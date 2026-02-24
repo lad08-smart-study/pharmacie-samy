@@ -3,173 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PHARMACIE SAMY</title>
+    <title>PHARMACIE SAMY | صيدلية سامي</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
-        
-        /* إعدادات الخلفية الثابتة */
+
+        :root {
+            --primary-dark: #064e3b;
+            --accent-green: #10b981;
+            --glass-white: rgba(255, 255, 255, 0.95);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            margin: 0; font-family: 'Tajawal', sans-serif;
-            background: linear-gradient(rgba(0,68,50,0.8), rgba(0,68,50,0.8)), 
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(rgba(0, 78, 59, 0.75), rgba(0, 78, 59, 0.75)), 
                         url('https://images.unsplash.com/photo-1596462502278-27bfdc4033c8?q=80&w=1500');
-            background-size: cover; background-attachment: fixed; color: #fff;
+            background-size: cover; background-position: center; background-attachment: fixed;
+            min-height: 100vh; color: #fff;
         }
 
-        /* الهيدر */
+        /* الهيدر مع تبديل اللغة */
         header {
-            background: #fff; margin: 10px; padding: 15px; border-radius: 15px;
-            display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background: var(--glass-white); margin: 15px; padding: 15px 25px;
+            border-radius: 20px; display: flex; justify-content: space-between;
+            align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
-        .logo { color: #064e3b; font-weight: 900; font-size: 20px; }
+        .logo-box { color: var(--primary-dark); }
+        .logo-box h1 { font-weight: 900; font-size: 22px; margin: 0; }
+        .logo-box span { font-size: 10px; color: var(--accent-green); font-weight: bold; }
 
-        /* شريط التصنيفات للزبون (هذا ما طلبته للتصفح) */
-        .categories-nav {
-            display: flex; overflow-x: auto; gap: 10px; padding: 15px; 
-            scrollbar-width: none; -ms-overflow-style: none;
+        .nav-controls { display: flex; gap: 15px; align-items: center; }
+        .lang-btn { background: #ecfdf5; color: var(--primary-dark); border: 2px solid var(--accent-green); padding: 5px 12px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+
+        /* شريط التصنيفات للزبون - (التفاصيل التي طلبتها) */
+        .cat-filter-bar {
+            display: flex; overflow-x: auto; gap: 12px; padding: 10px 20px;
+            scrollbar-width: none;
         }
-        .cat-btn {
-            background: rgba(255,255,255,0.2); border: 1px solid #fff; color: #fff;
-            padding: 8px 20px; border-radius: 20px; white-space: nowrap; cursor: pointer; font-weight: bold;
+        .cat-filter-bar::-webkit-scrollbar { display: none; }
+        .filter-btn {
+            background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+            color: #fff; padding: 10px 22px; border-radius: 25px; white-space: nowrap;
+            cursor: pointer; font-weight: bold; transition: 0.3s;
         }
-        .cat-btn.active { background: #10b981; border-color: #10b981; }
+        .filter-btn.active { background: var(--accent-green); border-color: var(--accent-green); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); }
 
         /* شبكة المنتجات */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 15px; }
-        .card {
-            background: #fff; border-radius: 15px; padding: 10px; color: #333;
-            text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        .products-container {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px; padding: 20px; padding-bottom: 100px;
         }
-        .card img { width: 100%; height: 140px; object-fit: cover; border-radius: 10px; }
-        .card h4 { margin: 8px 0 2px; font-size: 14px; color: #064e3b; }
-        .card .price { font-weight: 900; color: #10b981; font-size: 18px; }
+        .product-card {
+            background: var(--glass-white); border-radius: 22px; padding: 15px;
+            color: #1f2937; text-align: center; position: relative; transition: 0.3s;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        .product-card:hover { transform: translateY(-8px); }
+        .product-card img { width: 100%; height: 160px; object-fit: cover; border-radius: 18px; }
+        .card-cat { position: absolute; top: 10px; right: 10px; background: var(--accent-green); color: #fff; font-size: 9px; padding: 3px 8px; border-radius: 8px; }
+        .card-brand { font-size: 11px; color: #9ca3af; margin-top: 10px; font-weight: bold; }
+        .card-title { font-weight: 900; font-size: 16px; margin: 5px 0; color: var(--primary-dark); }
+        .card-price { font-size: 19px; font-weight: 900; color: var(--accent-green); }
 
         /* لوحة التحكم */
         #adminPanel {
-            display: none; background: #fff; color: #333; margin: 10px; padding: 20px;
-            border-radius: 15px; border: 3px solid #10b981;
+            display: none; background: #fff; color: #333; margin: 20px; padding: 25px;
+            border-radius: 25px; border: 4px solid var(--accent-green);
         }
-        input, select { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; }
+        .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        input, select { padding: 14px; border-radius: 12px; border: 2px solid #f3f4f6; font-family: 'Tajawal'; font-weight: bold; }
 
-        /* أزرار التواصل */
-        .footer {
-            position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
-            background: #fff; padding: 10px 30px; border-radius: 40px; display: flex; gap: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 100;
+        /* الفوتر (أزرار التواصل) */
+        .social-dock {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: #fff; padding: 12px 35px; border-radius: 50px;
+            display: flex; gap: 30px; box-shadow: 0 15px 40px rgba(0,0,0,0.5); z-index: 1000;
         }
+        .social-dock a { font-size: 28px; transition: 0.3s; }
+        .wa { color: #25D366; } .ig { color: #E1306C; } .tk { color: #000; } .map { color: #4285F4; }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="logo">PHARMACIE SAMY</div>
-    <button onclick="checkPass()" style="background:none; border:none; font-size:20px; color:#064e3b;"><i class="fas fa-lock"></i></button>
-</header>
+    <header>
+        <div class="logo-box">
+            <h1>PHARMACIE SAMY</h1>
+            <span>PREMIUM CARE STORE</span>
+        </div>
+        <div class="nav-controls">
+            <button class="lang-btn" onclick="toggleLang()" id="langSwitcher">Français</button>
+            <button onclick="openAdmin()" style="background:none; border:none; color:var(--primary-dark); font-size:22px; cursor:pointer;"><i class="fas fa-lock"></i></button>
+        </div>
+    </header>
 
-<div id="adminPanel">
-    <h3>إضافة منتج</h3>
-    <input type="text" id="n" placeholder="الاسم">
-    <input type="text" id="b" placeholder="الماركة">
-    <input type="number" id="p" placeholder="السعر">
-    <select id="c">
-        <option value="الكل">اختر الفئة</option>
-        <option>درمو-كوسميتيك</option>
-        <option>الأم والطفل</option>
-        <option>مكملات غذائية</option>
-        <option>العناية بالأسنان</option>
-        <option>أدوية</option>
-    </select>
-    <input type="file" id="f">
-    <button onclick="upload()" id="upBtn" style="width:100%; padding:15px; background:#064e3b; color:#fff; border:none; border-radius:10px;">حفظ المنتج</button>
-</div>
+    <section id="adminPanel">
+        <h2 style="margin-bottom:20px; color:var(--primary-dark);">إضافة منتج جديد</h2>
+        <div class="admin-grid">
+            <input type="text" id="name" placeholder="إسم المنتج">
+            <input type="text" id="brand" placeholder="الماركة (Brand)">
+            <input type="number" id="price" placeholder="السعر (د.ج)">
+            <select id="cat">
+                <option value="درمو-كوسميتيك">درمو-كوسميتيك</option>
+                <option value="الأم والطفل">الأم والطفل</option>
+                <option value="مكملات غذائية">مكملات غذائية</option>
+                <option value="العناية بالأسنان">العناية بالأسنان</option>
+                <option value="أدوية">أدوية</option>
+            </select>
+            <input type="file" id="image">
+        </div>
+        <button onclick="saveProduct()" id="saveBtn" style="width:100%; background:var(--primary-dark); color:#fff; padding:18px; border:none; border-radius:15px; margin-top:20px; font-weight:900; font-size:18px; cursor:pointer;">نشر في الموقع</button>
+    </section>
 
-<div class="categories-nav" id="catBar">
-    <button class="cat-btn active" onclick="filterItems('الكل')">الكل</button>
-    <button class="cat-btn" onclick="filterItems('درمو-كوسميتيك')">درمو-كوسميتيك</button>
-    <button class="cat-btn" onclick="filterItems('الأم والطفل')">الأم والطفل</button>
-    <button class="cat-btn" onclick="filterItems('مكملات غذائية')">مكملات</button>
-    <button class="cat-btn" onclick="filterItems('العناية بالأسنان')">الأسنان</button>
-    <button class="cat-btn" onclick="filterItems('أدوية')">أدوية</button>
-</div>
+    <div class="cat-filter-bar" id="filterBar">
+        <button class="filter-btn active" onclick="filterBy('الكل')">الكل</button>
+        <button class="filter-btn" onclick="filterBy('درمو-كوسميتيك')">درمو-كوسميتيك</button>
+        <button class="filter-btn" onclick="filterBy('الأم والطفل')">الأم والطفل</button>
+        <button class="filter-btn" onclick="filterBy('مكملات غذائية')">مكملات غذائية</button>
+        <button class="filter-btn" onclick="filterBy('العناية بالأسنان')">العناية بالأسنان</button>
+        <button class="filter-btn" onclick="filterBy('أدوية')">أدوية</button>
+    </div>
 
-<div class="grid" id="mainGrid"></div>
+    <div class="products-container" id="productsGrid"></div>
 
-<footer class="footer">
-    <a href="https://wa.me/213770762987" style="color:#25D366; font-size:25px;"><i class="fab fa-whatsapp"></i></a>
-    <a href="https://www.instagram.com/pharmaciesamy/" style="color:#E1306C; font-size:25px;"><i class="fab fa-instagram"></i></a>
-    <a href="https://www.tiktok.com/@pharmacie.samy" style="color:#000; font-size:25px;"><i class="fab fa-tiktok"></i></a>
-    <a href="https://share.google/1uSFRbdMSAfgNZSUU" style="color:#4285F4; font-size:25px;"><i class="fas fa-map-marker-alt"></i></a>
-</footer>
+    <footer class="social-dock">
+        <a href="https://wa.me/213770762987" class="wa"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://www.instagram.com/pharmaciesamy/" class="ig"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.tiktok.com/@pharmacie.samy" class="tk"><i class="fab fa-tiktok"></i></a>
+        <a href="https://share.google/1uSFRbdMSAfgNZSUU" class="map"><i class="fas fa-map-marker-alt"></i></a>
+    </footer>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyDXOljj0H5909ivD-OhMbIVsF_pjzSDtBg",
-        authDomain: "pharmacie-samy.firebaseapp.com",
-        projectId: "pharmacie-samy",
-        storageBucket: "pharmacie-samy.firebasestorage.app",
-        messagingSenderId: "178950700829",
-        appId: "1:178950700829:web:1d5f72f25352c3fe642bf4"
-    };
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXOljj0H5909ivD-OhMbIVsF_pjzSDtBg",
+            authDomain: "pharmacie-samy.firebaseapp.com",
+            projectId: "pharmacie-samy",
+            storageBucket: "pharmacie-samy.firebasestorage.app",
+            messagingSenderId: "178950700829",
+            appId: "1:178950700829:web:1d5f72f25352c3fe642bf4"
+        };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const st = getStorage(app);
-    let allMeds = [];
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const st = getStorage(app);
+        let currentData = [];
 
-    window.checkPass = () => {
-        if(prompt("كلمة السر:") === "pharmaciesami001") document.getElementById('adminPanel').style.display='block';
-    };
+        window.toggleLang = () => {
+            const isAr = document.documentElement.dir === "rtl";
+            document.documentElement.dir = isAr ? "ltr" : "rtl";
+            document.getElementById('langSwitcher').innerText = isAr ? "العربية" : "Français";
+        };
 
-    window.upload = async () => {
-        const btn = document.getElementById('upBtn');
-        btn.disabled = true; btn.innerText = "جاري الحفظ...";
-        try {
-            const file = document.getElementById('f').files[0];
-            const sRef = ref(st, `items/${Date.now()}`);
-            await uploadBytes(sRef, file);
-            const url = await getDownloadURL(sRef);
-            await addDoc(collection(db, "meds"), {
-                name: document.getElementById('n').value,
-                brand: document.getElementById('b').value,
-                price: document.getElementById('p').value,
-                cat: document.getElementById('c').value,
-                img: url, time: Date.now()
-            });
-            location.reload();
-        } catch (e) { alert("خطأ في Firebase!"); btn.disabled = false; }
-    };
+        window.openAdmin = () => {
+            if(prompt("PASSWORD:") === "pharmaciesami001") document.getElementById('adminPanel').style.display = 'block';
+        };
 
-    onSnapshot(query(collection(db, "meds"), orderBy("time", "desc")), (snap) => {
-        allMeds = [];
-        snap.forEach(doc => allMeds.push(doc.data()));
-        renderMeds(allMeds);
-    });
+        window.saveProduct = async () => {
+            const file = document.getElementById('image').files[0];
+            const btn = document.getElementById('saveBtn');
+            if(!file) return alert("اختر صورة!");
+            btn.disabled = true; btn.innerText = "جاري الحفظ...";
+            
+            try {
+                const sRef = ref(st, `meds/${Date.now()}`);
+                await uploadBytes(sRef, file);
+                const url = await getDownloadURL(sRef);
+                await addDoc(collection(db, "meds"), {
+                    name: document.getElementById('name').value,
+                    brand: document.getElementById('brand').value,
+                    price: document.getElementById('price').value,
+                    cat: document.getElementById('cat').value,
+                    img: url, time: Date.now()
+                });
+                location.reload();
+            } catch (e) { alert("خطأ!"); btn.disabled = false; }
+        };
 
-    function renderMeds(data) {
-        const g = document.getElementById('mainGrid');
-        g.innerHTML = data.map(i => `
-            <div class="card">
-                <img src="${i.img}">
-                <div style="font-size:10px; color:#777; margin-top:5px;">${i.cat}</div>
-                <h4>${i.name}</h4>
-                <div class="price">${i.price} DA</div>
-            </div>
-        `).join('');
-    }
+        onSnapshot(query(collection(db, "meds"), orderBy("time", "desc")), (snap) => {
+            currentData = [];
+            snap.forEach(d => currentData.push({id: d.id, ...d.data()}));
+            render(currentData);
+        });
 
-    window.filterItems = (cat) => {
-        // تحديث شكل الأزرار
-        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-        event.target.classList.add('active');
-        
-        if(cat === 'الكل') return renderMeds(allMeds);
-        const filtered = allMeds.filter(m => m.cat === cat);
-        renderMeds(filtered);
-    };
-</script>
+        function render(items) {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = items.map(i => `
+                <div class="product-card">
+                    <span class="card-cat">${i.cat}</span>
+                    <img src="${i.img}">
+                    <div class="card-brand">${i.brand}</div>
+                    <div class="card-title">${i.name}</div>
+                    <div class="card-price">${i.price} DA</div>
+                    <button onclick="delItem('${i.id}')" style="border:none; background:none; color:#ddd; cursor:pointer;"><i class="fas fa-trash-alt text-xs"></i></button>
+                </div>
+            `).join('');
+        }
+
+        window.filterBy = (cat) => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            if(cat === 'الكل') return render(currentData);
+            render(currentData.filter(m => m.cat === cat));
+        };
+
+        window.delItem = async (id) => {
+            if(prompt("رمز الحذف:") === "pharmaciesami001") await deleteDoc(doc(db, "meds", id));
+        };
+    </script>
 </body>
 </html>
