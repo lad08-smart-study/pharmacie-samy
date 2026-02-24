@@ -3,153 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PHARMACIE SAMY | PREMIUM STORE</title>
+    <title>PHARMACIE SAMY | PREMIUM</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
-
+        
+        /* إعدادات الألوان الثابتة لضمان عدم ظهور بياض */
         :root {
-            --primary: #064e3b; /* أخضر غامق فخم */
-            --accent: #10b981;  /* أخضر زمردي */
-            --gold: #fbbf24;    /* لمسة ذهبية */
-            --glass: rgba(255, 255, 255, 0.92);
+            --main-green: #064e3b;
+            --light-green: #10b981;
+            --bg-overlay: rgba(0, 0, 0, 0.6);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Tajawal', sans-serif;
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
-                        url('https://images.unsplash.com/photo-1596462502278-27bfdc4033c8?q=80&w=2080&auto=format&fit=crop');
+            /* خلفية المرأة والكوسميتيك مضمونة */
+            background: linear-gradient(var(--bg-overlay), var(--bg-overlay)), 
+                        url('https://images.unsplash.com/photo-1596462502278-27bfdc4033c8?q=80&w=2080') no-repeat center center fixed;
             background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
             min-height: 100vh;
-            color: #1f2937;
+            color: #fff;
         }
 
-        /* الهيدر الفخم */
-        header {
-            background: var(--glass);
-            margin: 20px;
+        /* الهيدر الاحترافي */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            margin: 15px;
             padding: 15px 25px;
             border-radius: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .brand-zone { display: flex; align-items: center; gap: 15px; }
-        .logo-box { background: var(--primary); color: white; padding: 12px; border-radius: 15px; font-size: 24px; }
-        .brand-name h1 { font-weight: 900; color: var(--primary); font-size: 22px; line-height: 1; }
-        .brand-name span { font-size: 10px; color: var(--accent); font-bold; letter-spacing: 2px; }
+        .logo-text { color: var(--main-green); font-weight: 900; font-size: 22px; }
+        .lang-btn { background: #f0fdf4; color: var(--light-green); border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; font-weight: bold; }
 
-        /* لوحة التحكم - ديزاين جديد */
-        #adminArea {
+        /* لوحة الإدارة */
+        #adminPanel {
             display: none;
-            background: var(--glass);
+            background: white;
+            color: #333;
             margin: 20px;
-            padding: 30px;
-            border-radius: 25px;
-            border: 3px solid var(--accent);
-            animation: slideDown 0.4s ease;
+            padding: 25px;
+            border-radius: 20px;
+            border: 3px solid var(--light-green);
         }
 
-        @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        input, select { padding: 15px; border-radius: 12px; border: 2px solid #e5e7eb; font-family: 'Tajawal'; font-weight: bold; }
-        input:focus { border-color: var(--accent); outline: none; }
-        
-        .btn-upload {
-            background: var(--primary); color: white; padding: 18px; border: none; 
-            border-radius: 15px; width: 100%; font-size: 18px; font-weight: bold; cursor: pointer;
-            transition: 0.3s;
-        }
-        .btn-upload:hover { background: var(--accent); transform: scale(1.01); }
+        .inputs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 15px; }
+        input, select { padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-family: 'Tajawal'; }
 
         /* شبكة المنتجات */
-        .products-grid {
+        .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 20px;
             padding: 20px;
         }
 
-        .product-card {
-            background: var(--glass);
-            border-radius: 20px;
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
             padding: 15px;
+            color: #333;
             text-align: center;
             transition: 0.3s;
-            position: relative;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-        .product-card:hover { transform: translateY(-10px); box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
-        .product-card img { width: 100%; height: 180px; object-fit: cover; border-radius: 15px; margin-bottom: 12px; }
-        .badge { position: absolute; top: 10px; right: 10px; background: var(--gold); color: #000; padding: 3px 10px; border-radius: 10px; font-size: 10px; font-weight: bold; }
-        .p-title { font-weight: bold; color: var(--primary); font-size: 16px; }
-        .p-brand { font-size: 12px; color: #6b7280; margin: 5px 0; }
-        .p-price { font-size: 20px; font-weight: 900; color: var(--accent); }
+        .card img { width: 100%; height: 150px; object-fit: cover; border-radius: 10px; }
+        .card h4 { margin: 10px 0 5px; font-weight: 900; }
+        .card .brand { font-size: 11px; color: #777; }
+        .card .price { font-size: 18px; color: var(--main-green); font-weight: 900; margin-top: 5px; }
 
-        /* أزرار التواصل العائمة */
-        .social-bar {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: white; padding: 12px 30px; border-radius: 50px;
-            display: flex; gap: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.4); z-index: 9999;
+        /* أزرار التواصل الأسفل */
+        .footer-nav {
+            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+            background: white; padding: 10px 25px; border-radius: 50px;
+            display: flex; gap: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.5);
         }
-        .social-bar a { font-size: 28px; transition: 0.3s; }
-        .social-bar a:hover { transform: scale(1.2); }
-        .wa { color: #25D366; } .ig { color: #E1306C; } .tk { color: #000; } .map { color: #4285F4; }
-
+        .footer-nav a { font-size: 25px; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="brand-zone">
-            <div class="logo-box"><i class="fas fa-prescription-bottle-medical"></i></div>
-            <div class="brand-name">
-                <h1>PHARMACIE SAMY</h1>
-                <span>PREMIUM STORE</span>
-            </div>
+    <header class="navbar">
+        <div class="logo-text"><i class="fas fa-plus-circle"></i> PHARMACIE SAMY</div>
+        <div style="display: flex; gap: 10px;">
+            <button class="lang-btn" onclick="document.documentElement.dir='ltr'">Fr</button>
+            <button onclick="checkPass()" style="background:none; border:none; font-size:20px; color:var(--main-green); cursor:pointer;"><i class="fas fa-lock"></i></button>
         </div>
-        <button onclick="openAdmin()" style="background:none; border:none; cursor:pointer; color:var(--primary); font-size: 24px;">
-            <i class="fas fa-lock"></i>
-        </button>
     </header>
 
-    <main>
-        <div id="adminArea">
-            <h2 style="margin-bottom: 20px; color: var(--primary);">لوحة إضافة المنتجات</h2>
-            <div class="form-grid">
-                <input type="text" id="pName" placeholder="اسم المنتج">
-                <input type="text" id="pBrand" placeholder="الماركة">
-                <input type="number" id="pPrice" placeholder="السعر">
-                <select id="pCat">
-                    <option value="درمو-كوسميتيك">درمو-كوسميتيك</option>
-                    <option value="الأم والطفل">الأم والطفل</option>
-                    <option value="مكملات غذائية">مكملات غذائية</option>
-                    <option value="عناية بالأسنان">عناية بالأسنان</option>
-                    <option value="أدوية">أدوية</option>
-                </select>
-            </div>
-            <input type="file" id="pImg" style="margin-bottom: 20px; width: 100%;">
-            <button class="btn-upload" id="uploadBtn" onclick="processUpload()">نشر المنتج فوراً</button>
+    <div id="adminPanel">
+        <div class="inputs-grid">
+            <input type="text" id="n" placeholder="الاسم">
+            <input type="text" id="b" placeholder="الماركة">
+            <input type="number" id="p" placeholder="السعر">
+            <select id="c">
+                <option>درمو-كوسميتيك</option>
+                <option>الأم والطفل</option>
+                <option>مكملات غذائية</option>
+                <option>العناية بالأسنان</option>
+                <option>أدوية</option>
+            </select>
         </div>
-
-        <div class="products-grid" id="mainGrid">
-            </div>
-    </main>
-
-    <div class="social-bar">
-        <a href="https://wa.me/213770762987" class="wa"><i class="fab fa-whatsapp"></i></a>
-        <a href="https://www.instagram.com/pharmaciesamy/" class="ig"><i class="fab fa-instagram"></i></a>
-        <a href="https://www.tiktok.com/@pharmacie.samy" class="tk"><i class="fab fa-tiktok"></i></a>
-        <a href="https://share.google/1uSFRbdMSAfgNZSUU" class="map"><i class="fas fa-map-marker-alt"></i></a>
+        <input type="file" id="f" style="margin-bottom:10px;">
+        <button onclick="upload()" id="upBtn" style="width:100%; padding:15px; background:var(--main-green); color:white; border:none; border-radius:10px; font-weight:bold;">حفظ المنتج</button>
     </div>
+
+    <div class="grid" id="mainGrid"></div>
+
+    <footer class="footer-nav">
+        <a href="https://wa.me/213770762987" style="color:#25D366;"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://www.instagram.com/pharmaciesamy/" style="color:#E1306C;"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.tiktok.com/@pharmacie.samy" style="color:#000;"><i class="fab fa-tiktok"></i></a>
+        <a href="https://share.google/1uSFRbdMSAfgNZSUU" style="color:#4285F4;"><i class="fas fa-map-marker-alt"></i></a>
+    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -167,50 +138,43 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const storage = getStorage(app);
+        const st = getStorage(app);
 
-        window.openAdmin = () => {
-            if(prompt("PASSWORD:") === "pharmaciesami001") {
-                document.getElementById('adminArea').style.display = "block";
-            }
+        window.checkPass = () => {
+            if(prompt("PASSWORD:") === "pharmaciesami001") document.getElementById('adminPanel').style.display='block';
         };
 
-        window.processUpload = async () => {
-            const name = document.getElementById('pName').value;
-            const brand = document.getElementById('pBrand').value;
-            const price = document.getElementById('pPrice').value;
-            const cat = document.getElementById('pCat').value;
-            const file = document.getElementById('pImg').files[0];
-            const btn = document.getElementById('uploadBtn');
-
-            if(!name || !file) return alert("البيانات ناقصة!");
-
-            btn.disabled = true; btn.innerText = "جاري الرفع...";
-
+        window.upload = async () => {
+            const btn = document.getElementById('upBtn');
+            btn.disabled = true; btn.innerText = "جاري الحفظ...";
             try {
-                const sRef = ref(storage, `products/${Date.now()}`);
+                const file = document.getElementById('f').files[0];
+                const sRef = ref(st, `items/${Date.now()}`);
                 await uploadBytes(sRef, file);
                 const url = await getDownloadURL(sRef);
-                await addDoc(collection(db, "meds"), { name, brand, price, cat, img: url, time: Date.now() });
-                alert("تم الحفظ!"); location.reload();
-            } catch (e) { alert("خطأ في الاتصال!"); btn.disabled = false; }
+                await addDoc(collection(db, "meds"), {
+                    name: document.getElementById('n').value,
+                    brand: document.getElementById('b').value,
+                    price: document.getElementById('p').value,
+                    cat: document.getElementById('c').value,
+                    img: url, time: Date.now()
+                });
+                location.reload();
+            } catch (e) { alert("خطأ!"); btn.disabled = false; }
         };
 
-        const q = query(collection(db, "meds"), orderBy("time", "desc"));
-        onSnapshot(q, (snap) => {
-            const grid = document.getElementById('mainGrid');
-            grid.innerHTML = '';
+        onSnapshot(query(collection(db, "meds"), orderBy("time", "desc")), (snap) => {
+            const g = document.getElementById('mainGrid');
+            g.innerHTML = '';
             snap.forEach(doc => {
-                const p = doc.data();
-                grid.innerHTML += `
-                    <div class="product-card">
-                        <div class="badge">${p.cat}</div>
-                        <img src="${p.img}">
-                        <div class="p-title">${p.name}</div>
-                        <div class="p-brand">${p.brand}</div>
-                        <div class="p-price">${p.price} DA</div>
-                    </div>
-                `;
+                const i = doc.data();
+                g.innerHTML += `<div class="card">
+                    <img src="${i.img}">
+                    <div style="font-size:9px; background:#eee; padding:2px; border-radius:5px; margin-top:5px;">${i.cat}</div>
+                    <h4>${i.name}</h4>
+                    <p class="brand">${i.brand}</p>
+                    <p class="price">${i.price} DA</p>
+                </div>`;
             });
         });
     </script>
