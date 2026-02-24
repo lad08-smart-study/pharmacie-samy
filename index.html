@@ -3,93 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PHARMACIE SAMY | النسخة الاحترافية</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>PHARMACIE SAMY | PREMIUM STORE</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
+
+        :root {
+            --primary: #064e3b; /* أخضر غامق فخم */
+            --accent: #10b981;  /* أخضر زمردي */
+            --gold: #fbbf24;    /* لمسة ذهبية */
+            --glass: rgba(255, 255, 255, 0.92);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
             font-family: 'Tajawal', sans-serif;
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
-                        url('https://images.unsplash.com/photo-1596462502278-27bfdc4033c8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-            background-size: cover; background-position: center; background-attachment: fixed;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('https://images.unsplash.com/photo-1596462502278-27bfdc4033c8?q=80&w=2080&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             min-height: 100vh;
+            color: #1f2937;
         }
-        .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(15px); border-radius: 25px; border: 1px solid rgba(255,255,255,0.4); }
-        .product-card { transition: all 0.3s ease; }
-        .product-card:hover { transform: translateY(-10px); }
-        .admin-panel { border: 3px solid #10b981; }
-        /* أنيميشن للحفظ */
-        .spinner { animation: spin 1s linear infinite; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* الهيدر الفخم */
+        header {
+            background: var(--glass);
+            margin: 20px;
+            padding: 15px 25px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        .brand-zone { display: flex; align-items: center; gap: 15px; }
+        .logo-box { background: var(--primary); color: white; padding: 12px; border-radius: 15px; font-size: 24px; }
+        .brand-name h1 { font-weight: 900; color: var(--primary); font-size: 22px; line-height: 1; }
+        .brand-name span { font-size: 10px; color: var(--accent); font-bold; letter-spacing: 2px; }
+
+        /* لوحة التحكم - ديزاين جديد */
+        #adminArea {
+            display: none;
+            background: var(--glass);
+            margin: 20px;
+            padding: 30px;
+            border-radius: 25px;
+            border: 3px solid var(--accent);
+            animation: slideDown 0.4s ease;
+        }
+
+        @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        input, select { padding: 15px; border-radius: 12px; border: 2px solid #e5e7eb; font-family: 'Tajawal'; font-weight: bold; }
+        input:focus { border-color: var(--accent); outline: none; }
+        
+        .btn-upload {
+            background: var(--primary); color: white; padding: 18px; border: none; 
+            border-radius: 15px; width: 100%; font-size: 18px; font-weight: bold; cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-upload:hover { background: var(--accent); transform: scale(1.01); }
+
+        /* شبكة المنتجات */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 25px;
+            padding: 20px;
+        }
+
+        .product-card {
+            background: var(--glass);
+            border-radius: 20px;
+            padding: 15px;
+            text-align: center;
+            transition: 0.3s;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .product-card:hover { transform: translateY(-10px); box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
+        .product-card img { width: 100%; height: 180px; object-fit: cover; border-radius: 15px; margin-bottom: 12px; }
+        .badge { position: absolute; top: 10px; right: 10px; background: var(--gold); color: #000; padding: 3px 10px; border-radius: 10px; font-size: 10px; font-weight: bold; }
+        .p-title { font-weight: bold; color: var(--primary); font-size: 16px; }
+        .p-brand { font-size: 12px; color: #6b7280; margin: 5px 0; }
+        .p-price { font-size: 20px; font-weight: 900; color: var(--accent); }
+
+        /* أزرار التواصل العائمة */
+        .social-bar {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: white; padding: 12px 30px; border-radius: 50px;
+            display: flex; gap: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.4); z-index: 9999;
+        }
+        .social-bar a { font-size: 28px; transition: 0.3s; }
+        .social-bar a:hover { transform: scale(1.2); }
+        .wa { color: #25D366; } .ig { color: #E1306C; } .tk { color: #000; } .map { color: #4285F4; }
+
     </style>
 </head>
-<body class="pb-32">
+<body>
 
-    <header class="container mx-auto mt-6 px-4">
-        <div class="glass p-5 flex justify-between items-center shadow-2xl">
-            <div class="flex items-center gap-3">
-                <div class="bg-emerald-600 p-3 rounded-2xl text-white shadow-lg">
-                    <i class="fas fa-clinic-medical text-2xl"></i>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-bold text-emerald-900 leading-none">PHARMACIE SAMY</h1>
-                    <span class="text-[10px] text-emerald-600 font-bold uppercase tracking-widest">Premium Store</span>
-                </div>
-            </div>
-            <div class="flex items-center gap-4">
-                <button id="langBtn" onclick="toggleLanguage()" class="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-xl font-bold text-sm hover:bg-emerald-200 transition">Français</button>
-                <button onclick="handleAdminAuth()" class="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-emerald-600 shadow-lg border border-emerald-100 hover:scale-110 transition">
-                    <i class="fas fa-fingerprint text-xl"></i>
-                </button>
+    <header>
+        <div class="brand-zone">
+            <div class="logo-box"><i class="fas fa-prescription-bottle-medical"></i></div>
+            <div class="brand-name">
+                <h1>PHARMACIE SAMY</h1>
+                <span>PREMIUM STORE</span>
             </div>
         </div>
+        <button onclick="openAdmin()" style="background:none; border:none; cursor:pointer; color:var(--primary); font-size: 24px;">
+            <i class="fas fa-lock"></i>
+        </button>
     </header>
 
-    <main class="container mx-auto px-4 mt-10">
-        <section id="adminArea" class="hidden mb-16 animate-in fade-in zoom-in duration-300">
-            <div class="glass p-8 admin-panel shadow-2xl">
-                <h2 id="adminTitle" class="text-2xl font-bold text-emerald-900 mb-8 border-r-8 border-emerald-500 pr-4">إضافة منتج جديد للرفوف</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                    <input type="text" id="pName" placeholder="إسم المنتج" class="p-4 rounded-2xl ring-2 ring-gray-100 outline-none focus:ring-emerald-500 bg-gray-50">
-                    <input type="text" id="pBrand" placeholder="الماركة (Brand)" class="p-4 rounded-2xl ring-2 ring-gray-100 outline-none focus:ring-emerald-500 bg-gray-50">
-                    <input type="number" id="pPrice" placeholder="السعر (د.ج)" class="p-4 rounded-2xl ring-2 ring-gray-100 outline-none focus:ring-emerald-500 bg-gray-50">
-                    
-                    <select id="pCat" class="p-4 rounded-2xl ring-2 ring-gray-100 outline-none focus:ring-emerald-500 bg-white font-bold text-gray-700">
-                        <option value="درمو كوسميتيك">درمو كوسميتيك (Dermo-Cosmétique)</option>
-                        <option value="الأم والطفل">الأم والطفل (Maman & Bébé)</option>
-                        <option value="مكملات غذائية">مكملات غذائية (Compléments)</option>
-                        <option value="العناية بالأسنان">العناية بالأسنان (Dentaire)</option>
-                        <option value="عناية بالشعر">عناية بالشعر (Cheveux)</option>
-                        <option value="أدوية">أدوية (Médicaments)</option>
-                    </select>
-                    
-                    <div class="lg:col-span-2">
-                        <input type="file" id="pImg" class="w-full p-3 bg-white rounded-2xl ring-2 ring-gray-100 cursor-pointer">
-                    </div>
-                </div>
-                <button onclick="uploadProduct()" id="saveBtn" class="w-full bg-emerald-600 text-white py-5 rounded-2xl font-bold text-xl shadow-xl hover:bg-emerald-700 transition flex items-center justify-center gap-3">
-                    <i class="fas fa-cloud-upload-alt"></i> 
-                    <span id="btnText">تأكيد ونشر المنتج</span>
-                </button>
+    <main>
+        <div id="adminArea">
+            <h2 style="margin-bottom: 20px; color: var(--primary);">لوحة إضافة المنتجات</h2>
+            <div class="form-grid">
+                <input type="text" id="pName" placeholder="اسم المنتج">
+                <input type="text" id="pBrand" placeholder="الماركة">
+                <input type="number" id="pPrice" placeholder="السعر">
+                <select id="pCat">
+                    <option value="درمو-كوسميتيك">درمو-كوسميتيك</option>
+                    <option value="الأم والطفل">الأم والطفل</option>
+                    <option value="مكملات غذائية">مكملات غذائية</option>
+                    <option value="عناية بالأسنان">عناية بالأسنان</option>
+                    <option value="أدوية">أدوية</option>
+                </select>
             </div>
-        </section>
+            <input type="file" id="pImg" style="margin-bottom: 20px; width: 100%;">
+            <button class="btn-upload" id="uploadBtn" onclick="processUpload()">نشر المنتج فوراً</button>
+        </div>
 
-        <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8"></div>
+        <div class="products-grid" id="mainGrid">
+            </div>
     </main>
 
-    <footer class="fixed bottom-6 left-4 right-4 z-50">
-        <div class="glass p-4 flex justify-around items-center max-w-lg mx-auto shadow-2xl border-t-2 border-white/50">
-            <a href="https://wa.me/213770762987" target="_blank" class="text-green-500 text-3xl hover:scale-125 transition"><i class="fab fa-whatsapp"></i></a>
-            <a href="https://www.instagram.com/pharmaciesamy/" target="_blank" class="text-pink-600 text-3xl hover:scale-125 transition"><i class="fab fa-instagram"></i></a>
-            <a href="https://www.tiktok.com/@pharmacie.samy" target="_blank" class="text-black text-3xl hover:scale-125 transition"><i class="fab fa-tiktok"></i></a>
-            <a href="https://share.google/1uSFRbdMSAfgNZSUU" target="_blank" class="text-blue-600 text-3xl hover:scale-125 transition"><i class="fas fa-map-marker-alt"></i></a>
-        </div>
-    </footer>
+    <div class="social-bar">
+        <a href="https://wa.me/213770762987" class="wa"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://www.instagram.com/pharmaciesamy/" class="ig"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.tiktok.com/@pharmacie.samy" class="tk"><i class="fab fa-tiktok"></i></a>
+        <a href="https://share.google/1uSFRbdMSAfgNZSUU" class="map"><i class="fas fa-map-marker-alt"></i></a>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
         const firebaseConfig = {
@@ -103,91 +167,52 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const st = getStorage(app);
+        const storage = getStorage(app);
 
-        // تبديل اللغة
-        window.toggleLanguage = () => {
-            const isAr = document.documentElement.dir === "rtl";
-            document.documentElement.dir = isAr ? "ltr" : "rtl";
-            document.getElementById('langBtn').innerText = isAr ? "العربية" : "Français";
+        window.openAdmin = () => {
+            if(prompt("PASSWORD:") === "pharmaciesami001") {
+                document.getElementById('adminArea').style.display = "block";
+            }
         };
 
-        // الدخول للإدارة
-        window.handleAdminAuth = () => {
-            if (prompt("ADMIN PASSWORD:") === "pharmaciesami001") {
-                document.getElementById('adminArea').classList.toggle('hidden');
-            } else { alert("ACCESS DENIED"); }
-        };
-
-        // وظيفة الرفع (المصلحة)
-        window.uploadProduct = async () => {
+        window.processUpload = async () => {
             const name = document.getElementById('pName').value;
             const brand = document.getElementById('pBrand').value;
             const price = document.getElementById('pPrice').value;
             const cat = document.getElementById('pCat').value;
             const file = document.getElementById('pImg').files[0];
-            const btn = document.getElementById('saveBtn');
-            const btnText = document.getElementById('btnText');
+            const btn = document.getElementById('uploadBtn');
 
-            if (!name || !price || !file) return alert("أكمل البيانات أولاً!");
+            if(!name || !file) return alert("البيانات ناقصة!");
 
-            btn.disabled = true;
-            btnText.innerHTML = '<i class="fas fa-circle-notch spinner"></i> جاري الحفظ...';
+            btn.disabled = true; btn.innerText = "جاري الرفع...";
 
             try {
-                // رفع الصورة
-                const fileName = `pharmacy_${Date.now()}`;
-                const storageRef = ref(st, 'meds/' + fileName);
-                
-                const uploadTask = await uploadBytes(storageRef, file);
-                const downloadURL = await getDownloadURL(uploadTask.ref);
-
-                // حفظ البيانات في Firestore
-                await addDoc(collection(db, "meds"), {
-                    name, brand, price, cat, 
-                    img: downloadURL,
-                    timestamp: Date.now()
-                });
-
-                alert("تم بنجاح!");
-                location.reload();
-            } catch (error) {
-                console.error(error);
-                alert("خطأ! تأكد من أن قواعد Firebase Storage مفتوحة.");
-                btn.disabled = false;
-                btnText.innerText = "تأكيد ونشر المنتج";
-            }
+                const sRef = ref(storage, `products/${Date.now()}`);
+                await uploadBytes(sRef, file);
+                const url = await getDownloadURL(sRef);
+                await addDoc(collection(db, "meds"), { name, brand, price, cat, img: url, time: Date.now() });
+                alert("تم الحفظ!"); location.reload();
+            } catch (e) { alert("خطأ في الاتصال!"); btn.disabled = false; }
         };
 
-        // العرض المباشر
-        const q = query(collection(db, "meds"), orderBy("timestamp", "desc"));
-        onSnapshot(q, (snapshot) => {
-            const grid = document.getElementById('productsGrid');
+        const q = query(collection(db, "meds"), orderBy("time", "desc"));
+        onSnapshot(q, (snap) => {
+            const grid = document.getElementById('mainGrid');
             grid.innerHTML = '';
-            snapshot.forEach((docSnap) => {
-                const data = docSnap.data();
+            snap.forEach(doc => {
+                const p = doc.data();
                 grid.innerHTML += `
-                    <div class="glass p-4 product-card shadow-xl relative">
-                        <img src="${data.img}" class="w-full h-48 object-cover rounded-2xl mb-4">
-                        <span class="absolute top-6 left-6 text-[8px] bg-emerald-600 text-white px-3 py-1 rounded-full font-bold uppercase shadow-lg">${data.cat}</span>
-                        <h4 class="font-bold text-gray-800 text-lg truncate">${data.name}</h4>
-                        <p class="text-xs text-gray-400 italic mb-2">${data.brand}</p>
-                        <div class="flex justify-between items-center">
-                            <p class="text-emerald-700 font-black text-xl">${data.price} <span class="text-xs">DA</span></p>
-                            <button onclick="deleteItem('${docSnap.id}')" class="text-gray-300 hover:text-red-500 transition">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        </div>
+                    <div class="product-card">
+                        <div class="badge">${p.cat}</div>
+                        <img src="${p.img}">
+                        <div class="p-title">${p.name}</div>
+                        <div class="p-brand">${p.brand}</div>
+                        <div class="p-price">${p.price} DA</div>
                     </div>
                 `;
             });
         });
-
-        window.deleteItem = async (id) => {
-            if (prompt("أدخل الرمز للحذف:") === "pharmaciesami001") {
-                await deleteDoc(doc(db, "meds", id));
-            }
-        };
     </script>
 </body>
 </html>
