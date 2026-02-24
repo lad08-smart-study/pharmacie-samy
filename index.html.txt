@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHARMACIE SAMY | صيدلية سامي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            /* صورة المرأة التي تستعمل منتج كوسميتيك في الواجهة */
+            background: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), 
+                        url('https://images.unsplash.com/photo-1596462502278-27bfdc4033c8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .product-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body class="pb-32">
+
+    <header class="glass-panel sticky top-4 mx-4 z-50 p-5 mb-10 flex justify-between items-center border-emerald-200 shadow-xl">
+        <div class="flex items-center gap-3">
+            <div class="bg-emerald-600 text-white p-2 rounded-xl shadow-lg">
+                <i class="fas fa-hand-holding-heart text-2xl"></i>
+            </div>
+            <h1 class="text-3xl font-extrabold text-emerald-900 tracking-tighter">PHARMACIE SAMY</h1>
+        </div>
+        <button onclick="accessAdmin()" class="w-12 h-12 rounded-full flex items-center justify-center bg-white text-emerald-600 shadow-md hover:bg-emerald-50 transition border border-emerald-100">
+            <i class="fas fa-lock text-xl"></i>
+        </button>
+    </header>
+
+    <main class="container mx-auto px-4">
+        <section id="adminPanel" class="hidden mb-16 animate-in slide-in-from-top duration-500">
+            <div class="glass-panel p-10 border-2 border-emerald-500 shadow-2xl">
+                <h2 class="text-2xl font-bold text-emerald-900 mb-8 flex items-center gap-3">
+                    <i class="fas fa-plus-circle"></i> إضافة منتج جديد للصيدلية
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div>
+                        <label class="block text-sm font-bold mb-2 text-gray-700">إسم المنتج</label>
+                        <input type="text" id="pName" placeholder="مثال: واقي شمس" class="w-full p-4 rounded-2xl ring-1 ring-gray-200 outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-2 text-gray-700">الماركة (Brand)</label>
+                        <input type="text" id="pBrand" placeholder="مثال: La Roche-Posay" class="w-full p-4 rounded-2xl ring-1 ring-gray-200 outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-2 text-gray-700">السعر (د.ج)</label>
+                        <input type="number" id="pPrice" placeholder="0.00" class="w-full p-4 rounded-2xl ring-1 ring-gray-200 outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-2 text-gray-700">الصنف (Catégorie)</label>
+                        <select id="pCat" class="w-full p-4 rounded-2xl ring-1 ring-gray-200 outline-none focus:ring-2 focus:ring-emerald-500 bg-white font-bold">
+                            <option value="كوسميتيك">تجميل (Cosmétique)</option>
+                            <option value="أدوية">أدوية (Médicaments)</option>
+                            <option value="عناية بالبشرة">عناية بالبشرة</option>
+                            <option value="مكملات">مكملات غذائية</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <label class="block text-sm font-bold mb-2 text-gray-700">صورة المنتج</label>
+                    <input type="file" id="pImg" class="w-full p-3 bg-white rounded-2xl border border-gray-100">
+                </div>
+                <button onclick="uploadItem()" id="saveBtn" class="mt-10 w-full bg-emerald-600 text-white py-5 rounded-2xl font-bold text-xl hover:bg-emerald-700 shadow-xl shadow-emerald-200 transition-all flex items-center justify-center gap-3">
+                    <i class="fas fa-check-double"></i> حفظ ونشر المنتج الآن
+                </button>
+            </div>
+        </section>
+
+        <div class="flex items-center gap-2 mb-8 mr-2">
+            <div class="w-2 h-8 bg-emerald-500 rounded-full"></div>
+            <h3 class="text-2xl font-bold text-gray-800">المنتجات المعروضة</h3>
+        </div>
+        <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8"></div>
+    </main>
+
+    <footer class="fixed bottom-6 left-4 right-4 z-50">
+        <div class="glass-panel p-4 shadow-2xl flex justify-around items-center max-w-md mx-auto border border-white">
+            <a href="https://wa.me/213770762987" target="_blank" class="text-green-500 text-3xl hover:scale-125 transition-transform"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://www.instagram.com/pharmaciesamy/" target="_blank" class="text-pink-600 text-3xl hover:scale-125 transition-transform"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.tiktok.com/@pharmacie.samy" target="_blank" class="text-black text-3xl hover:scale-125 transition-transform"><i class="fab fa-tiktok"></i></a>
+            <a href="https://share.google/1uSFRbdMSAfgNZSUU" target="_blank" class="text-blue-600 text-3xl hover:scale-125 transition-transform"><i class="fas fa-map-marker-alt"></i></a>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXOljj0H5909ivD-OhMbIVsF_pjzSDtBg",
+            authDomain: "pharmacie-samy.firebaseapp.com",
+            projectId: "pharmacie-samy",
+            storageBucket: "pharmacie-samy.firebasestorage.app",
+            messagingSenderId: "178950700829",
+            appId: "1:178950700829:web:1d5f72f25352c3fe642bf4"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const st = getStorage(app);
+
+        // نظام الحماية بالرمز الموحد
+        window.accessAdmin = () => {
+            if (prompt("أدخل كود الإدارة السري للوصول:") === "pharmaciesami001") {
+                document.getElementById('adminPanel').classList.toggle('hidden');
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            } else { alert("عذراً، الرمز خاطئ!"); }
+        };
+
+        window.uploadItem = async () => {
+            const name = document.getElementById('pName').value;
+            const brand = document.getElementById('pBrand').value;
+            const price = document.getElementById('pPrice').value;
+            const cat = document.getElementById('pCat').value;
+            const file = document.getElementById('pImg').files[0];
+            const btn = document.getElementById('saveBtn');
+
+            if (!name || !price || !file || !brand) return alert("يرجى ملء جميع البيانات");
+            btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحفظ...';
+
+            try {
+                const sRef = ref(st, `items/${Date.now()}_${file.name}`);
+                await uploadBytes(sRef, file);
+                const url = await getDownloadURL(sRef);
+                await addDoc(collection(db, "meds"), { name, brand, price, cat, img: url, date: Date.now() });
+                alert("تمت الإضافة بنجاح!");
+                location.reload();
+            } catch (e) { alert("خطأ! تأكد من إعدادات Firebase"); }
+        };
+
+        onSnapshot(collection(db, "meds"), (snap) => {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = '';
+            snap.forEach((d) => {
+                const p = d.data();
+                grid.innerHTML += `
+                    <div class="glass-panel p-4 product-card">
+                        <img src="${p.img}" class="w-full h-48 object-cover rounded-2xl mb-4 shadow-sm">
+                        <div class="flex flex-col gap-1">
+                            <span class="text-[10px] bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full font-bold w-fit uppercase">${p.cat}</span>
+                            <h4 class="font-bold text-gray-800 text-lg mt-1 truncate">${p.name}</h4>
+                            <p class="text-xs text-gray-400 italic">${p.brand}</p>
+                            <div class="flex justify-between items-center mt-2">
+                                <p class="text-emerald-700 font-black text-xl">${p.price} <span class="text-xs">د.ج</span></p>
+                                <button onclick="delProd('${d.id}')" class="text-gray-300 hover:text-red-500"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        });
+
+        window.delProd = async (id) => {
+            if(prompt("أدخل الرمز لتأكيد الحذف:") === "pharmaciesami001") await deleteDoc(doc(db, "meds", id));
+        };
+    </script>
+</body>
+</html>
