@@ -5,52 +5,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PHARMACIE SAMY | صيدلية سامي</title>
 
+  <!-- Fonts + Icons (لازم إنترنت) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
 
   <style>
     :root{
-      --primary-dark:#064e3b;
-      --accent-green:#10b981;
-      --accent-green-2:#34d399;
-      --glass: rgba(255,255,255,.92);
-      --glass2: rgba(255,255,255,.15);
-      --text:#0f172a;
-      --muted:#6b7280;
+      --primary:#064e3b;
+      --accent:#10b981;
+      --accent2:#34d399;
+      --glass: rgba(255,255,255,.93);
+      --glass2: rgba(255,255,255,.16);
       --shadow: 0 18px 55px rgba(0,0,0,.35);
       --radius: 22px;
+      --text:#0f172a;
+      --muted:#6b7280;
+      --danger:#ef4444;
     }
-
     *{margin:0;padding:0;box-sizing:border-box}
     html,body{height:100%}
     body{
       font-family:"Tajawal",sans-serif;
-      color:#fff;
       min-height:100vh;
+      color:#fff;
       background:
         linear-gradient(rgba(6,78,59,.78), rgba(6,78,59,.78)),
-        url("https://images.unsplash.com/photo-1596462502278-27bfdc4033c8?q=80&w=1500");
+        url("https://images.unsplash.com/photo-1596462502278-27bfdc4033c8?q=80&w=1600");
       background-size:cover;
       background-position:center;
       background-attachment:fixed;
     }
-
-    /* تحسين تجربة اللمس */
+    a{ text-decoration:none; color:inherit }
     button, a { -webkit-tap-highlight-color: transparent; }
-    a{ text-decoration:none; }
+    .wrap{ width:min(1100px,95%); margin:0 auto; }
 
-    /* حاوية عامة */
-    .wrap{
-      width: min(1100px, 95%);
-      margin: 0 auto;
-    }
-
-    /* HEADER */
+    /* Header */
     header{
-      margin: 16px auto 12px;
+      margin: 16px auto 10px;
       padding: 14px 18px;
       border-radius: 18px;
       background: var(--glass);
@@ -60,101 +53,102 @@
       justify-content:space-between;
       gap: 12px;
     }
-
-    .logo-box{ color:var(--primary-dark); line-height:1.1; }
+    .logo-box{ color:var(--primary); line-height:1.1; }
     .logo-box h1{ font-weight: 900; font-size: 22px; }
     .logo-box span{
       display:inline-block;
       margin-top:4px;
       font-size: 11px;
-      font-weight: 800;
+      font-weight: 900;
       letter-spacing: .8px;
-      color: var(--accent-green);
+      color: var(--accent);
     }
-
     .nav-controls{ display:flex; gap:10px; align-items:center; }
     .lang-btn{
       background:#ecfdf5;
-      color: var(--primary-dark);
-      border: 2px solid var(--accent-green);
+      color: var(--primary);
+      border: 2px solid var(--accent);
       padding: 8px 12px;
       border-radius: 12px;
       cursor:pointer;
       font-weight: 900;
       font-size: 13px;
+      min-width: 110px;
     }
     .icon-btn{
       width: 42px; height: 42px;
       border-radius: 14px;
       border: 2px solid rgba(16,185,129,.35);
       background: #f0fdf4;
-      color: var(--primary-dark);
+      color: var(--primary);
       cursor:pointer;
       display:grid;
       place-items:center;
       font-size: 18px;
     }
 
-    /* عنوان صغير */
+    /* Hero */
     .hero{
-      margin: 8px auto 0;
-      padding: 6px 4px;
+      margin: 8px auto 6px;
+      padding: 6px 2px;
       display:flex;
-      align-items:center;
+      align-items:flex-end;
       justify-content:space-between;
       gap: 12px;
     }
-    .hero h2{
-      font-size: 16px;
-      font-weight: 900;
-      letter-spacing: .2px;
-    }
-    .hero p{
-      font-size: 12px;
-      color: rgba(255,255,255,.85);
-      font-weight: 700;
-    }
+    .hero h2{ font-size: 16px; font-weight: 900; }
+    .hero p{ font-size: 12px; font-weight: 800; color: rgba(255,255,255,.88); }
 
-    /* شريط التصنيفات */
-    .cat-filter-bar{
+    /* Category tiles (مربعات) */
+    .cats{
       margin: 12px auto 10px;
-      padding: 10px 6px;
-      display:flex;
-      gap: 10px;
-      overflow-x:auto;
-      scrollbar-width:none;
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
     }
-    .cat-filter-bar::-webkit-scrollbar{ display:none; }
-
-    .filter-btn{
-      flex: 0 0 auto;
-      border: 1px solid rgba(255,255,255,.28);
-      background: rgba(255,255,255,.12);
-      color:#fff;
-      padding: 10px 18px;
-      border-radius: 999px;
+    .cat-tile{
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 18px;
+      padding: 14px 12px;
       cursor:pointer;
-      font-weight: 900;
-      font-size: 13px;
       transition: .2s;
       backdrop-filter: blur(6px);
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      user-select:none;
     }
-    .filter-btn:hover{ transform: translateY(-1px); }
-    .filter-btn.active{
-      background: linear-gradient(135deg, var(--accent-green), var(--accent-green-2));
-      border-color: rgba(16,185,129,.9);
-      box-shadow: 0 10px 25px rgba(16,185,129,.35);
+    .cat-tile i{
+      font-size: 20px;
+      opacity: .95;
+    }
+    .cat-tile .t{
+      font-weight: 900;
+      font-size: 13px;
+      line-height:1.2;
+    }
+    .cat-tile .s{
+      font-weight: 800;
+      font-size: 11px;
+      opacity: .88;
+      margin-top: 2px;
+    }
+    .cat-tile:hover{ transform: translateY(-2px); }
+    .cat-tile.active{
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-color: rgba(16,185,129,.95);
       color:#062c22;
+      box-shadow: 0 14px 30px rgba(16,185,129,.28);
     }
 
-    /* GRID */
+    /* Grid products */
     .products-container{
-      margin: 6px auto 110px;
+      margin: 6px auto 120px;
       display:grid;
       grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
       gap: 16px;
     }
-
     .product-card{
       background: var(--glass);
       border-radius: var(--radius);
@@ -170,8 +164,8 @@
     .card-cat{
       position:absolute;
       top:10px;
-      inset-inline-end: 10px; /* بدل right ليدعم RTL/LTR */
-      background: linear-gradient(135deg, var(--accent-green), var(--accent-green-2));
+      inset-inline-end: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
       color:#062c22;
       font-size: 10px;
       font-weight: 900;
@@ -180,7 +174,6 @@
       box-shadow: 0 10px 20px rgba(16,185,129,.25);
       z-index:2;
     }
-
     .img-wrap{
       border-radius: 18px;
       overflow:hidden;
@@ -192,25 +185,21 @@
       height:100%;
       object-fit:cover;
       display:block;
-      transform: scale(1.02);
     }
-
     .card-brand{
       margin-top: 10px;
       font-size: 11px;
       color: var(--muted);
       font-weight: 900;
-      letter-spacing: .2px;
     }
     .card-title{
       font-weight: 900;
       font-size: 16px;
       margin: 6px 0 2px;
-      color: var(--primary-dark);
+      color: var(--primary);
       line-height:1.2;
       min-height: 38px;
     }
-
     .price-row{
       display:flex;
       justify-content:space-between;
@@ -221,9 +210,8 @@
     .card-price{
       font-size: 18px;
       font-weight: 900;
-      color: var(--accent-green);
+      color: var(--accent);
     }
-
     .admin-del{
       border:none;
       background: rgba(15,23,42,.06);
@@ -236,12 +224,12 @@
       transition:.2s;
     }
     .admin-del:hover{
-      background: rgba(239,68,68,.10);
-      color: #ef4444;
+      background: rgba(239,68,68,.12);
+      color: var(--danger);
       transform: translateY(-1px);
     }
 
-    /* Admin Panel */
+    /* Admin panel */
     #adminPanel{
       display:none;
       margin: 14px auto 10px;
@@ -259,11 +247,7 @@
       gap: 10px;
       margin-bottom: 14px;
     }
-    .admin-head h3{
-      color: var(--primary-dark);
-      font-weight: 900;
-      font-size: 18px;
-    }
+    .admin-head h3{ color: var(--primary); font-weight: 900; font-size: 18px; }
     .close-admin{
       border:none;
       cursor:pointer;
@@ -275,7 +259,6 @@
       place-items:center;
       font-size: 18px;
     }
-
     .admin-grid{
       display:grid;
       grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
@@ -287,7 +270,7 @@
       border-radius: 14px;
       border: 2px solid #eef2f7;
       font-family: "Tajawal", sans-serif;
-      font-weight: 800;
+      font-weight: 900;
       outline: none;
     }
     input:focus, select:focus{
@@ -295,25 +278,53 @@
       box-shadow: 0 0 0 4px rgba(16,185,129,.15);
     }
 
-    #saveBtn{
+    .btn{
       width:100%;
       margin-top: 12px;
       padding: 16px;
       border:none;
       border-radius: 16px;
-      background: linear-gradient(135deg, var(--primary-dark), #0b7a5b);
+      background: linear-gradient(135deg, var(--primary), #0b7a5b);
       color:#fff;
       font-weight: 900;
       font-size: 17px;
       cursor:pointer;
       transition:.2s;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
     }
-    #saveBtn:hover{ transform: translateY(-1px); }
-    #saveBtn:disabled{
-      opacity: .7;
-      cursor:not-allowed;
-      transform:none;
+    .btn:hover{ transform: translateY(-1px); }
+    .btn:disabled{ opacity:.75; cursor:not-allowed; transform:none; }
+
+    .spinner{
+      width: 18px; height: 18px;
+      border-radius: 999px;
+      border: 3px solid rgba(255,255,255,.35);
+      border-top-color: #fff;
+      animation: spin .8s linear infinite;
     }
+    @keyframes spin{ to{ transform: rotate(360deg); } }
+
+    /* Toast */
+    .toast{
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2000;
+      background: rgba(255,255,255,.96);
+      color: #0f172a;
+      border-radius: 14px;
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+      width: min(520px, 92%);
+      display:none;
+    }
+    .toast .title{ font-weight: 900; margin-bottom: 4px; color: var(--primary); }
+    .toast .msg{ font-weight: 800; font-size: 12px; color:#334155; }
+    .toast.error .title{ color: var(--danger); }
 
     /* Social Dock */
     .social-dock{
@@ -330,42 +341,38 @@
       z-index: 1000;
       backdrop-filter: blur(8px);
     }
-    .social-dock a{
-      font-size: 26px;
-      transition:.2s;
-    }
+    .social-dock a{ font-size: 26px; transition:.2s; }
     .social-dock a:hover{ transform: translateY(-2px) scale(1.03); }
-    .wa{ color:#25D366; }
-    .ig{ color:#E1306C; }
-    .tk{ color:#111; }
-    .map{ color:#4285F4; }
+    .wa{ color:#25D366; } .ig{ color:#E1306C; } .tk{ color:#111; } .map{ color:#4285F4; }
 
-    /* Responsive tweaks */
     @media (max-width: 520px){
       header{ padding: 12px 14px; }
       .logo-box h1{ font-size: 18px; }
       .logo-box span{ font-size: 10px; }
       .products-container{ grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 12px; }
       .img-wrap{ height: 145px; }
-      .social-dock{ gap: 18px; padding: 11px 22px; }
+      .cats{ grid-template-columns: repeat(2, minmax(0,1fr)); }
     }
   </style>
 </head>
 
 <body>
 
+  <div class="toast" id="toast">
+    <div class="title" id="toastTitle">تم</div>
+    <div class="msg" id="toastMsg">...</div>
+  </div>
+
   <div class="wrap">
     <header>
       <div class="logo-box">
-        <h1>PHARMACIE SAMY</h1>
-        <span>PREMIUM CARE STORE</span>
+        <h1 id="brandName">PHARMACIE SAMY</h1>
+        <span id="brandTag">PREMIUM CARE STORE</span>
       </div>
 
       <div class="nav-controls">
         <button class="lang-btn" onclick="toggleLang()" id="langSwitcher">Français</button>
-        <button class="icon-btn" onclick="openAdmin()" aria-label="Admin">
-          <i class="fas fa-lock"></i>
-        </button>
+        <button class="icon-btn" onclick="openAdmin()" aria-label="Admin"><i class="fas fa-lock"></i></button>
       </div>
     </header>
 
@@ -379,44 +386,30 @@
     <!-- Admin Panel -->
     <section id="adminPanel">
       <div class="admin-head">
-        <h3 id="adminTitle">إضافة منتج جديد</h3>
-        <button class="close-admin" onclick="closeAdmin()" aria-label="Close">
-          <i class="fas fa-xmark"></i>
-        </button>
+        <h3 id="adminTitle">لوحة الإدارة</h3>
+        <button class="close-admin" onclick="closeAdmin()" aria-label="Close"><i class="fas fa-xmark"></i></button>
       </div>
 
       <div class="admin-grid">
         <input type="text" id="name" placeholder="إسم المنتج">
         <input type="text" id="brand" placeholder="الماركة (Brand)">
         <input type="number" id="price" placeholder="السعر (د.ج)" min="0">
-        <select id="cat">
-          <option value="درمو-كوسميتيك">درمو-كوسميتيك</option>
-          <option value="الأم والطفل">الأم والطفل</option>
-          <option value="مكملات غذائية">مكملات غذائية</option>
-          <option value="العناية بالأسنان">العناية بالأسنان</option>
-          <option value="أدوية">أدوية</option>
-        </select>
+        <select id="cat"></select>
         <input type="file" id="image" accept="image/*">
       </div>
 
-      <button onclick="saveProduct()" id="saveBtn">نشر في الموقع</button>
+      <button onclick="saveProduct()" id="saveBtn" class="btn">
+        <span id="saveBtnText">نشر في الموقع</span>
+      </button>
     </section>
 
-    <!-- Filters -->
-    <div class="cat-filter-bar" id="filterBar">
-      <button class="filter-btn active" onclick="filterBy('الكل', this)">الكل</button>
-      <button class="filter-btn" onclick="filterBy('درمو-كوسميتيك', this)">درمو-كوسميتيك</button>
-      <button class="filter-btn" onclick="filterBy('الأم والطفل', this)">الأم والطفل</button>
-      <button class="filter-btn" onclick="filterBy('مكملات غذائية', this)">مكملات غذائية</button>
-      <button class="filter-btn" onclick="filterBy('العناية بالأسنان', this)">العناية بالأسنان</button>
-      <button class="filter-btn" onclick="filterBy('أدوية', this)">أدوية</button>
-    </div>
+    <!-- Categories Tiles -->
+    <div class="cats" id="catsGrid"></div>
 
     <!-- Products -->
     <div class="products-container" id="productsGrid"></div>
   </div>
 
-  <!-- Social Dock -->
   <footer class="social-dock">
     <a href="https://wa.me/213770762987" class="wa" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i></a>
     <a href="https://www.instagram.com/pharmaciesamy/" class="ig" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
@@ -429,11 +422,13 @@
     import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
+    // ✅ مهم: هذا هو الشكل الشائع للـ bucket
+    // إذا كان مشروعك bucket مختلف، بدّلو من Firebase Console (شرحت تحت)
     const firebaseConfig = {
       apiKey: "AIzaSyDXOljj0H5909ivD-OhMbIVsF_pjzSDtBg",
       authDomain: "pharmacie-samy.firebaseapp.com",
       projectId: "pharmacie-samy",
-      storageBucket: "pharmacie-samy.firebasestorage.app",
+      storageBucket: "pharmacie-samy.appspot.com",
       messagingSenderId: "178950700829",
       appId: "1:178950700829:web:1d5f72f25352c3fe642bf4"
     };
@@ -442,56 +437,205 @@
     const db = getFirestore(app);
     const st = getStorage(app);
 
+    // ====== State ======
     let currentData = [];
     let isAdmin = false;
-    let currentLang = "ar";
-    let currentFilter = "الكل";
+    let lang = "ar"; // ar | fr
+    let currentFilter = "all";
 
-    // ====== لغة ======
-    window.toggleLang = () => {
-      const isAr = document.documentElement.dir === "rtl";
-      document.documentElement.dir = isAr ? "ltr" : "rtl";
-      currentLang = isAr ? "fr" : "ar";
-      document.getElementById("langSwitcher").innerText = isAr ? "العربية" : "Français";
+    // ====== Translation ======
+    const CATS = [
+      { key:"all", icon:"fa-layer-group" },
+      { key:"dermo", icon:"fa-sparkles" },
+      { key:"mom", icon:"fa-baby" },
+      { key:"supp", icon:"fa-capsules" },
+      { key:"dental", icon:"fa-tooth" },
+      { key:"meds", icon:"fa-pills" },
+    ];
 
-      // نصوص بسيطة
-      if(currentLang === "fr"){
-        document.getElementById("heroTitle").innerText = "Produits - Pharmacie Samy";
-        document.getElementById("heroSub").innerText = "Choisissez une catégorie pour filtrer";
-        document.getElementById("adminTitle").innerText = "Ajouter un nouveau produit";
-        document.getElementById("name").placeholder = "Nom du produit";
-        document.getElementById("brand").placeholder = "Marque (Brand)";
-        document.getElementById("price").placeholder = "Prix (DA)";
-        document.getElementById("saveBtn").innerText = "Publier";
-      } else {
-        document.getElementById("heroTitle").innerText = "منتجات صيدلية سامي";
-        document.getElementById("heroSub").innerText = "اختر التصنيف وشاهد المنتجات المتوفرة";
-        document.getElementById("adminTitle").innerText = "إضافة منتج جديد";
-        document.getElementById("name").placeholder = "إسم المنتج";
-        document.getElementById("brand").placeholder = "الماركة (Brand)";
-        document.getElementById("price").placeholder = "السعر (د.ج)";
-        document.getElementById("saveBtn").innerText = "نشر في الموقع";
+    const T = {
+      ar: {
+        langBtn: "Français",
+        heroTitle: "منتجات صيدلية سامي",
+        heroSub: "اختر التصنيف وشاهد المنتجات المتوفرة",
+        adminTitle: "لوحة الإدارة",
+        namePh: "إسم المنتج",
+        brandPh: "الماركة (Brand)",
+        pricePh: "السعر (د.ج)",
+        save: "نشر في الموقع",
+        saving: "جاري الحفظ...",
+        chooseImg: "اختر صورة!",
+        fillOk: "رجاءً املأ الاسم والماركة والسعر بشكل صحيح.",
+        passAsk: "PASSWORD:",
+        delAsk: "رمز الحذف:",
+        noProductsTitle: "لا توجد منتجات حالياً",
+        noProductsSub: "أضف منتجات من لوحة الإدارة",
+        toastOk: "تم",
+        toastErr: "خطأ",
+        cats: {
+          all: { t:"الكل", s:"جميع المنتجات" },
+          dermo: { t:"درمو-كوسميتيك", s:"عناية بالبشرة" },
+          mom: { t:"الأم والطفل", s:"أمان ونعومة" },
+          supp: { t:"مكملات غذائية", s:"فيتامينات ومعادن" },
+          dental: { t:"العناية بالأسنان", s:"فم صحي" },
+          meds: { t:"أدوية", s:"منتجات دوائية" },
+        }
+      },
+      fr: {
+        langBtn: "العربية",
+        heroTitle: "Produits - Pharmacie Samy",
+        heroSub: "Choisissez une catégorie pour filtrer",
+        adminTitle: "Panneau Admin",
+        namePh: "Nom du produit",
+        brandPh: "Marque",
+        pricePh: "Prix (DA)",
+        save: "Publier",
+        saving: "Enregistrement...",
+        chooseImg: "Choisissez une image !",
+        fillOk: "Veuillez remplir correctement le nom, la marque et le prix.",
+        passAsk: "MOT DE PASSE:",
+        delAsk: "Code de suppression:",
+        noProductsTitle: "Aucun produit pour le moment",
+        noProductsSub: "Ajoutez des produits depuis le panneau admin",
+        toastOk: "OK",
+        toastErr: "Erreur",
+        cats: {
+          all: { t:"Tout", s:"Tous les produits" },
+          dermo: { t:"Dermo-Cosmétique", s:"Soin de la peau" },
+          mom: { t:"Maman & Bébé", s:"Douceur & sécurité" },
+          supp: { t:"Compléments", s:"Vitamines & minéraux" },
+          dental: { t:"Dentaire", s:"Hygiène bucco-dentaire" },
+          meds: { t:"Médicaments", s:"Produits médicaux" },
+        }
       }
     };
+
+    function toast(type, title, msg){
+      const el = document.getElementById("toast");
+      el.classList.toggle("error", type === "error");
+      document.getElementById("toastTitle").innerText = title;
+      document.getElementById("toastMsg").innerText = msg;
+      el.style.display = "block";
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(()=> el.style.display="none", 3500);
+    }
+
+    // ====== UI apply language ======
+    function applyLang(){
+      document.documentElement.dir = (lang === "ar") ? "rtl" : "ltr";
+      document.getElementById("langSwitcher").innerText = T[lang].langBtn;
+      document.getElementById("heroTitle").innerText = T[lang].heroTitle;
+      document.getElementById("heroSub").innerText = T[lang].heroSub;
+      document.getElementById("adminTitle").innerText = T[lang].adminTitle;
+
+      const name = document.getElementById("name");
+      const brand = document.getElementById("brand");
+      const price = document.getElementById("price");
+      name.placeholder = T[lang].namePh;
+      brand.placeholder = T[lang].brandPh;
+      price.placeholder = T[lang].pricePh;
+
+      document.getElementById("saveBtnText").innerText = T[lang].save;
+
+      // categories (tiles)
+      renderCats();
+      // select categories for admin
+      renderCatSelect();
+      // re-render products for current filter
+      render(applyFilter(currentData));
+    }
+
+    window.toggleLang = () => {
+      lang = (lang === "ar") ? "fr" : "ar";
+      applyLang();
+    };
+
+    // ====== Categories tiles ======
+    function renderCats(){
+      const grid = document.getElementById("catsGrid");
+      grid.innerHTML = CATS.map(c => {
+        const active = (currentFilter === c.key) ? "active" : "";
+        const tt = T[lang].cats[c.key].t;
+        const ss = T[lang].cats[c.key].s;
+        return `
+          <div class="cat-tile ${active}" onclick="setFilter('${c.key}')">
+            <i class="fa-solid ${c.icon}"></i>
+            <div>
+              <div class="t">${tt}</div>
+              <div class="s">${ss}</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    window.setFilter = (key) => {
+      currentFilter = key;
+      renderCats();
+      render(applyFilter(currentData));
+    };
+
+    function keyToCatText(key){
+      // كيف نخزن في Firestore؟ نخزن اسم الكات بالعربية (كما عندك) باش يبقى ثابت
+      // هنا نرجع النص العربي الأصلي للكات
+      const map = {
+        all: "الكل",
+        dermo: "درمو-كوسميتيك",
+        mom: "الأم والطفل",
+        supp: "مكملات غذائية",
+        dental: "العناية بالأسنان",
+        meds: "أدوية",
+      };
+      return map[key] || "الكل";
+    }
+
+    function applyFilter(items){
+      if(currentFilter === "all") return items;
+      const catAr = keyToCatText(currentFilter);
+      return items.filter(x => x.cat === catAr);
+    }
+
+    function renderCatSelect(){
+      const sel = document.getElementById("cat");
+      const options = [
+        { key:"dermo", value:"درمو-كوسميتيك" },
+        { key:"mom", value:"الأم والطفل" },
+        { key:"supp", value:"مكملات غذائية" },
+        { key:"dental", value:"العناية بالأسنان" },
+        { key:"meds", value:"أدوية" },
+      ];
+      sel.innerHTML = options.map(o => {
+        const label = T[lang].cats[o.key].t;
+        return `<option value="${o.value}">${label}</option>`;
+      }).join("");
+    }
 
     // ====== Admin ======
     window.openAdmin = () => {
-      const pass = prompt("PASSWORD:");
+      const pass = prompt(T[lang].passAsk);
       if(pass === "pharmaciesami001"){
         isAdmin = true;
         document.getElementById("adminPanel").style.display = "block";
-        render(applyFilter(currentData, currentFilter));
+        render(applyFilter(currentData));
       }
     };
-
     window.closeAdmin = () => {
       document.getElementById("adminPanel").style.display = "none";
     };
 
-    // ====== حفظ منتج ======
+    // ====== Save product with real error + timeout ======
+    function withTimeout(promise, ms=20000){
+      return new Promise((resolve, reject)=>{
+        const t = setTimeout(()=> reject(new Error("TIMEOUT")), ms);
+        promise.then(v => { clearTimeout(t); resolve(v); })
+               .catch(e => { clearTimeout(t); reject(e); });
+      });
+    }
+
     window.saveProduct = async () => {
       const file = document.getElementById("image").files[0];
       const btn = document.getElementById("saveBtn");
+      const btnText = document.getElementById("saveBtnText");
 
       const name = document.getElementById("name").value.trim();
       const brand = document.getElementById("brand").value.trim();
@@ -499,65 +643,84 @@
       const cat = document.getElementById("cat").value;
 
       if(!name || !brand || !price || price <= 0){
-        return alert(currentLang === "fr"
-          ? "Veuillez remplir correctement le nom, la marque et le prix."
-          : "رجاءً املأ الاسم والماركة والسعر بشكل صحيح.");
+        toast("error", T[lang].toastErr, T[lang].fillOk);
+        return;
       }
-      if(!file) return alert(currentLang === "fr" ? "Choisissez une image." : "اختر صورة!");
+      if(!file){
+        toast("error", T[lang].toastErr, T[lang].chooseImg);
+        return;
+      }
 
+      // UI loading
       btn.disabled = true;
-      btn.innerText = (currentLang === "fr") ? "Enregistrement..." : "جاري الحفظ...";
+      btnText.innerText = T[lang].saving;
+      btn.insertAdjacentHTML("beforeend", `<span class="spinner" id="sp"></span>`);
 
       try{
-        const sRef = ref(st, `meds/${Date.now()}_${file.name}`);
-        await uploadBytes(sRef, file);
-        const url = await getDownloadURL(sRef);
+        // upload
+        const safeName = file.name.replace(/\s+/g, "_");
+        const path = `meds/${Date.now()}_${safeName}`;
+        const sRef = ref(st, path);
 
-        await addDoc(collection(db, "meds"), {
+        await withTimeout(uploadBytes(sRef, file), 25000);
+        const url = await withTimeout(getDownloadURL(sRef), 25000);
+
+        // firestore
+        await withTimeout(addDoc(collection(db, "meds"), {
           name, brand, price, cat,
           img: url,
           time: Date.now()
-        });
+        }), 25000);
 
-        // تفريغ المدخلات بدون reload
+        // reset inputs
         document.getElementById("name").value = "";
         document.getElementById("brand").value = "";
         document.getElementById("price").value = "";
         document.getElementById("image").value = "";
-        btn.disabled = false;
-        btn.innerText = (currentLang === "fr") ? "Publier" : "نشر في الموقع";
 
+        toast("ok", T[lang].toastOk, (lang==="ar" ? "تم حفظ المنتج بنجاح ✅" : "Produit ajouté ✅"));
       } catch(e){
         console.error(e);
-        alert(currentLang === "fr" ? "Erreur!" : "خطأ!");
+
+        // عرض سبب الفشل الحقيقي
+        let msg = e?.message || String(e);
+
+        // رسائل مفهومة لبعض الأخطاء الشائعة
+        if(msg.includes("permission") || msg.includes("PERMISSION_DENIED")){
+          msg = (lang==="ar")
+            ? "الكتابة ممنوعة (Rules). افتح Firestore/Storage Rules وخليها مؤقتاً test mode أو عدّلها."
+            : "Permission denied (Rules). Set Firestore/Storage rules to allow write.";
+        } else if(msg.includes("TIMEOUT")){
+          msg = (lang==="ar")
+            ? "الرفع تأخر بزاف (Timeout). جرّب إنترنت أقوى أو صورة أصغر."
+            : "Upload timeout. Try smaller image or better internet.";
+        } else if(msg.includes("bucket") || msg.includes("storage")){
+          msg = (lang==="ar")
+            ? "مشكلة في Storage Bucket. راجع storageBucket في إعدادات Firebase."
+            : "Storage bucket issue. Check storageBucket in Firebase config.";
+        }
+
+        toast("error", T[lang].toastErr, msg);
+      } finally{
+        // stop loading
         btn.disabled = false;
-        btn.innerText = (currentLang === "fr") ? "Publier" : "نشر في الموقع";
+        btnText.innerText = T[lang].save;
+        const sp = document.getElementById("sp");
+        if(sp) sp.remove();
       }
     };
 
-    // ====== حذف منتج (Admin فقط) ======
+    // ====== Delete (Admin only) ======
     window.delItem = async (id) => {
       if(!isAdmin) return;
-      const pass = prompt(currentLang === "fr" ? "Code de suppression:" : "رمز الحذف:");
+      const pass = prompt(T[lang].delAsk);
       if(pass === "pharmaciesami001"){
         await deleteDoc(doc(db, "meds", id));
+        toast("ok", T[lang].toastOk, (lang==="ar" ? "تم حذف المنتج" : "Produit supprimé"));
       }
     };
 
-    // ====== فلترة ======
-    window.filterBy = (cat, btn) => {
-      currentFilter = cat;
-      document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      render(applyFilter(currentData, currentFilter));
-    };
-
-    function applyFilter(items, cat){
-      if(cat === "الكل") return items;
-      return items.filter(m => m.cat === cat);
-    }
-
-    // ====== رندر ======
+    // ====== Render products ======
     function render(items){
       const grid = document.getElementById("productsGrid");
 
@@ -565,50 +728,53 @@
         grid.innerHTML = `
           <div style="
             grid-column:1/-1;
-            background: rgba(255,255,255,.15);
+            background: rgba(255,255,255,.14);
             border: 1px solid rgba(255,255,255,.25);
             border-radius: 18px;
             padding: 18px;
             text-align:center;
             backdrop-filter: blur(6px);
           ">
-            <div style="font-weight:900;font-size:16px;margin-bottom:6px;">${currentLang === "fr" ? "Aucun produit pour le moment" : "لا توجد منتجات حالياً"}</div>
-            <div style="opacity:.9;font-weight:700;font-size:12px;">${currentLang === "fr" ? "Ajoutez des produits depuis le panneau admin" : "أضف منتجات من لوحة الإدارة"}</div>
+            <div style="font-weight:900;font-size:16px;margin-bottom:6px;">${T[lang].noProductsTitle}</div>
+            <div style="opacity:.9;font-weight:800;font-size:12px;">${T[lang].noProductsSub}</div>
           </div>`;
         return;
       }
 
       grid.innerHTML = items.map(i => `
         <div class="product-card">
-          <span class="card-cat">${i.cat}</span>
+          <span class="card-cat">${i.cat ?? ""}</span>
 
           <div class="img-wrap">
-            <img src="${i.img}" alt="${i.name}">
+            <img src="${i.img}" alt="${i.name ?? ""}">
           </div>
 
           <div class="card-brand">${i.brand ?? ""}</div>
           <div class="card-title">${i.name ?? ""}</div>
 
           <div class="price-row">
-            <div class="card-price">${Number(i.price).toLocaleString()} DA</div>
-            ${
-              isAdmin
-                ? `<button class="admin-del" onclick="delItem('${i.id}')" title="Delete">
-                     <i class="fas fa-trash"></i>
-                   </button>`
-                : ``
-            }
+            <div class="card-price">${Number(i.price ?? 0).toLocaleString()} DA</div>
+            ${isAdmin ? `
+              <button class="admin-del" onclick="delItem('${i.id}')" title="Delete">
+                <i class="fas fa-trash"></i>
+              </button>` : ``}
           </div>
         </div>
       `).join("");
     }
 
-    // ====== Firestore Live ======
+    // ====== Live Firestore ======
     onSnapshot(query(collection(db, "meds"), orderBy("time", "desc")), (snap) => {
       currentData = [];
       snap.forEach(d => currentData.push({ id: d.id, ...d.data() }));
-      render(applyFilter(currentData, currentFilter));
+      render(applyFilter(currentData));
+    }, (err) => {
+      console.error(err);
+      toast("error", T[lang].toastErr, (lang==="ar" ? "فشل تحميل المنتجات (Rules/اتصال)" : "Failed to load products (Rules/connection)"));
     });
+
+    // init
+    applyLang();
   </script>
 </body>
 </html>
