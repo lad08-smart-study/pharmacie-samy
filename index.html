@@ -3,85 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PHARMACIE SAMY - Premium Showcase</title>
+    <title>PHARMACIE SAMY | Dermocosmétique & Bien-être</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        body { font-family: 'Inter', 'Noto Sans Arabic', sans-serif; background-color: #f8fafc; }
+        body { font-family: 'Inter', 'Noto Sans Arabic', sans-serif; background-color: #fcfdfe; }
         .pharma-blue { color: #0d47a1; }
-        .bg-pharma { background-color: #0d47a1; }
-        .card:hover { transform: translateY(-5px); transition: all 0.3s ease; }
+        .bg-pharma { background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%); }
+        .hero-gradient { background: linear-gradient(to right, rgba(13, 71, 161, 0.9), rgba(13, 71, 161, 0.4)), url('https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=1920&auto=format&fit=crop'); background-size: cover; background-position: center; }
+        .product-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid #f1f5f9; }
+        .product-card:hover { transform: translateY(-8px); shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); border-color: #0d47a1; }
+        .whatsapp-float { position: fixed; bottom: 30px; right: 30px; background-color: #25d366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; items-center; justify-content: center; font-size: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000; transition: transform 0.3s; }
+        .whatsapp-float:hover { transform: scale(1.1); }
     </style>
 </head>
 <body>
 
-    <nav class="bg-white shadow-sm border-b sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold pharma-blue tracking-tighter">PHARMACIE SAMY</h1>
-            <div class="space-x-4 flex items-center">
-                <button onclick="switchLang('fr')" class="text-sm font-semibold">FR</button>
-                <button onclick="switchLang('ar')" class="text-sm font-semibold">AR</button>
-                <button onclick="showAdmin()" class="bg-gray-100 px-4 py-2 rounded-lg text-sm">Admin</button>
+    <nav class="bg-white/80 backdrop-blur-md shadow-sm border-b sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-mortar-pestle pharma-blue text-2xl"></i>
+                <h1 class="text-xl font-bold pharma-blue tracking-tighter">PHARMACIE SAMY</h1>
+            </div>
+            <div class="hidden md:flex space-x-8 text-sm font-medium text-gray-600">
+                <a href="#" class="hover:text-blue-700">Accueil</a>
+                <a href="#products" class="hover:text-blue-700">Produits</a>
+                <a href="#contact" class="hover:text-blue-700">Contact</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <select onchange="switchLang(this.value)" class="bg-gray-50 border border-gray-200 text-xs rounded-lg p-1">
+                    <option value="fr">FR</option>
+                    <option value="ar">AR</option>
+                </select>
+                <button onclick="showAdmin()" class="text-gray-400 hover:text-blue-600"><i class="fa-solid fa-user-lock"></i></button>
             </div>
         </div>
     </nav>
 
-    <header class="bg-pharma text-white py-16 px-4 text-center">
-        <h2 id="hero-title" class="text-4xl md:text-5xl font-bold mb-4">PHARMACIE SAMY</h2>
-        <p id="hero-sub" class="text-blue-100 text-lg max-w-2xl mx-auto">Votre destination premium pour la dermocosmétique et le bien-être.</p>
+    <header class="hero-gradient text-white py-24 px-6 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="max-w-xl">
+                <span class="bg-blue-500/30 text-blue-100 px-3 py-1 rounded-full text-xs font-bold tracking-widest uppercase mb-4 inline-block">Premium Care</span>
+                <h2 id="hero-title" class="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">Votre Beauté, Notre Expertise.</h2>
+                <p id="hero-sub" class="text-blue-50 text-lg mb-8 opacity-90">Découvrez notre sélection exclusive de produits Dermocosmétiques de luxe et de soins pharmaceutiques de haute qualité.</p>
+                <div class="flex gap-4">
+                    <a href="#products" class="bg-white text-blue-900 px-8 py-4 rounded-xl font-bold hover:bg-blue-50 transition-all shadow-lg">Explorer</a>
+                    <a href="https://wa.me/213770762987" class="bg-green-500 text-white px-8 py-4 rounded-xl font-bold hover:bg-green-600 transition-all flex items-center gap-2"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+                </div>
+            </div>
+        </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 py-10">
-        
-        <div class="mb-10">
-            <input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Rechercher un produit, une marque..." 
-                   class="w-full p-4 rounded-2xl border-2 border-gray-100 focus:border-blue-600 outline-none shadow-sm text-lg">
+    <section class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="text-center p-6 border rounded-2xl hover:bg-blue-50 cursor-pointer">
+                <i class="fa-solid fa-pump-medical pharma-blue text-3xl mb-3"></i>
+                <h3 class="font-bold text-sm">Dermocosmétique</h3>
+            </div>
+            <div class="text-center p-6 border rounded-2xl hover:bg-blue-50 cursor-pointer">
+                <i class="fa-solid fa-baby-carriage pharma-blue text-3xl mb-3"></i>
+                <h3 class="font-bold text-sm">Maman & Bébé</h3>
+            </div>
+            <div class="text-center p-6 border rounded-2xl hover:bg-blue-50 cursor-pointer">
+                <i class="fa-solid fa-tooth pharma-blue text-3xl mb-3"></i>
+                <h3 class="font-bold text-sm">Hygiène</h3>
+            </div>
+            <div class="text-center p-6 border rounded-2xl hover:bg-blue-50 cursor-pointer">
+                <i class="fa-solid fa-capsules pharma-blue text-3xl mb-3"></i>
+                <h3 class="font-bold text-sm">Compléments</h3>
+            </div>
+        </div>
+    </section>
+
+    <main id="products" class="max-w-7xl mx-auto px-6 py-16">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+            <div class="w-full md:w-1/2">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Nos Produits</h2>
+                <input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Chercher une marque (Vichy, CeraVe...)" 
+                       class="w-full p-4 rounded-2xl border-2 border-gray-100 focus:border-blue-600 outline-none shadow-sm transition-all">
+            </div>
         </div>
 
-        <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <p class="col-span-full text-center text-gray-400">Chargement des produits...</p>
-        </div>
+        <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            </div>
     </main>
 
-    <div id="adminModal" class="fixed inset-0 bg-black/50 hidden z-[60] flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-8 relative">
-            <button onclick="closeAdmin()" class="absolute top-4 right-4 text-2xl">&times;</button>
-            
-            <div id="loginArea">
-                <h3 class="text-2xl font-bold mb-6">Connexion Admin</h3>
-                <input type="email" id="adminEmail" placeholder="Email" class="w-full p-3 border rounded-lg mb-4">
-                <input type="password" id="adminPass" placeholder="Password" class="w-full p-3 border rounded-lg mb-6">
-                <button onclick="handleLogin()" class="w-full bg-pharma text-white py-3 rounded-xl font-bold">Entrer</button>
+    <footer id="contact" class="bg-white border-t pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-12 mb-12 text-center md:text-left">
+            <div>
+                <h3 class="text-xl font-bold pharma-blue mb-4">PHARMACIE SAMY</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">Votre pharmacie de confiance, offrant les meilleures marques internationales de soins et de beauté.</p>
             </div>
+            <div>
+                <h3 class="font-bold mb-4 uppercase text-xs tracking-widest text-gray-400">Liens Utiles</h3>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li><a href="#" class="hover:text-blue-700">Accueil</a></li>
+                    <li><a href="#products" class="hover:text-blue-700">Catalogue</a></li>
+                    <li><a href="https://maps.app.goo.gl/fy6dWekCW2gFX2WNA?g_st=ic" class="hover:text-blue-700">Localisation</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-bold mb-6 uppercase text-xs tracking-widest text-gray-400">Suivez-nous</h3>
+                <div class="flex justify-center md:justify-start gap-4">
+                    <a href="https://www.instagram.com/pharmaciesamy/" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-pink-100 hover:text-pink-600 transition-all text-xl"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.tiktok.com/@pharmacie.samy" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-black hover:text-white transition-all text-xl"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="https://wa.me/213770762987" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-green-100 hover:text-green-600 transition-all text-xl"><i class="fa-brands fa-whatsapp"></i></a>
+                    <a href="https://maps.app.goo.gl/fy6dWekCW2gFX2WNA?g_st=ic" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-red-100 hover:text-red-600 transition-all text-xl"><i class="fa-solid fa-location-dot"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="border-t pt-8 text-center text-gray-400 text-xs">
+            © 2026 PHARMACIE SAMY - TOUS DROITS RÉSERVÉS.
+        </div>
+    </footer>
 
+    <a href="https://wa.me/213770762987" class="whatsapp-float" target="_blank">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <div id="adminModal" class="fixed inset-0 bg-black/60 hidden z-[100] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-8 shadow-2xl">
+            <div id="loginArea">
+                <h3 class="text-2xl font-bold mb-6 text-gray-800">Accès Admin</h3>
+                <input type="email" id="adminEmail" placeholder="Email" class="w-full p-4 bg-gray-50 border-0 rounded-xl mb-4 focus:ring-2 focus:ring-blue-600 outline-none">
+                <input type="password" id="adminPass" placeholder="Mot de passe" class="w-full p-4 bg-gray-50 border-0 rounded-xl mb-6 focus:ring-2 focus:ring-blue-600 outline-none">
+                <button onclick="handleLogin()" class="w-full bg-pharma text-white py-4 rounded-xl font-bold shadow-lg">Connexion</button>
+                <button onclick="closeAdmin()" class="w-full mt-4 text-gray-400 text-sm">Fermer</button>
+            </div>
             <div id="adminPanel" class="hidden">
-                <h3 class="text-2xl font-bold mb-6">Ajouter un Produit</h3>
-                <div class="grid gap-4">
-                    <input type="text" id="pNameFr" placeholder="Nom du produit (FR)" class="p-3 border rounded-lg">
-                    <input type="text" id="pNameAr" placeholder="اسم المنتج (AR)" class="p-3 border rounded-lg text-right">
-                    <input type="number" id="pPrice" placeholder="Prix (DA)" class="p-3 border rounded-lg">
-                    <input type="text" id="pBrand" placeholder="Marque" class="p-3 border rounded-lg">
-                    <select id="pCat" class="p-3 border rounded-lg">
-                        <option value="Dermocosmétique">Dermocosmétique</option>
-                        <option value="Maman & Bébé">Maman & Bébé</option>
-                        <option value="Hygiène">Hygiène</option>
-                    </select>
-                    <input type="text" id="pImg" placeholder="URL de l'image (Firebase URL)" class="p-3 border rounded-lg">
-                    <button onclick="addProduct()" class="bg-green-600 text-white py-4 rounded-xl font-bold">Publier</button>
+                <h3 class="text-xl font-bold mb-6">Ajouter un produit</h3>
+                <div class="space-y-4">
+                    <input type="text" id="pNameFr" placeholder="Nom FR" class="w-full p-3 bg-gray-50 rounded-lg">
+                    <input type="text" id="pNameAr" placeholder="الاسم بالعربية" class="w-full p-3 bg-gray-50 rounded-lg text-right">
+                    <input type="number" id="pPrice" placeholder="Prix (DA)" class="w-full p-3 bg-gray-50 rounded-lg">
+                    <input type="text" id="pBrand" placeholder="Marque (Vichy...)" class="w-full p-3 bg-gray-50 rounded-lg">
+                    <input type="text" id="pImg" placeholder="Lien image (URL)" class="w-full p-3 bg-gray-50 rounded-lg">
+                    <button onclick="addProduct()" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold">Publier</button>
+                    <button onclick="closeAdmin()" class="w-full py-2 text-gray-400 text-sm">Quitter</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <footer class="bg-white border-t py-10 text-center">
-        <p class="text-gray-500 text-sm">© 2026 PHARMACIE SAMY. Designed for Excellence.</p>
-    </footer>
-
     <script>
-        // 1. Firebase Configuration (Direct implementation)
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyDXOljj0H5909iVD-0hMbIVsF_pjzSDtBg",
             authDomain: "pharmacie-samy.firebaseapp.com",
@@ -96,27 +165,31 @@
 
         let currentLocale = 'fr';
 
-        // 2. Core Functions
         async function loadProducts() {
             const grid = document.getElementById('productsGrid');
+            grid.innerHTML = '<p class="col-span-full text-center py-20 text-gray-400">Chargement...</p>';
             const snapshot = await db.collection('products').orderBy('createdAt', 'desc').get();
             grid.innerHTML = '';
 
             snapshot.forEach(doc => {
                 const p = doc.data();
                 const name = currentLocale === 'ar' ? (p.name_ar || p.name_fr) : p.name_fr;
-                const waMsg = encodeURIComponent(`Bonjour, je veux réserver: ${p.name_fr} (${p.price} DA)`);
+                const waMsg = encodeURIComponent(`Bonjour, je veux plus d'infos sur : ${p.name_fr}\nMarque : ${p.brand}\nPrix : ${p.price} DA`);
                 
                 grid.innerHTML += `
-                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 card flex flex-col">
-                        <img src="${p.images || 'https://via.placeholder.com/200'}" class="h-48 w-full object-contain mb-4">
-                        <p class="text-[10px] text-blue-600 font-bold uppercase">${p.brand}</p>
-                        <h4 class="font-bold text-gray-800 text-sm h-10 overflow-hidden">${name}</h4>
-                        <p class="text-lg font-bold pharma-blue mt-2">${p.price} DA</p>
-                        <a href="https://wa.me/213770762987?text=${waMsg}" target="_blank" 
-                           class="mt-4 block text-center bg-green-500 text-white py-2 rounded-lg text-xs font-bold hover:bg-green-600 transition-colors">
-                           WhatsApp
-                        </a>
+                    <div class="bg-white rounded-2xl p-4 shadow-sm product-card flex flex-col">
+                        <div class="aspect-square mb-4 overflow-hidden rounded-xl bg-gray-50">
+                            <img src="${p.images || 'https://via.placeholder.com/300'}" class="w-full h-full object-contain p-4">
+                        </div>
+                        <span class="text-[10px] text-blue-600 font-bold uppercase tracking-widest mb-1">${p.brand}</span>
+                        <h4 class="font-bold text-gray-800 text-base leading-snug mb-2 h-12 overflow-hidden">${name}</h4>
+                        <div class="mt-auto pt-4 border-t flex justify-between items-center">
+                            <span class="text-xl font-bold pharma-blue">${p.price} DA</span>
+                            <a href="https://wa.me/213770762987?text=${waMsg}" target="_blank" 
+                               class="bg-green-50 text-green-600 px-4 py-2 rounded-lg text-xs font-bold hover:bg-green-600 hover:text-white transition-all flex items-center gap-1">
+                               <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                            </a>
+                        </div>
                     </div>
                 `;
             });
@@ -128,49 +201,40 @@
                 name_ar: document.getElementById('pNameAr').value,
                 price: document.getElementById('pPrice').value,
                 brand: document.getElementById('pBrand').value,
-                category: document.getElementById('pCat').value,
                 images: document.getElementById('pImg').value,
-                createdAt: new Date().toISOString(),
-                keywords: [document.getElementById('pNameFr').value.toLowerCase(), document.getElementById('pBrand').value.toLowerCase()]
+                createdAt: new Date().toISOString()
             };
             await db.collection('products').add(data);
             alert("Produit ajouté !");
-            closeAdmin();
-            loadProducts();
+            location.reload();
         }
 
         function searchProducts() {
-            let input = document.getElementById('searchInput').value.toLowerCase();
-            let cards = document.querySelectorAll('#productsGrid > div');
-            cards.forEach(card => {
-                let txt = card.textContent.toLowerCase();
-                card.style.display = txt.includes(input) ? "flex" : "none";
+            let val = document.getElementById('searchInput').value.toLowerCase();
+            document.querySelectorAll('.product-card').forEach(c => {
+                c.style.display = c.textContent.toLowerCase().includes(val) ? 'flex' : 'none';
             });
         }
 
-        // 3. UI Helpers
         function showAdmin() { document.getElementById('adminModal').classList.remove('hidden'); }
         function closeAdmin() { document.getElementById('adminModal').classList.add('hidden'); }
         
         async function handleLogin() {
-            const email = document.getElementById('adminEmail').value;
-            const pass = document.getElementById('adminPass').value;
             try {
-                await auth.signInWithEmailAndPassword(email, pass);
+                await auth.signInWithEmailAndPassword(document.getElementById('adminEmail').value, document.getElementById('adminPass').value);
                 document.getElementById('loginArea').classList.add('hidden');
                 document.getElementById('adminPanel').classList.remove('hidden');
-            } catch(e) { alert("Erreur d'authentification"); }
+            } catch(e) { alert("Accès refusé"); }
         }
 
         function switchLang(lang) {
             currentLocale = lang;
             document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-            document.getElementById('hero-title').innerText = lang === 'ar' ? 'صيدلية سامي' : 'PHARMACIE SAMY';
+            document.getElementById('hero-title').innerText = lang === 'ar' ? 'صيدلية سامي: وجهتكم للجمال والعناية' : 'Votre Beauté, Notre Expertise.';
             loadProducts();
         }
 
-        // Init
-        loadProducts();
+        window.onload = loadProducts;
     </script>
 </body>
 </html>
