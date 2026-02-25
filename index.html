@@ -2,7 +2,7 @@
 <html lang="fr" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PHARMACIE SAMY | Premium Showcase</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -16,46 +16,37 @@
         .pharma-blue { color: #0d47a1; }
         .bg-pharma { background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%); }
         .hero-gradient { background: linear-gradient(to right, rgba(13, 71, 161, 0.85), rgba(13, 71, 161, 0.4)), url('https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=1920&auto=format&fit=crop'); background-size: cover; background-position: center; }
-        
-        .product-card { transition: all 0.3s ease; border: 1px solid #f1f5f9; position: relative; overflow: hidden; }
+        .product-card { transition: all 0.3s ease; border: 1px solid #f1f5f9; position: relative; }
         .product-card:hover { transform: translateY(-8px); border-color: #0d47a1; box-shadow: 0 15px 30px rgba(13,71,161,0.1); }
-        
         .whatsapp-float { position: fixed; bottom: 30px; right: 30px; background-color: #25d366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000; transition: 0.3s; }
-        .whatsapp-float:hover { transform: scale(1.1); }
-
-        .cat-card { transition: all 0.3s ease; }
-        .cat-card:hover { transform: translateY(-5px); border-color: #0d47a1; }
-        .cat-card.active { border-color: #0d47a1; background-color: #eff6ff; border-width: 2px; }
-
-        .brand-pill { transition: all 0.2s; cursor: pointer; border: 1px solid #e2e8f0; }
-        .brand-pill:hover { background-color: #0d47a1; color: white; border-color: #0d47a1; }
-        .brand-pill.active { background-color: #0d47a1; color: white; }
-
-        .admin-only { display: none; }
-        .is-admin .admin-only { display: block; }
+        .cat-card.active { border: 2px solid #0d47a1 !important; background-color: #eff6ff !important; transform: scale(1.05); }
         
-        /* Smooth Fade In */
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .fade-in { animation: fadeIn 0.5s ease-in; }
+        /* شريط الماركات */
+        .brand-pill { cursor: pointer; padding: 8px 16px; border-radius: 99px; font-size: 11px; font-weight: bold; border: 1px solid #e2e8f0; transition: 0.3s; background: white; white-space: nowrap; }
+        .brand-pill.active { background: #0d47a1; color: white; border-color: #0d47a1; }
+        
+        /* زر الحذف للأدمن */
+        .admin-delete-btn { display: none; position: absolute; top: 10px; right: 10px; background: #ef4444; color: white; width: 32px; height: 32px; border-radius: 50%; z-index: 30; align-items: center; justify-content: center; shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .is-admin .admin-delete-btn { display: flex; }
     </style>
 </head>
 <body>
 
     <nav class="bg-white/80 backdrop-blur-md shadow-sm border-b sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-2 cursor-pointer" onclick="resetView()">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="resetFilters()">
                 <i class="fa-solid fa-mortar-pestle pharma-blue text-2xl"></i>
                 <h1 class="text-xl font-bold pharma-blue tracking-tighter uppercase">PHARMACIE SAMY</h1>
             </div>
             <div class="flex items-center gap-4">
-                <button onclick="switchLang('fr')" class="text-xs font-bold px-2 py-1 rounded hover:bg-gray-100 border">FR</button>
-                <button onclick="switchLang('ar')" class="text-xs font-bold px-2 py-1 rounded hover:bg-gray-100 border">AR</button>
-                <button onclick="showAdmin()" class="text-gray-400 hover:text-blue-600 ml-2"><i class="fa-solid fa-user-lock"></i></button>
+                <button onclick="switchLang('fr')" class="text-xs font-bold px-2 py-1 rounded border hover:bg-gray-100">FR</button>
+                <button onclick="switchLang('ar')" class="text-xs font-bold px-2 py-1 rounded border hover:bg-gray-100">AR</button>
+                <button onclick="showAdmin()" class="text-gray-400 hover:text-blue-600 text-xl ml-2"><i class="fa-solid fa-user-lock"></i></button>
             </div>
         </div>
     </nav>
 
-    <header id="main-hero" class="hero-gradient text-white py-24 px-6 relative">
+    <header class="hero-gradient text-white py-24 px-6 relative">
         <div class="max-w-7xl mx-auto">
             <div class="max-w-xl">
                 <span class="bg-blue-500/30 text-blue-100 px-3 py-1 rounded-full text-xs font-bold tracking-widest uppercase mb-4 inline-block">Premium Care</span>
@@ -69,51 +60,41 @@
         </div>
     </header>
 
-    <section id="categories-bar" class="py-12 bg-white border-b sticky top-[72px] z-40">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div onclick="selectCategory('Dermocosmétique')" id="cat-Dermocosmétique" class="cat-card text-center p-6 border rounded-2xl cursor-pointer bg-white shadow-sm">
-                    <i class="fa-solid fa-pump-medical pharma-blue text-3xl mb-3"></i>
-                    <h3 class="font-bold text-sm">Dermocosmétique</h3>
-                </div>
-                <div onclick="selectCategory('Maman & Bébé')" id="cat-Maman" class="cat-card text-center p-6 border rounded-2xl cursor-pointer bg-white shadow-sm">
-                    <i class="fa-solid fa-baby-carriage pharma-blue text-3xl mb-3"></i>
-                    <h3 class="font-bold text-sm">Maman & Bébé</h3>
-                </div>
-                <div onclick="selectCategory('Hygiène')" id="cat-Hygiène" class="cat-card text-center p-6 border rounded-2xl cursor-pointer bg-white shadow-sm">
-                    <i class="fa-solid fa-tooth pharma-blue text-3xl mb-3"></i>
-                    <h3 class="font-bold text-sm">Hygiène</h3>
-                </div>
-                <div onclick="selectCategory('Compléments')" id="cat-Compléments" class="cat-card text-center p-6 border rounded-2xl cursor-pointer bg-white shadow-sm">
-                    <i class="fa-solid fa-capsules pharma-blue text-3xl mb-3"></i>
-                    <h3 class="font-bold text-sm">Compléments</h3>
-                </div>
+    <section class="py-12 bg-white border-b sticky top-[72px] z-40">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div onclick="filterByCategory('Dermocosmétique')" id="cat-Dermocosmétique" class="cat-card text-center p-6 border rounded-2xl cursor-pointer hover:shadow-md transition">
+                <i class="fa-solid fa-pump-medical pharma-blue text-3xl mb-3"></i>
+                <h3 class="font-bold text-sm">Dermocosmétique</h3>
+            </div>
+            <div onclick="filterByCategory('Maman & Bébé')" id="cat-Maman" class="cat-card text-center p-6 border rounded-2xl cursor-pointer hover:shadow-md transition">
+                <i class="fa-solid fa-baby-carriage pharma-blue text-3xl mb-3"></i>
+                <h3 class="font-bold text-sm">Maman & Bébé</h3>
+            </div>
+            <div onclick="filterByCategory('Hygiène')" id="cat-Hygiène" class="cat-card text-center p-6 border rounded-2xl cursor-pointer hover:shadow-md transition">
+                <i class="fa-solid fa-tooth pharma-blue text-3xl mb-3"></i>
+                <h3 class="font-bold text-sm">Hygiène</h3>
+            </div>
+            <div onclick="filterByCategory('Compléments')" id="cat-Compléments" class="cat-card text-center p-6 border rounded-2xl cursor-pointer hover:shadow-md transition">
+                <i class="fa-solid fa-capsules pharma-blue text-3xl mb-3"></i>
+                <h3 class="font-bold text-sm">Compléments</h3>
             </div>
         </div>
     </section>
 
-    <section id="brands-nav" class="hidden bg-gray-50 py-6 border-b fade-in">
+    <section id="brands-bar" class="hidden py-6 bg-gray-50 border-b overflow-x-auto">
         <div class="max-w-7xl mx-auto px-6">
-            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Filtrer par marque :</h4>
-            <div id="brands-list" class="flex flex-wrap gap-3">
-                </div>
+            <p class="text-[10px] font-bold text-gray-400 mb-3 uppercase tracking-widest">Filtrer par marque:</p>
+            <div id="brands-list" class="flex flex-nowrap md:flex-wrap gap-2 pb-2"></div>
         </div>
     </section>
 
     <main id="products" class="max-w-7xl mx-auto px-6 py-16">
         <div class="mb-12">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-                <h2 id="section-title" class="text-3xl font-bold text-gray-900">Tous les produits</h2>
-                <div id="view-controls" class="hidden">
-                    <button onclick="resetView()" class="text-blue-600 font-bold text-sm hover:underline"><i class="fa-solid fa-rotate-left mr-1"></i> Réinitialiser</button>
-                </div>
-            </div>
+            <h2 id="section-title" class="text-3xl font-bold text-gray-900 mb-6">Tous les produits</h2>
             <input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Rechercher (Vichy, CeraVe...)" 
-                   class="w-full p-4 rounded-2xl border-2 border-gray-100 focus:border-blue-600 outline-none shadow-sm transition-all">
+                   class="w-full p-4 rounded-2xl border-2 border-gray-100 focus:border-blue-600 outline-none shadow-sm">
         </div>
-
-        <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            </div>
+        <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"></div>
     </main>
 
     <footer id="contact" class="bg-white border-t pt-16 pb-8">
@@ -142,39 +123,32 @@
 
     <a href="https://wa.me/213770762987" class="whatsapp-float" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
 
-    <div id="adminModal" class="fixed inset-0 bg-black/60 hidden z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
+    <div id="adminModal" class="fixed inset-0 bg-black/60 hidden z-[100] flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-lg w-full p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeAdmin()" class="absolute top-4 right-6 text-gray-400 text-2xl">×</button>
-            
             <div id="loginArea">
-                <h3 class="text-2xl font-bold mb-6 text-gray-800 text-center">Accès Administration</h3>
-                <input type="password" id="adminPin" placeholder="Entrez le Code PIN" class="w-full p-4 bg-gray-50 border rounded-xl mb-6 outline-none text-center text-2xl tracking-[0.5em]">
-                <button onclick="handleLogin()" id="loginBtn" class="w-full bg-pharma text-white py-4 rounded-xl font-bold shadow-lg hover:opacity-90 transition">Entrer</button>
+                <h3 class="text-2xl font-bold mb-6 text-gray-800 text-center">Admin Access</h3>
+                <input type="email" id="adminEmail" placeholder="Email" class="w-full p-4 bg-gray-50 border rounded-xl mb-4 outline-none">
+                <input type="password" id="adminPass" placeholder="Password" class="w-full p-4 bg-gray-50 border rounded-xl mb-6 outline-none">
+                <button onclick="handleLogin()" id="loginBtn" class="w-full bg-pharma text-white py-4 rounded-xl font-bold shadow-lg">Entrer</button>
             </div>
-
             <div id="adminPanel" class="hidden space-y-4">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-bold">Ajouter un produit</h3>
-                    <button onclick="logout()" class="text-red-500 text-xs font-bold uppercase">Déconnexion</button>
+                <div class="flex justify-between items-center mb-4 border-b pb-2">
+                    <h3 class="text-xl font-bold">Gestion des Produits</h3>
+                    <button onclick="logout()" class="text-red-500 text-xs font-bold uppercase">Logout</button>
                 </div>
-                
-                <input type="text" id="pNameFr" placeholder="Nom du produit (FR)" class="w-full p-3 border rounded-lg">
-                <input type="text" id="pNameAr" placeholder="اسم المنتج (بالعربية)" class="w-full p-3 border rounded-lg text-right">
-                <input type="text" id="pBrand" placeholder="Marque (Vichy, CeraVe...)" class="w-full p-3 border rounded-lg">
+                <input type="text" id="pNameFr" placeholder="Nom FR" class="w-full p-3 border rounded-lg">
+                <input type="text" id="pNameAr" placeholder="الاسم بالعربية" class="w-full p-3 border rounded-lg text-right">
                 <input type="number" id="pPrice" placeholder="Prix (DA)" class="w-full p-3 border rounded-lg">
-                
-                <select id="pCat" class="w-full p-3 border rounded-lg bg-white font-semibold">
+                <input type="text" id="pBrand" placeholder="Marque (Vichy...)" class="w-full p-3 border rounded-lg">
+                <select id="pCat" class="w-full p-3 border rounded-lg bg-white">
                     <option value="Dermocosmétique">Dermocosmétique</option>
                     <option value="Maman & Bébé">Maman & Bébé</option>
                     <option value="Hygiène">Hygiène</option>
                     <option value="Compléments">Compléments</option>
                 </select>
-                
-                <input type="text" id="pImg" placeholder="URL de l'image (Lien direct)" class="w-full p-3 border rounded-lg">
-                
-                <button onclick="addProduct()" id="saveBtn" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold shadow-lg hover:bg-green-700 transition">
-                    <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Publier Immédiatement
-                </button>
+                <input type="text" id="pImg" placeholder="Lien direct Image (URL)" class="w-full p-3 border rounded-lg">
+                <button onclick="addProduct()" id="saveBtn" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold shadow-lg">Publier sur le site</button>
             </div>
         </div>
     </div>
@@ -185,10 +159,10 @@
         const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let currentLocale = 'fr';
         let allProducts = [];
+        let currentLocale = 'fr';
+        let currentCategory = null;
         let isAdmin = localStorage.getItem('samy_is_admin') === 'true';
-        let activeCategory = null;
 
         // --- FETCH DATA ---
         async function fetchProducts() {
@@ -200,8 +174,9 @@
                 if (error) throw error;
                 allProducts = data;
                 renderGrid(allProducts);
+                checkAdminStatus();
             } catch (err) {
-                grid.innerHTML = '<p class="text-center col-span-full py-10 text-red-500 font-bold">Erreur de connexion.</p>';
+                grid.innerHTML = '<p class="text-center col-span-full py-10 text-red-500">Erreur lors du chargement.</p>';
             }
         }
 
@@ -210,8 +185,6 @@
             const grid = document.getElementById('productsGrid');
             grid.innerHTML = '';
             
-            if(isAdmin) document.body.classList.add('is-admin');
-
             if(products.length === 0) {
                 grid.innerHTML = '<div class="col-span-full text-center py-20 text-gray-400 font-bold">Aucun produit trouvé.</div>';
                 return;
@@ -222,26 +195,20 @@
                 const waMsg = encodeURIComponent(`Bonjour Pharmacie Samy, je souhaite commander :\nProduit: ${p.name_fr}\nMarque: ${p.brand}\nPrix: ${p.price} DA`);
                 
                 grid.innerHTML += `
-                    <div class="bg-white rounded-2xl p-4 product-card flex flex-col shadow-sm fade-in">
-                        ${isAdmin ? `
-                        <div class="admin-only absolute top-2 right-2 z-10">
-                            <button onclick="deleteProduct('${p.id}')" class="bg-red-500 text-white w-8 h-8 rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition">
-                                <i class="fa-solid fa-trash-can text-xs"></i>
-                            </button>
-                        </div>` : ''}
-                        
+                    <div class="bg-white rounded-2xl p-4 product-card flex flex-col shadow-sm">
+                        <button onclick="deleteProduct('${p.id}')" class="admin-delete-btn" title="Supprimer">
+                            <i class="fa-solid fa-trash-can text-sm"></i>
+                        </button>
                         <div class="aspect-square mb-4 rounded-xl bg-gray-50 flex items-center justify-center overflow-hidden">
-                            <img src="${p.img_url || 'https://via.placeholder.com/300?text=Produit'}" class="max-h-full max-w-full object-contain p-2 hover:scale-110 transition duration-500" loading="lazy">
+                            <img src="${p.img_url || 'https://via.placeholder.com/300?text=Produit'}" class="max-h-full max-w-full object-contain p-2" loading="lazy">
                         </div>
-                        
                         <span class="text-[10px] text-blue-600 font-extrabold uppercase tracking-tighter">${p.brand || 'Premium'}</span>
                         <h4 class="font-bold text-gray-800 text-sm mt-1 h-10 overflow-hidden line-clamp-2">${name}</h4>
-                        
                         <div class="mt-4 pt-4 border-t flex justify-between items-center">
                             <span class="text-xl font-bold pharma-blue">${p.price} DA</span>
                             <a href="https://wa.me/213770762987?text=${waMsg}" target="_blank" 
                                class="bg-green-500 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-green-600 transition flex items-center gap-1 shadow-sm">
-                               <i class="fa-brands fa-whatsapp text-sm"></i> Commander
+                               <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp
                             </a>
                         </div>
                     </div>
@@ -249,55 +216,43 @@
             });
         }
 
-        // --- FILTERING LOGIC ---
-        function selectCategory(category) {
-            activeCategory = category;
-            
-            // UI Update
+        // --- FILTERING ---
+        function filterByCategory(category) {
+            currentCategory = category;
             document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('active'));
             const catId = category === 'Maman & Bébé' ? 'cat-Maman' : 'cat-' + category;
             document.getElementById(catId).classList.add('active');
-            
-            // Show Brands
+
+            // إظهار الماركات الموجودة في هذا القسم فقط
             const categoryProducts = allProducts.filter(p => p.category === category);
             const brands = [...new Set(categoryProducts.map(p => p.brand))].filter(b => b);
             
-            const brandsNav = document.getElementById('brands-nav');
-            const brandsList = document.getElementById('brands-list');
+            const bar = document.getElementById('brands-bar');
+            const list = document.getElementById('brands-list');
             
-            brandsNav.classList.remove('hidden');
-            brandsList.innerHTML = `<div onclick="filterByBrand('all')" class="brand-pill active px-4 py-2 rounded-full text-xs font-bold">Tout ${category}</div>`;
-            
+            bar.classList.remove('hidden');
+            list.innerHTML = `<button onclick="filterByBrand('all')" class="brand-pill active">Tout voir</button>`;
             brands.forEach(b => {
-                brandsList.innerHTML += `<div onclick="filterByBrand('${b}')" class="brand-pill bg-white px-4 py-2 rounded-full text-xs font-bold">${b}</div>`;
+                list.innerHTML += `<button onclick="filterByBrand('${b}')" class="brand-pill">${b}</button>`;
             });
 
             document.getElementById('section-title').innerText = category;
-            document.getElementById('view-controls').classList.remove('hidden');
             renderGrid(categoryProducts);
-            
             window.location.hash = "products";
         }
 
         function filterByBrand(brand) {
             document.querySelectorAll('.brand-pill').forEach(p => p.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-
-            let filtered = allProducts.filter(p => p.category === activeCategory);
-            if(brand !== 'all') {
-                filtered = filtered.filter(p => p.brand === brand);
-                document.getElementById('section-title').innerText = `${activeCategory} > ${brand}`;
-            } else {
-                document.getElementById('section-title').innerText = activeCategory;
-            }
+            event.target.classList.add('active');
+            
+            let filtered = allProducts.filter(p => p.category === currentCategory);
+            if(brand !== 'all') filtered = filtered.filter(p => p.brand === brand);
             renderGrid(filtered);
         }
 
-        function resetView() {
-            activeCategory = null;
+        function resetFilters() {
             document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('active'));
-            document.getElementById('brands-nav').classList.add('hidden');
-            document.getElementById('view-controls').classList.add('hidden');
+            document.getElementById('brands-bar').classList.add('hidden');
             document.getElementById('section-title').innerText = "Tous les produits";
             renderGrid(allProducts);
         }
@@ -307,22 +262,29 @@
             const filtered = allProducts.filter(p => 
                 p.name_fr.toLowerCase().includes(val) || 
                 (p.name_ar && p.name_ar.includes(val)) || 
-                p.brand.toLowerCase().includes(val)
+                (p.brand && p.brand.toLowerCase().includes(val))
             );
             renderGrid(filtered);
         }
 
-        // --- ADMIN SYSTEM ---
-        function handleLogin() {
-            const pin = document.getElementById('adminPin').value;
-            if(pin === "pharmaciesami001") {
+        // --- ADMIN ---
+        async function handleLogin() {
+            const email = document.getElementById('adminEmail').value;
+            const pass = document.getElementById('adminPass').value;
+            const btn = document.getElementById('loginBtn');
+
+            btn.innerText = "Connexion...";
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
+
+            if (error) {
+                alert("Erreur: " + error.message);
+                btn.innerText = "Entrer";
+            } else {
                 isAdmin = true;
                 localStorage.setItem('samy_is_admin', 'true');
+                checkAdminStatus();
                 document.getElementById('loginArea').classList.add('hidden');
                 document.getElementById('adminPanel').classList.remove('hidden');
-                renderGrid(allProducts);
-            } else {
-                alert("Code PIN Incorrect !");
             }
         }
 
@@ -331,37 +293,40 @@
             const data = {
                 name_fr: document.getElementById('pNameFr').value,
                 name_ar: document.getElementById('pNameAr').value,
-                brand: document.getElementById('pBrand').value,
                 price: parseFloat(document.getElementById('pPrice').value),
+                brand: document.getElementById('pBrand').value,
                 category: document.getElementById('pCat').value,
                 img_url: document.getElementById('pImg').value
             };
 
-            if(!data.name_fr || !data.price || !data.brand) { alert("Veuillez remplir les champs obligatoires !"); return; }
+            if(!data.name_fr || !data.price) { alert("Nom et Prix obligatoires !"); return; }
 
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> En cours...';
-
+            btn.innerText = "Publication...";
             const { error } = await supabase.from('products').insert([data]);
 
             if(!error) {
-                alert("✅ Produit ajouté avec succès !");
+                alert("✅ Succès !");
                 location.reload();
             } else {
                 alert("Erreur: " + error.message);
-                btn.disabled = false;
-                btn.innerText = "Publier Immédiatement";
+                btn.innerText = "Publier";
             }
         }
 
         async function deleteProduct(id) {
-            if(confirm("Êtes-vous sûr de vouloir supprimer ce produit ?")) {
+            if(confirm("Supprimer définitivement ce produit ?")) {
                 const { error } = await supabase.from('products').delete().eq('id', id);
                 if(!error) {
                     allProducts = allProducts.filter(p => p.id !== id);
                     renderGrid(allProducts);
+                } else {
+                    alert("Erreur lors de la suppression.");
                 }
             }
+        }
+
+        function checkAdminStatus() {
+            if(isAdmin) document.body.classList.add('is-admin');
         }
 
         function showAdmin() { 
@@ -371,8 +336,14 @@
                 document.getElementById('adminPanel').classList.remove('hidden');
             }
         }
+        
         function closeAdmin() { document.getElementById('adminModal').classList.add('hidden'); }
-        function logout() { localStorage.removeItem('samy_is_admin'); location.reload(); }
+
+        function logout() {
+            supabase.auth.signOut();
+            localStorage.removeItem('samy_is_admin');
+            location.reload();
+        }
 
         function switchLang(lang) {
             currentLocale = lang;
