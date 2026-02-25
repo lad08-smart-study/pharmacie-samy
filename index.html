@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PHARMACIE SAMY | Premium Showcase</title>
     
-    <!-- Supabase بدل Firebase -->
+    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -33,7 +33,7 @@
         
         .delete-btn { 
             position: absolute; top: 15px; right: 15px; background: #ef4444; color: white; 
-            width: 40px; height: 40px; border-radius: 50%; display: none; items-center; justify-content: center; 
+            width: 40px; height: 40px; border-radius: 50%; display: none; align-items: center; justify-content: center; 
             z-index: 50; border: 3px solid white; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         .is-admin .delete-btn { display: flex; }
@@ -41,7 +41,7 @@
         .whatsapp-float { 
             position: fixed; bottom: 30px; right: 30px; background-color: var(--accent-green); 
             color: white; width: 70px; height: 70px; border-radius: 50%; display: flex; 
-            items-center; justify-content: center; font-size: 35px; box-shadow: 0 15px 35px rgba(37,211,102,0.4); 
+            align-items: center; justify-content: center; font-size: 35px; box-shadow: 0 15px 35px rgba(37,211,102,0.4); 
             z-index: 1000; transition: 0.4s; 
         }
         .whatsapp-float:hover { transform: rotate(360deg) scale(1.1); }
@@ -233,10 +233,10 @@
     </a>
 
     <script>
-        // --- SUPABASE FULL ENGINE ---
-        const SUPABASE_URL = "https://YOUR_PROJECT.supabase.co";
-        const SUPABASE_KEY = "YOUR_ANON_KEY";
-        const { createClient } = supabase;
+        // --- SUPABASE CONFIGURATION ---
+        const SUPABASE_URL = "https://kmhbvdqrhnwfpglngchf.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_gpDvHMQc6DC37fFeoXtF1Q_QpUkN0YI";
+        const { createClient } = window.supabase;
         const client = createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let allProducts = [];
@@ -254,11 +254,14 @@
                 if(error) throw error;
                 allProducts = data || [];
                 renderGrid(allProducts);
+                if(isAdmin) renderGrid(allProducts);
             } catch (err) { 
+                console.error('Error:', err);
                 grid.innerHTML = `<div class="col-span-full text-center py-20 bg-red-50 rounded-[40px] border border-red-100">
                     <i class="fa-solid fa-triangle-exclamation text-red-400 text-4xl mb-4"></i>
                     <p class="text-red-900 font-black uppercase text-xs tracking-widest">Erreur de Synchronisation Supabase</p>
-                    <p class="text-red-400 text-[10px] mt-2 italic font-medium">Vérifiez vos 'Security Rules' (read/write: true)</p>
+                    <p class="text-red-400 text-[10px] mt-2 italic font-medium">Vérifiez votre connexion et vos données Supabase</p>
+                    <p class="text-red-400 text-[10px] mt-2 italic font-medium">Erreur: ${err.message}</p>
                 </div>`; 
             }
         }
@@ -275,7 +278,7 @@
                     <div class="product-card p-7 ${isAdmin ? 'is-admin' : ''}">
                         <div onclick="deleteProduct('${p.id}')" class="delete-btn" title="Supprimer du stock"><i class="fa-solid fa-trash-can"></i></div>
                         <div class="aspect-[4/5] bg-gray-50 rounded-[25px] mb-8 overflow-hidden flex items-center justify-center p-6 group-hover:bg-white transition-colors duration-500">
-                            <img src="${p.img || 'https://via.placeholder.com/400'}" class="max-h-full max-w-full object-contain mix-blend-multiply transform transition-transform duration-700 hover:scale-110" loading="lazy">
+                            <img src="${p.img || 'https://via.placeholder.com/400'}" class="max-h-full max-w-full object-contain mix-blend-multiply transform transition-transform duration-700 hover:scale-110" loading="lazy" onerror="this.src='https://via.placeholder.com/400'">
                         </div>
                         <div class="flex-grow">
                             <span class="text-[10px] text-blue-600 font-black uppercase tracking-[0.25em] mb-3 block opacity-60">${p.brand || 'Premium Care'}</span>
@@ -327,29 +330,29 @@
             btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-2"></i> TRAITEMENT...`;
 
             try {
-                // رفع الصورة إلى Supabase Storage
+                // Upload image to Supabase Storage
                 const fileExtension = file.name.split('.').pop();
                 const fileName = `SAMY_${Date.now()}.${fileExtension}`;
                 
-                const { data, error: uploadError } = await client.storage
+                const { data: uploadData, error: uploadError } = await client.storage
                     .from('product-images')
                     .upload(`products/${fileName}`, file);
                 
                 if(uploadError) throw uploadError;
 
-                // الحصول على رابط الصورة العام
+                // Get public URL
                 const { data: publicUrlData } = client.storage
                     .from('product-images')
                     .getPublicUrl(`products/${fileName}`);
 
                 const downloadURL = publicUrlData.publicUrl;
 
-                // إضافة المنتج إلى Supabase
-                const { error: insertError } = await client
+                // Insert product into Supabase
+                const { data: insertData, error: insertError } = await client
                     .from('products')
                     .insert([{
                         name_fr: name,
-                        price: price,
+                        price: parseInt(price),
                         brand: document.getElementById('pBrand').value || "Marque Inconnue",
                         category: document.getElementById('pCat').value,
                         img: downloadURL,
@@ -358,13 +361,22 @@
 
                 if(insertError) throw insertError;
 
-                alert("✅ Catalogue mis à jour avec succès !");
-                location.reload();
+                alert("✅ Produit ajouté avec succès!");
+                document.getElementById('pNameFr').value = "";
+                document.getElementById('pBrand').value = "";
+                document.getElementById('pPrice').value = "";
+                document.getElementById('pImgFile').value = "";
+                document.getElementById('fileName').innerHTML = "Téléverser l'image du produit";
+                document.getElementById('fileName').classList.remove('text-green-600');
+                
+                fetchProducts();
+                btn.disabled = false;
+                btn.innerHTML = "🚀 Mettre à jour le catalogue";
             } catch(e) { 
                 console.error(e);
-                alert("❌ Erreur Critique : " + e.message); 
+                alert("❌ Erreur : " + e.message); 
                 btn.disabled = false;
-                btn.innerText = "🚀 RÉESSAYER LA PUBLICATION";
+                btn.innerHTML = "🚀 Mettre à jour le catalogue";
             }
         }
 
@@ -377,8 +389,8 @@
                         .eq('id', id);
                     
                     if(error) throw error;
-                    location.reload();
-                } catch(e) { alert("Erreur lors de la suppression."); }
+                    fetchProducts();
+                } catch(e) { alert("Erreur lors de la suppression: " + e.message); }
             }
         }
 
