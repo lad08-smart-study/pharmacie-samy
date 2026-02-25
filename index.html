@@ -5,252 +5,412 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PHARMACIE SAMY | Premium Showcase</title>
     
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <style>
-        body { font-family: 'Inter', 'Noto Sans Arabic', sans-serif; background-color: #fcfdfe; scroll-behavior: smooth; }
-        .pharma-blue { color: #0d47a1; }
-        .bg-pharma { background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%); }
-        .hero-gradient { background: linear-gradient(to right, rgba(13, 71, 161, 0.85), rgba(13, 71, 161, 0.4)), url('https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=1920&auto=format&fit=crop'); background-size: cover; background-position: center; }
-        
-        .product-card { transition: all 0.3s ease; border: 1px solid #f1f5f9; position: relative; }
-        .product-card:hover { transform: translateY(-8px); border-color: #0d47a1; box-shadow: 0 15px 30px rgba(13,71,161,0.1); }
-        
-        .whatsapp-float { position: fixed; bottom: 30px; right: 30px; background-color: #25d366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000; transition: 0.3s; }
-        
-        /* الأقسام وتفعيلها */
-        .cat-card { cursor: pointer; transition: 0.3s; border: 2px solid transparent; background: white; }
-        .cat-card:hover { transform: translateY(-5px); border-color: #0d47a1; }
-        .cat-card.active { border-color: #0d47a1 !important; background-color: #eff6ff !important; }
 
-        /* شريط الماركات */
-        .brand-pill { cursor: pointer; padding: 8px 16px; border-radius: 99px; font-size: 11px; font-weight: bold; border: 1px solid #e2e8f0; transition: 0.3s; background: white; white-space: nowrap; }
-        .brand-pill.active { background: #0d47a1 !important; color: white !important; border-color: #0d47a1 !important; }
+    <style>
+        :root { --main-blue: #0d47a1; --accent-green: #25d366; }
+        body { font-family: 'Inter', 'Noto Sans Arabic', sans-serif; background-color: #fcfdfe; scroll-behavior: smooth; }
+        .pharma-blue { color: var(--main-blue); }
+        .bg-pharma { background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%); }
         
-        /* زر الحذف للأدمن */
-        .admin-delete-btn { display: none; position: absolute; top: 10px; right: 10px; background: #ef4444; color: white; width: 32px; height: 32px; border-radius: 50%; z-index: 50; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); border: none; }
-        .is-admin .admin-delete-btn { display: flex; }
+        /* Hero Section Full Version */
+        .hero-gradient { 
+            background: linear-gradient(to right, rgba(13, 71, 161, 0.9), rgba(13, 71, 161, 0.4)), 
+            url('https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=1920&auto=format&fit=crop'); 
+            background-size: cover; background-position: center; min-height: 650px; display: flex; align-items: center;
+        }
+
+        /* Product Cards Full Design */
+        .product-card { 
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); 
+            border: 1px solid #f1f5f9; background: white; border-radius: 30px; 
+            position: relative; overflow: hidden; display: flex; flex-direction: column;
+        }
+        .product-card:hover { transform: translateY(-15px); box-shadow: 0 40px 80px rgba(13,71,161,0.12); border-color: var(--main-blue); }
+        
+        /* Admin Elements */
+        .delete-btn { 
+            position: absolute; top: 15px; right: 15px; background: #ef4444; color: white; 
+            width: 40px; height: 40px; border-radius: 50%; display: none; items-center; justify-content: center; 
+            z-index: 50; border: 3px solid white; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .is-admin .delete-btn { display: flex; }
+        
+        /* Buttons & Badges */
+        .whatsapp-float { 
+            position: fixed; bottom: 30px; right: 30px; background-color: var(--accent-green); 
+            color: white; width: 70px; height: 70px; border-radius: 50%; display: flex; 
+            items-center; justify-content: center; font-size: 35px; box-shadow: 0 15px 35px rgba(37,211,102,0.4); 
+            z-index: 1000; transition: 0.4s; 
+        }
+        .whatsapp-float:hover { transform: rotate(360deg) scale(1.1); }
+
+        .cat-chip { transition: 0.3s; cursor: pointer; border: 1px solid #f1f5f9; white-space: nowrap; }
+        .cat-chip:hover, .cat-chip.active { background: var(--main-blue); color: white; border-color: var(--main-blue); transform: scale(1.05); }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body>
 
-    <nav class="bg-white/80 backdrop-blur-md shadow-sm border-b sticky top-0 z-[100]">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-2 cursor-pointer" onclick="location.reload()">
-                <i class="fa-solid fa-mortar-pestle pharma-blue text-2xl"></i>
-                <h1 class="text-xl font-bold pharma-blue tracking-tighter uppercase">PHARMACIE SAMY</h1>
+    <nav class="bg-white/95 backdrop-blur-2xl shadow-sm border-b sticky top-0 z-[100] px-6 py-5">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-4 cursor-pointer" onclick="location.reload()">
+                <div class="bg-pharma p-3 rounded-2xl shadow-xl shadow-blue-200">
+                    <i class="fa-solid fa-mortar-pestle text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-black pharma-blue tracking-tighter uppercase leading-none">Pharmacie Samy</h1>
+                    <div class="flex items-center gap-2 mt-1">
+                        <span class="w-2 h-2 bg-green-500 rounded-full animate-ping"></span>
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest text-left">Les Sources, Bir Mourad Rais</p>
+                    </div>
+                </div>
             </div>
-            <div class="flex items-center gap-4">
-                <button onclick="switchLang('fr')" class="text-xs font-bold px-2 py-1 rounded border hover:bg-gray-100">FR</button>
-                <button onclick="switchLang('ar')" class="text-xs font-bold px-2 py-1 rounded border hover:bg-gray-100">AR</button>
-                <button onclick="showAdmin()" class="text-gray-400 hover:text-blue-600 text-xl ml-2"><i class="fa-solid fa-user-lock"></i></button>
+            <div class="flex items-center gap-6">
+                <div class="hidden lg:flex flex-col items-end border-r pr-6 border-gray-100">
+                    <span class="text-[11px] font-black text-blue-600 uppercase tracking-widest">Ouvert 7j/7</span>
+                    <span class="text-[12px] font-bold text-gray-900 uppercase italic">08:00 — 00:00</span>
+                </div>
+                <i onclick="showAdmin()" class="fa-solid fa-fingerprint text-gray-200 hover:text-blue-600 cursor-pointer text-3xl transition-all"></i>
             </div>
         </div>
     </nav>
 
-    <header class="hero-gradient text-white py-24 px-6 relative">
-        <div class="max-w-7xl mx-auto">
-            <div class="max-w-xl">
-                <span class="bg-blue-500/30 text-blue-100 px-3 py-1 rounded-full text-xs font-bold tracking-widest uppercase mb-4 inline-block">Premium Care</span>
-                <h2 id="hero-title" class="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">Votre Beauté, Notre Expertise.</h2>
-                <p id="hero-sub" class="text-blue-50 text-lg mb-8 opacity-90">Découvrez notre sélection exclusive de produits Dermocosmétiques.</p>
-                <div class="flex gap-4">
-                    <a href="#products" class="bg-white text-blue-900 px-8 py-4 rounded-xl font-bold shadow-lg">Explorer</a>
-                    <a href="https://wa.me/213770762987" class="bg-green-500 text-white px-8 py-4 rounded-xl font-bold flex items-center gap-2"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+    <header class="hero-gradient text-white flex items-center px-6">
+        <div class="max-w-7xl mx-auto w-full py-24">
+            <div class="max-w-3xl animate-fade-in">
+                <div class="flex flex-wrap gap-3 mb-10">
+                    <span class="bg-white/10 backdrop-blur-md text-white px-6 py-2 rounded-full text-[11px] font-black tracking-[0.2em] uppercase border border-white/20">Dermocosmétique Internationale</span>
+                    <span class="bg-green-500 text-white px-6 py-2 rounded-full text-[11px] font-black tracking-[0.2em] uppercase shadow-2xl">Service 7j/7</span>
+                </div>
+                <h2 class="text-6xl md:text-8xl font-black mb-8 leading-[1] tracking-tighter">Votre Beauté,<br>Notre Expertise.</h2>
+                <p class="text-blue-50 text-xl md:text-2xl mb-12 opacity-90 leading-relaxed max-w-2xl font-light">
+                    Retrouvez-nous à <span class="font-bold border-b-2 border-blue-400">Les Sources</span> pour les meilleurs soins mondiaux. <br>
+                    Ouvert tous les jours jusqu'à minuit.
+                </p>
+                <div class="flex flex-wrap gap-6">
+                    <a href="#products" class="bg-white text-blue-900 px-12 py-6 rounded-[25px] font-black shadow-2xl hover:bg-blue-50 transition transform hover:-translate-y-2 text-center min-w-[220px]">DÉCOUVRIR</a>
+                    <a href="https://wa.me/213770762987" class="bg-green-500 text-white px-12 py-6 rounded-[25px] font-black flex items-center justify-center gap-4 shadow-2xl hover:bg-green-600 transition transform hover:-translate-y-2 min-w-[220px]"><i class="fa-brands fa-whatsapp text-3xl"></i> COMMANDER</a>
                 </div>
             </div>
         </div>
     </header>
 
-    <section class="py-12 bg-white border-b sticky top-[72px] z-50 overflow-x-auto">
-        <div class="max-w-7xl mx-auto px-6 flex md:grid md:grid-cols-4 gap-4">
-            <div onclick="filterByCategory('Dermocosmétique')" id="cat-Dermocosmétique" class="cat-card flex-shrink-0 w-40 md:w-auto text-center p-6 border rounded-2xl">
-                <i class="fa-solid fa-pump-medical pharma-blue text-3xl mb-3 pointer-events-none"></i>
-                <h3 class="font-bold text-sm pointer-events-none">Dermocosmétique</h3>
-            </div>
-            <div onclick="filterByCategory('Maman & Bébé')" id="cat-Maman" class="cat-card flex-shrink-0 w-40 md:w-auto text-center p-6 border rounded-2xl">
-                <i class="fa-solid fa-baby-carriage pharma-blue text-3xl mb-3 pointer-events-none"></i>
-                <h3 class="font-bold text-sm pointer-events-none">Maman & Bébé</h3>
-            </div>
-            <div onclick="filterByCategory('Hygiène')" id="cat-Hygiène" class="cat-card flex-shrink-0 w-40 md:w-auto text-center p-6 border rounded-2xl">
-                <i class="fa-solid fa-tooth pharma-blue text-3xl mb-3 pointer-events-none"></i>
-                <h3 class="font-bold text-sm pointer-events-none">Hygiène</h3>
-            </div>
-            <div onclick="filterByCategory('Compléments')" id="cat-Compléments" class="cat-card flex-shrink-0 w-40 md:w-auto text-center p-6 border rounded-2xl">
-                <i class="fa-solid fa-capsules pharma-blue text-3xl mb-3 pointer-events-none"></i>
-                <h3 class="font-bold text-sm pointer-events-none">Compléments</h3>
-            </div>
+    <section class="py-12 bg-white overflow-x-auto no-scrollbar border-b">
+        <div class="max-w-7xl mx-auto px-6 flex gap-4">
+            <div onclick="filterByCategory('Tout')" class="cat-chip active px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-sm">Tout</div>
+            <div onclick="filterByCategory('Dermocosmétique')" class="cat-chip px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-sm">Dermocosmétique</div>
+            <div onclick="filterByCategory('Maman & Bébé')" class="cat-chip px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-sm">Maman & Bébé</div>
+            <div onclick="filterByCategory('Hygiène')" class="cat-chip px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-sm">Hygiène</div>
+            <div onclick="filterByCategory('Compléments')" class="cat-chip px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-sm">Santé</div>
         </div>
     </section>
 
-    <section id="brands-bar" class="hidden py-6 bg-gray-50 border-b overflow-x-auto">
-        <div class="max-w-7xl mx-auto px-6">
-            <p class="text-[10px] font-bold text-gray-400 mb-3 uppercase tracking-widest">Filtrer par marque:</p>
-            <div id="brands-list" class="flex gap-2"></div>
+    <main id="products" class="max-w-7xl mx-auto px-6 py-24">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-20 gap-10">
+            <div class="w-full">
+                <h2 id="section-title" class="text-4xl md:text-6xl font-black text-gray-900 tracking-tighter uppercase leading-none">Catalogue</h2>
+                <div class="h-3 w-32 bg-pharma rounded-full mt-6 shadow-lg shadow-blue-100"></div>
+            </div>
+            <div class="w-full md:max-w-md">
+                <div class="relative group">
+                    <i class="fa-solid fa-magnifying-glass absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600 transition-all"></i>
+                    <input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Rechercher une marque (Vichy, CeraVe...)" 
+                           class="w-full p-6 pl-16 rounded-3xl border-2 border-gray-50 focus:border-blue-600 outline-none shadow-sm text-lg transition-all bg-white font-medium">
+                </div>
+            </div>
         </div>
-    </section>
 
-    <main id="products" class="max-w-7xl mx-auto px-6 py-16">
-        <div class="mb-12">
-            <h2 id="section-title" class="text-3xl font-bold text-gray-900 mb-6">Tous les produits</h2>
-            <input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Rechercher (Vichy, CeraVe...)" 
-                   class="w-full p-4 rounded-2xl border-2 border-gray-100 focus:border-blue-600 outline-none shadow-sm">
+        <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
+            <div class="col-span-full text-center py-40">
+                <div class="inline-block w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                <p class="mt-6 text-gray-400 font-black uppercase tracking-[0.3em] text-xs">Accès à la base de données...</p>
+            </div>
         </div>
-        <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"></div>
     </main>
 
-    <a href="https://wa.me/213770762987" class="whatsapp-float" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
-
-    <div id="adminModal" class="fixed inset-0 bg-black/60 hidden z-[200] flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-lg w-full p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <button onclick="closeAdmin()" class="absolute top-4 right-6 text-gray-400 text-2xl">×</button>
-            <div id="loginArea">
-                <h3 class="text-2xl font-bold mb-6 text-center">Admin Access</h3>
-                <input type="email" id="adminEmail" placeholder="Email" class="w-full p-4 bg-gray-50 border rounded-xl mb-4 outline-none">
-                <input type="password" id="adminPass" placeholder="Password" class="w-full p-4 bg-gray-50 border rounded-xl mb-6 outline-none">
-                <button onclick="handleLogin()" id="loginBtn" class="w-full bg-pharma text-white py-4 rounded-xl font-bold">Entrer</button>
+    <footer class="bg-white border-t pt-28 pb-12">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-24 mb-24">
+            <div>
+                <h3 class="text-4xl font-black pharma-blue mb-8 tracking-tighter">SAMY.</h3>
+                <p class="text-gray-400 text-lg leading-relaxed italic mb-10 font-light">"Plus qu'une pharmacie, un partenaire pour votre bien-être et votre beauté à Bir Mourad Rais."</p>
+                <div class="flex gap-6">
+                    <a href="https://instagram.com" class="w-16 h-16 rounded-3xl bg-gray-50 flex items-center justify-center hover:bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 hover:text-white transition-all text-2xl shadow-sm"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://wa.me/213770762987" class="w-16 h-16 rounded-3xl bg-gray-50 flex items-center justify-center hover:bg-green-500 hover:text-white transition-all text-2xl shadow-sm"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
             </div>
-            <div id="adminPanel" class="hidden space-y-4">
-                <h3 class="text-xl font-bold border-b pb-2">Gestion des Produits</h3>
-                <input type="text" id="pNameFr" placeholder="Nom FR" class="w-full p-3 border rounded-lg">
-                <input type="text" id="pNameAr" placeholder="الاسم بالعربية" class="w-full p-3 border rounded-lg text-right">
-                <input type="number" id="pPrice" placeholder="Prix (DA)" class="w-full p-3 border rounded-lg">
-                <input type="text" id="pBrand" placeholder="Marque (Vichy...)" class="w-full p-3 border rounded-lg">
-                <select id="pCat" class="w-full p-3 border rounded-lg bg-white">
-                    <option value="Dermocosmétique">Dermocosmétique</option>
-                    <option value="Maman & Bébé">Maman & Bébé</option>
-                    <option value="Hygiène">Hygiène</option>
-                    <option value="Compléments">Compléments</option>
-                </select>
-                <input type="text" id="pImg" placeholder="Lien image URL" class="w-full p-3 border rounded-lg">
-                <button onclick="addProduct()" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold">Publier</button>
-                <button onclick="logout()" class="w-full text-red-500 text-sm mt-4 underline">Déconnexion</button>
+            <div>
+                <h3 class="font-black text-gray-900 mb-10 uppercase tracking-[0.3em] text-[11px]">Informations</h3>
+                <div class="space-y-6">
+                    <div class="flex items-start gap-4">
+                        <i class="fa-solid fa-map-location-dot text-2xl pharma-blue mt-1"></i>
+                        <p class="text-gray-600 font-bold leading-snug uppercase text-sm">Les Sources,<br>Bir Mourad Rais, Alger</p>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <i class="fa-solid fa-clock-rotate-left text-2xl pharma-blue mt-1"></i>
+                        <p class="text-gray-600 font-bold uppercase text-sm">7j/7<br>08:00 — 00:00</p>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h3 class="font-black text-gray-900 mb-10 uppercase tracking-[0.3em] text-[11px]">Contact Direct</h3>
+                <p class="text-gray-400 text-sm mb-4">Besoin d'un conseil médical ?</p>
+                <p class="text-4xl font-black pharma-blue tracking-tighter hover:scale-105 transition-transform cursor-pointer">0770 76 29 87</p>
+            </div>
+        </div>
+        <div class="text-center text-gray-300 text-[10px] font-black border-t pt-12 tracking-[0.6em] uppercase">
+            © 2026 Pharmacie Samy | Premium Healthcare Experience
+        </div>
+    </footer>
+
+    <div id="adminModal" class="fixed inset-0 bg-black/95 hidden z-[1000] flex items-center justify-center p-4 backdrop-blur-xl">
+        <div class="bg-white w-full max-w-2xl rounded-[50px] p-10 md:p-16 shadow-2xl relative overflow-y-auto max-h-[90vh] border border-gray-100">
+            <button onclick="closeAdmin()" class="absolute top-10 right-10 text-gray-200 hover:text-black text-5xl font-light transition-colors">×</button>
+            
+            <div id="loginArea">
+                <div class="text-center mb-12">
+                    <div class="w-20 h-20 bg-blue-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fa-solid fa-shield-halved text-3xl pharma-blue"></i>
+                    </div>
+                    <h3 class="text-4xl font-black text-gray-900 tracking-tighter uppercase">Authentification</h3>
+                </div>
+                <input type="password" id="adminPass" placeholder="••••••••" class="w-full p-7 bg-gray-50 border-2 border-transparent focus:border-blue-600 rounded-3xl mb-8 text-center outline-none transition-all text-3xl font-black tracking-widest">
+                <button onclick="handleLogin()" class="w-full bg-pharma text-white py-6 rounded-3xl font-black text-xl shadow-2xl hover:shadow-blue-200 transition-all active:scale-95 uppercase">Valider l'accès</button>
+            </div>
+
+            <div id="adminPanel" class="hidden space-y-8 animate-fade-in">
+                <div class="border-b pb-6">
+                    <h3 class="text-3xl font-black text-blue-900 tracking-tighter uppercase">Gestionnaire de Stock</h3>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black uppercase text-gray-400 ml-4">Nom du produit</label>
+                        <input type="text" id="pNameFr" class="w-full p-5 bg-gray-50 rounded-2xl outline-none border-2 border-transparent focus:border-blue-600 font-bold">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black uppercase text-gray-400 ml-4">Marque</label>
+                        <input type="text" id="pBrand" class="w-full p-5 bg-gray-50 rounded-2xl outline-none border-2 border-transparent focus:border-blue-600 font-bold">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black uppercase text-gray-400 ml-4">Prix (DA)</label>
+                        <input type="number" id="pPrice" class="w-full p-5 bg-gray-50 rounded-2xl outline-none border-2 border-transparent focus:border-blue-600 font-black">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black uppercase text-gray-400 ml-4">Catégorie</label>
+                        <select id="pCat" class="w-full p-5 bg-gray-50 rounded-2xl outline-none border-2 border-transparent focus:border-blue-600 font-bold">
+                            <option>Dermocosmétique</option>
+                            <option>Maman & Bébé</option>
+                            <option>Hygiène</option>
+                            <option>Compléments</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="border-4 border-dashed border-gray-100 p-12 rounded-[40px] text-center group hover:border-blue-200 transition-all cursor-pointer bg-gray-50/50">
+                    <input type="file" id="pImgFile" accept="image/*" class="hidden">
+                    <label for="pImgFile" class="cursor-pointer block">
+                        <i class="fa-solid fa-cloud-arrow-up text-6xl text-blue-100 group-hover:text-blue-500 mb-6 block transition-all duration-500 transform group-hover:-translate-y-2"></i>
+                        <span class="text-blue-600 font-black block text-sm uppercase tracking-widest" id="fileName">Téléverser l'image du produit</span>
+                    </label>
+                </div>
+
+                <button onclick="addProduct()" id="saveBtn" class="w-full bg-green-600 text-white py-7 rounded-[30px] font-black text-xl shadow-2xl hover:bg-green-700 transition-all active:scale-95 uppercase tracking-widest">🚀 Mettre à jour le catalogue</button>
+                <div class="text-center">
+                    <button onclick="logoutAdmin()" class="text-red-400 text-[10px] font-black uppercase tracking-[0.3em] hover:text-red-600 transition-colors">Déconnexion de session</button>
+                </div>
             </div>
         </div>
     </div>
 
+    <a href="https://wa.me/213770762987" class="whatsapp-float">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
     <script>
-        // --- ضع بياناتك هنا ---
-        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-        const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // --- FIREBASE FULL ENGINE (الكل في الكل) ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXOljj0H5909iVD-0hMbIVsF_pjzSDtBg",
+            authDomain: "pharmacie-samy.firebaseapp.com",
+            projectId: "pharmacie-samy",
+            storageBucket: "pharmacie-samy.appspot.com",
+            messagingSenderId: "178950700829",
+            appId: "1:178950700829:web:e0b657ee0b206c2f642bf4"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const storage = firebase.storage();
 
         let allProducts = [];
-        let currentLocale = 'fr';
-        let currentCategory = null;
-        let isAdmin = localStorage.getItem('samy_is_admin') === 'true';
+        let isAdmin = localStorage.getItem('samy_admin_session') === 'true';
 
-        // جلب البيانات
+        // --- Core Application Functions ---
         async function fetchProducts() {
-            const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
-            if (!error) {
-                allProducts = data;
+            const grid = document.getElementById('productsGrid');
+            try {
+                const snap = await db.collection('products').orderBy('createdAt', 'desc').get();
+                allProducts = snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
                 renderGrid(allProducts);
-                if(isAdmin) document.body.classList.add('is-admin');
+            } catch (err) { 
+                grid.innerHTML = `<div class="col-span-full text-center py-20 bg-red-50 rounded-[40px] border border-red-100">
+                    <i class="fa-solid fa-triangle-exclamation text-red-400 text-4xl mb-4"></i>
+                    <p class="text-red-900 font-black uppercase text-xs tracking-widest">Erreur de Synchronisation Firebase</p>
+                    <p class="text-red-400 text-[10px] mt-2 italic font-medium">Vérifiez vos 'Security Rules' (read/write: if true)</p>
+                </div>`; 
             }
         }
 
-        // عرض الشبكة
         function renderGrid(products) {
             const grid = document.getElementById('productsGrid');
-            grid.innerHTML = '';
-            products.forEach(p => {
-                const name = currentLocale === 'ar' ? (p.name_ar || p.name_fr) : p.name_fr;
-                grid.innerHTML += `
-                    <div class="bg-white rounded-2xl p-4 product-card flex flex-col shadow-sm">
-                        <button onclick="deleteProduct('${p.id}')" class="admin-delete-btn"><i class="fa-solid fa-trash-can"></i></button>
-                        <div class="aspect-square mb-4 bg-gray-50 rounded-xl flex items-center justify-center overflow-hidden">
-                            <img src="${p.img_url || 'https://via.placeholder.com/200'}" class="max-h-full object-contain p-2">
+            if(products.length === 0) {
+                grid.innerHTML = `<p class="col-span-full text-center py-20 text-gray-300 font-bold uppercase tracking-widest">Aucun produit dans cette catégorie</p>`;
+                return;
+            }
+            grid.innerHTML = products.map(p => {
+                const waMsg = encodeURIComponent(`Bonjour Pharmacie Samy, je souhaite commander : ${p.name_fr} de la marque ${p.brand || '---'} au prix de ${p.price} DA.`);
+                return `
+                    <div class="product-card p-7 ${isAdmin ? 'is-admin' : ''}">
+                        <div onclick="deleteProduct('${p.id}')" class="delete-btn" title="Supprimer du stock"><i class="fa-solid fa-trash-can"></i></div>
+                        <div class="aspect-[4/5] bg-gray-50 rounded-[25px] mb-8 overflow-hidden flex items-center justify-center p-6 group-hover:bg-white transition-colors duration-500">
+                            <img src="${p.img || 'https://via.placeholder.com/400'}" class="max-h-full max-w-full object-contain mix-blend-multiply transform transition-transform duration-700 hover:scale-110" loading="lazy">
                         </div>
-                        <span class="text-[10px] text-blue-600 font-bold uppercase">${p.brand}</span>
-                        <h4 class="font-bold text-gray-800 text-sm mt-1 h-10 overflow-hidden line-clamp-2">${name}</h4>
-                        <div class="mt-4 pt-4 border-t flex justify-between items-center">
-                            <span class="text-xl font-bold pharma-blue">${p.price} DA</span>
-                            <a href="https://wa.me/213770762987?text=Commander: ${p.name_fr}" target="_blank" class="bg-green-500 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-1 shadow-sm">
-                                <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                        <div class="flex-grow">
+                            <span class="text-[10px] text-blue-600 font-black uppercase tracking-[0.25em] mb-3 block opacity-60">${p.brand || 'Premium Care'}</span>
+                            <h4 class="font-bold text-gray-900 text-xl leading-tight h-14 overflow-hidden mb-8 line-clamp-2 uppercase tracking-tighter">${p.name_fr}</h4>
+                        </div>
+                        <div class="mt-auto flex justify-between items-center pt-8 border-t border-gray-50">
+                            <div>
+                                <span class="text-[10px] text-gray-400 block font-black uppercase mb-1">Prix Pharmacie</span>
+                                <span class="text-3xl font-black pharma-blue tracking-tighter">${p.price} <small class="text-xs">DA</small></span>
+                            </div>
+                            <a href="https://wa.me/213770762987?text=${waMsg}" target="_blank" 
+                               class="bg-green-500 text-white w-16 h-16 rounded-2xl flex items-center justify-center hover:bg-green-600 transition-all shadow-xl shadow-green-100 transform active:scale-90">
+                               <i class="fa-brands fa-whatsapp text-3xl"></i>
                             </a>
                         </div>
-                    </div>`;
-            });
+                    </div>
+                `;
+            }).join('');
         }
 
-        // الفلترة
-        window.filterByCategory = function(category) {
-            currentCategory = category;
-            document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('active'));
-            const id = category === 'Maman & Bébé' ? 'cat-Maman' : 'cat-' + category;
-            document.getElementById(id).classList.add('active');
-
-            const filtered = allProducts.filter(p => p.category === category);
-            const brands = [...new Set(filtered.map(p => p.brand))].filter(b => b);
-            
-            const bar = document.getElementById('brands-bar');
-            const list = document.getElementById('brands-list');
-            bar.classList.remove('hidden');
-            list.innerHTML = `<button onclick="filterByBrand('all')" class="brand-pill active">Tout</button>`;
-            brands.forEach(b => list.innerHTML += `<button onclick="filterByBrand('${b}')" class="brand-pill">${b}</button>`);
-
-            document.getElementById('section-title').innerText = category;
-            renderGrid(filtered);
-        };
-
-        window.filterByBrand = function(brand) {
-            document.querySelectorAll('.brand-pill').forEach(p => p.classList.remove('active'));
-            event.target.classList.add('active');
-            let filtered = allProducts.filter(p => p.category === currentCategory);
-            if(brand !== 'all') filtered = filtered.filter(p => p.brand === brand);
-            renderGrid(filtered);
-        };
-
-        function searchProducts() {
-            const val = document.getElementById('searchInput').value.toLowerCase();
-            renderGrid(allProducts.filter(p => p.name_fr.toLowerCase().includes(val) || (p.brand && p.brand.toLowerCase().includes(val))));
-        }
-
-        // الأدمن
-        window.showAdmin = function() { 
-            document.getElementById('adminModal').classList.remove('hidden');
-            if(isAdmin) {
+        // --- Admin Security & Management ---
+        function handleLogin() {
+            if(document.getElementById('adminPass').value === "pharmaciesami001") {
+                isAdmin = true;
+                localStorage.setItem('samy_admin_session', 'true');
                 document.getElementById('loginArea').classList.add('hidden');
                 document.getElementById('adminPanel').classList.remove('hidden');
+                renderGrid(allProducts);
+            } else { 
+                alert("Accès refusé : Code de sécurité invalide."); 
+                document.getElementById('adminPass').value = "";
             }
-        };
-        window.closeAdmin = function() { document.getElementById('adminModal').classList.add('hidden'); };
+        }
 
-        async function handleLogin() {
-            const email = document.getElementById('adminEmail').value;
-            const pass = document.getElementById('adminPass').value;
-            const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
-            if(!error) { isAdmin = true; localStorage.setItem('samy_is_admin', 'true'); location.reload(); }
-            else { alert(error.message); }
+        function logoutAdmin() {
+            localStorage.removeItem('samy_admin_session');
+            location.reload();
         }
 
         async function addProduct() {
-            const data = {
-                name_fr: document.getElementById('pNameFr').value,
-                name_ar: document.getElementById('pNameAr').value,
-                price: parseFloat(document.getElementById('pPrice').value),
-                brand: document.getElementById('pBrand').value,
-                category: document.getElementById('pCat').value,
-                img_url: document.getElementById('pImg').value
-            };
-            const { error } = await supabase.from('products').insert([data]);
-            if(!error) location.reload(); else alert(error.message);
-        }
+            const btn = document.getElementById('saveBtn');
+            const file = document.getElementById('pImgFile').files[0];
+            const name = document.getElementById('pNameFr').value;
+            const price = document.getElementById('pPrice').value;
 
-        async function deleteProduct(id) {
-            if(confirm("Supprimer?")) {
-                const { error } = await supabase.from('products').delete().eq('id', id);
-                if(!error) { allProducts = allProducts.filter(p => p.id !== id); renderGrid(allProducts); }
+            if(!file || !name || !price) return alert("Formulaire incomplet : Photo, Nom et Prix sont obligatoires.");
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-2"></i> TRAITEMENT...`;
+
+            try {
+                // Phase 1: Storage Upload (Universal support for PNG/JPG/WebP)
+                const fileExtension = file.name.split('.').pop();
+                const fileName = `SAMY_${Date.now()}.${fileExtension}`;
+                const fileRef = storage.ref().child('products/' + fileName);
+                
+                const uploadTask = await fileRef.put(file);
+                const downloadURL = await uploadTask.ref.getDownloadURL();
+
+                // Phase 2: Firestore Record
+                await db.collection('products').add({
+                    name_fr: name,
+                    price: price,
+                    brand: document.getElementById('pBrand').value || "Marque Inconnue",
+                    category: document.getElementById('pCat').value,
+                    img: downloadURL,
+                    createdAt: new Date().toISOString()
+                });
+
+                alert("✅ Catalogue mis à jour avec succès !");
+                location.reload();
+            } catch(e) { 
+                console.error(e);
+                alert("❌ Erreur Critique : " + e.message); 
+                btn.disabled = false;
+                btn.innerText = "🚀 RÉESSAYER LA PUBLICATION";
             }
         }
 
-        function logout() { supabase.auth.signOut(); localStorage.removeItem('samy_is_admin'); location.reload(); }
+        async function deleteProduct(id) {
+            if(confirm("Action irréversible : Voulez-vous vraiment retirer ce produit du catalogue ?")) {
+                try {
+                    await db.collection('products').doc(id).delete();
+                    location.reload();
+                } catch(e) { alert("Erreur lors de la suppression."); }
+            }
+        }
 
+        // --- Filtering & UI Logic ---
+        function filterByCategory(cat) {
+            // Update UI Chips
+            document.querySelectorAll('.cat-chip').forEach(chip => {
+                chip.classList.remove('active');
+                if(chip.innerText === cat) chip.classList.add('active');
+            });
+
+            document.getElementById('section-title').innerText = cat === 'Tout' ? 'Catalogue' : cat;
+            
+            const filtered = cat === 'Tout' 
+                ? allProducts 
+                : allProducts.filter(p => p.category === cat);
+            
+            renderGrid(filtered);
+            window.location.hash = "products";
+        }
+
+        function searchProducts() {
+            const val = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allProducts.filter(p => 
+                p.name_fr.toLowerCase().includes(val) || 
+                (p.brand && p.brand.toLowerCase().includes(val))
+            );
+            renderGrid(filtered);
+        }
+
+        function showAdmin() { document.getElementById('adminModal').classList.remove('hidden'); }
+        function closeAdmin() { document.getElementById('adminModal').classList.add('hidden'); }
+        
+        document.getElementById('pImgFile').onchange = function() {
+            const fileNameDisplay = document.getElementById('fileName');
+            if(this.files[0]) {
+                fileNameDisplay.innerHTML = `<i class="fa-solid fa-check-circle text-green-500"></i> ${this.files[0].name}`;
+                fileNameDisplay.classList.add('text-green-600');
+            }
+        };
+
+        // --- Init ---
         window.onload = fetchProducts;
     </script>
 </body>
