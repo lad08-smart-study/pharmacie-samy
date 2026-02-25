@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PHARMACIE SAMY | Premium Showcase</title>
     
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
@@ -19,14 +17,12 @@
         .pharma-blue { color: var(--main-blue); }
         .bg-pharma { background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%); }
         
-        /* Hero Section Full Version */
         .hero-gradient { 
             background: linear-gradient(to right, rgba(13, 71, 161, 0.9), rgba(13, 71, 161, 0.4)), 
             url('https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=1920&auto=format&fit=crop'); 
             background-size: cover; background-position: center; min-height: 650px; display: flex; align-items: center;
         }
 
-        /* Product Cards Full Design */
         .product-card { 
             transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); 
             border: 1px solid #f1f5f9; background: white; border-radius: 30px; 
@@ -34,7 +30,6 @@
         }
         .product-card:hover { transform: translateY(-15px); box-shadow: 0 40px 80px rgba(13,71,161,0.12); border-color: var(--main-blue); }
         
-        /* Admin Elements */
         .delete-btn { 
             position: absolute; top: 15px; right: 15px; background: #ef4444; color: white; 
             width: 40px; height: 40px; border-radius: 50%; display: none; items-center; justify-content: center; 
@@ -42,7 +37,6 @@
         }
         .is-admin .delete-btn { display: flex; }
         
-        /* Buttons & Badges */
         .whatsapp-float { 
             position: fixed; bottom: 30px; right: 30px; background-color: var(--accent-green); 
             color: white; width: 70px; height: 70px; border-radius: 50%; display: flex; 
@@ -238,19 +232,11 @@
     </a>
 
     <script>
-        // --- FIREBASE FULL ENGINE (الكل في الكل) ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyDXOljj0H5909iVD-0hMbIVsF_pjzSDtBg",
-            authDomain: "pharmacie-samy.firebaseapp.com",
-            projectId: "pharmacie-samy",
-            storageBucket: "pharmacie-samy.appspot.com",
-            messagingSenderId: "178950700829",
-            appId: "1:178950700829:web:e0b657ee0b206c2f642bf4"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const storage = firebase.storage();
+        // --- SUPABASE CONFIG ---
+        const SB_URL = "YOUR_SUPABASE_PROJECT_URL"; // استبدله برابط مشروعك
+        const SB_KEY = "YOUR_SUPABASE_ANON_KEY";    // استبدله بمفتاح الـ Anon
+        
+        const supabase = Object.assign(window.supabase.createClient(SB_URL, SB_KEY));
 
         let allProducts = [];
         let isAdmin = localStorage.getItem('samy_admin_session') === 'true';
@@ -259,14 +245,20 @@
         async function fetchProducts() {
             const grid = document.getElementById('productsGrid');
             try {
-                const snap = await db.collection('products').orderBy('createdAt', 'desc').get();
-                allProducts = snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
+                const { data, error } = await supabase
+                    .from('products')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+                
+                allProducts = data;
                 renderGrid(allProducts);
             } catch (err) { 
                 grid.innerHTML = `<div class="col-span-full text-center py-20 bg-red-50 rounded-[40px] border border-red-100">
                     <i class="fa-solid fa-triangle-exclamation text-red-400 text-4xl mb-4"></i>
-                    <p class="text-red-900 font-black uppercase text-xs tracking-widest">Erreur de Synchronisation Firebase</p>
-                    <p class="text-red-400 text-[10px] mt-2 italic font-medium">Vérifiez vos 'Security Rules' (read/write: if true)</p>
+                    <p class="text-red-900 font-black uppercase text-xs tracking-widest">Erreur de Synchronisation Supabase</p>
+                    <p class="text-red-400 text-[10px] mt-2 italic font-medium">${err.message}</p>
                 </div>`; 
             }
         }
@@ -281,7 +273,7 @@
                 const waMsg = encodeURIComponent(`Bonjour Pharmacie Samy, je souhaite commander : ${p.name_fr} de la marque ${p.brand || '---'} au prix de ${p.price} DA.`);
                 return `
                     <div class="product-card p-7 ${isAdmin ? 'is-admin' : ''}">
-                        <div onclick="deleteProduct('${p.id}')" class="delete-btn" title="Supprimer du stock"><i class="fa-solid fa-trash-can"></i></div>
+                        <div onclick="deleteProduct('${p.id}', '${p.img}')" class="delete-btn" title="Supprimer du stock"><i class="fa-solid fa-trash-can"></i></div>
                         <div class="aspect-[4/5] bg-gray-50 rounded-[25px] mb-8 overflow-hidden flex items-center justify-center p-6 group-hover:bg-white transition-colors duration-500">
                             <img src="${p.img || 'https://via.placeholder.com/400'}" class="max-h-full max-w-full object-contain mix-blend-multiply transform transition-transform duration-700 hover:scale-110" loading="lazy">
                         </div>
@@ -335,23 +327,33 @@
             btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-2"></i> TRAITEMENT...`;
 
             try {
-                // Phase 1: Storage Upload (Universal support for PNG/JPG/WebP)
-                const fileExtension = file.name.split('.').pop();
-                const fileName = `SAMY_${Date.now()}.${fileExtension}`;
-                const fileRef = storage.ref().child('products/' + fileName);
+                // 1. Upload Image to Storage (Bucket name must be 'products')
+                const fileExt = file.name.split('.').pop();
+                const fileName = `samy_${Date.now()}.${fileExt}`;
                 
-                const uploadTask = await fileRef.put(file);
-                const downloadURL = await uploadTask.ref.getDownloadURL();
+                const { data: uploadData, error: uploadError } = await supabase.storage
+                    .from('products')
+                    .upload(fileName, file);
 
-                // Phase 2: Firestore Record
-                await db.collection('products').add({
-                    name_fr: name,
-                    price: price,
-                    brand: document.getElementById('pBrand').value || "Marque Inconnue",
-                    category: document.getElementById('pCat').value,
-                    img: downloadURL,
-                    createdAt: new Date().toISOString()
-                });
+                if (uploadError) throw uploadError;
+
+                // 2. Get Public URL
+                const { data: { publicUrl } } = supabase.storage
+                    .from('products')
+                    .getPublicUrl(fileName);
+
+                // 3. Insert into Database
+                const { error: insertError } = await supabase
+                    .from('products')
+                    .insert([{
+                        name_fr: name,
+                        price: price,
+                        brand: document.getElementById('pBrand').value || "Marque Inconnue",
+                        category: document.getElementById('pCat').value,
+                        img: publicUrl
+                    }]);
+
+                if (insertError) throw insertError;
 
                 alert("✅ Catalogue mis à jour avec succès !");
                 location.reload();
@@ -363,10 +365,16 @@
             }
         }
 
-        async function deleteProduct(id) {
+        async function deleteProduct(id, imgUrl) {
             if(confirm("Action irréversible : Voulez-vous vraiment retirer ce produit du catalogue ?")) {
                 try {
-                    await db.collection('products').doc(id).delete();
+                    // Delete from DB
+                    const { error } = await supabase
+                        .from('products')
+                        .delete()
+                        .eq('id', id);
+                    
+                    if (error) throw error;
                     location.reload();
                 } catch(e) { alert("Erreur lors de la suppression."); }
             }
@@ -374,7 +382,6 @@
 
         // --- Filtering & UI Logic ---
         function filterByCategory(cat) {
-            // Update UI Chips
             document.querySelectorAll('.cat-chip').forEach(chip => {
                 chip.classList.remove('active');
                 if(chip.innerText === cat) chip.classList.add('active');
@@ -410,7 +417,6 @@
             }
         };
 
-        // --- Init ---
         window.onload = fetchProducts;
     </script>
 </body>
