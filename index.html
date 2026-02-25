@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -15,24 +14,26 @@
         .pharma-blue { color: #0d47a1; }
         .bg-pharma { background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%); }
         .hero-gradient { background: linear-gradient(to right, rgba(13, 71, 161, 0.85), rgba(13, 71, 161, 0.4)), url('https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=1920&auto=format&fit=crop'); background-size: cover; background-position: center; }
-        .product-card { transition: all 0.3s ease; border: 1px solid #f1f5f9; }
+        .product-card { transition: all 0.3s ease; border: 1px solid #f1f5f9; position: relative; }
         .product-card:hover { transform: translateY(-8px); border-color: #0d47a1; box-shadow: 0 15px 30px rgba(13,71,161,0.1); }
         .whatsapp-float { position: fixed; bottom: 30px; right: 30px; background-color: #25d366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; items-center; justify-content: center; font-size: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000; transition: 0.3s; }
         .cat-card.active { border-color: #0d47a1; background-color: #eff6ff; }
+        .delete-btn { position: absolute; top: 10px; right: 10px; background: rgba(239, 68, 68, 0.9); color: white; width: 30px; height: 30px; border-radius: 50%; display: none; items-center; justify-content: center; z-index: 10; cursor: pointer; }
+        .is-admin .delete-btn { display: flex; }
     </style>
 </head>
-<body>
+<body class="">
 
     <nav class="bg-white/80 backdrop-blur-md shadow-sm border-b sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-2 cursor-pointer" onclick="resetFilters()">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="location.reload()">
                 <i class="fa-solid fa-mortar-pestle pharma-blue text-2xl"></i>
                 <h1 class="text-xl font-bold pharma-blue tracking-tighter">PHARMACIE SAMY</h1>
             </div>
             <div class="flex items-center gap-4">
-                <button onclick="switchLang('fr')" class="text-xs font-bold px-2 py-1 rounded hover:bg-gray-100">FR</button>
-                <button onclick="switchLang('ar')" class="text-xs font-bold px-2 py-1 rounded hover:bg-gray-100">AR</button>
-                <button onclick="showAdmin()" class="text-gray-400 hover:text-blue-600 ml-2"><i class="fa-solid fa-user-lock"></i></button>
+                <button onclick="switchLang('fr')" class="text-xs font-bold px-2 py-1 rounded hover:bg-gray-100 border">FR</button>
+                <button onclick="switchLang('ar')" class="text-xs font-bold px-2 py-1 rounded hover:bg-gray-100 border">AR</button>
+                <button onclick="showAdmin()" class="text-gray-400 hover:text-blue-600 ml-2 transition-colors"><i class="fa-solid fa-gear"></i></button>
             </div>
         </div>
     </nav>
@@ -45,7 +46,7 @@
                 <p id="hero-sub" class="text-blue-50 text-lg mb-8 opacity-90">Découvrez notre sélection exclusive de produits Dermocosmétiques et soins pharmaceutiques.</p>
                 <div class="flex gap-4">
                     <a href="#products" class="bg-white text-blue-900 px-8 py-4 rounded-xl font-bold shadow-lg hover:scale-105 transition">Explorer</a>
-                    <a href="https://wa.me/213770762987" class="bg-green-500 text-white px-8 py-4 rounded-xl font-bold flex items-center gap-2 hover:scale-105 transition"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+                    <a href="https://wa.me/213770762987" class="bg-green-500 text-white px-8 py-4 rounded-xl font-bold flex items-center gap-2 hover:scale-105 transition shadow-lg"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
                 </div>
             </div>
         </div>
@@ -53,19 +54,19 @@
 
     <section class="py-12 bg-white border-b">
         <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div onclick="filterByCategory('Dermocosmétique')" id="cat-Dermocosmétique" class="cat-card text-center p-6 border rounded-2xl cursor-pointer hover:shadow-md transition">
+            <div onclick="filterByCategory('Dermocosmétique')" class="cat-card text-center p-6 border rounded-2xl cursor-pointer hover:shadow-md transition">
                 <i class="fa-solid fa-pump-medical pharma-blue text-3xl mb-3"></i>
                 <h3 class="font-bold text-sm">Dermocosmétique</h3>
             </div>
-            <div onclick="filterByCategory('Maman & Bébé')" id="cat-Maman" class="cat-card text-center p-6 border rounded-2xl cursor-pointer hover:shadow-md transition">
+            <div onclick="filterByCategory('Maman & Bébé')" class="cat-card text-center p-6 border rounded-2xl cursor-pointer hover:shadow-md transition">
                 <i class="fa-solid fa-baby-carriage pharma-blue text-3xl mb-3"></i>
                 <h3 class="font-bold text-sm">Maman & Bébé</h3>
             </div>
-            <div onclick="filterByCategory('Hygiène')" id="cat-Hygiène" class="cat-card text-center p-6 border rounded-2xl cursor-pointer hover:shadow-md transition">
+            <div onclick="filterByCategory('Hygiène')" class="cat-card text-center p-6 border rounded-2xl cursor-pointer hover:shadow-md transition">
                 <i class="fa-solid fa-tooth pharma-blue text-3xl mb-3"></i>
                 <h3 class="font-bold text-sm">Hygiène</h3>
             </div>
-            <div onclick="filterByCategory('Compléments')" id="cat-Compléments" class="cat-card text-center p-6 border rounded-2xl cursor-pointer hover:shadow-md transition">
+            <div onclick="filterByCategory('Compléments')" class="cat-card text-center p-6 border rounded-2xl cursor-pointer hover:shadow-md transition">
                 <i class="fa-solid fa-capsules pharma-blue text-3xl mb-3"></i>
                 <h3 class="font-bold text-sm">Compléments</h3>
             </div>
@@ -96,7 +97,7 @@
                 </ul>
             </div>
             <div>
-                <h3 class="font-bold mb-6 uppercase text-xs tracking-widest text-gray-400">Social</h3>
+                <h3 class="font-bold mb-6 uppercase text-xs tracking-widest text-gray-400">Suivez-nous</h3>
                 <div class="flex gap-4">
                     <a href="https://www.instagram.com/pharmaciesamy/" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-pink-500 hover:text-white transition text-xl"><i class="fa-brands fa-instagram"></i></a>
                     <a href="https://www.tiktok.com/@pharmacie.samy" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-black hover:text-white transition text-xl"><i class="fa-brands fa-tiktok"></i></a>
@@ -104,41 +105,43 @@
                 </div>
             </div>
         </div>
-        <div class="text-center text-gray-400 text-xs border-t pt-8">© 2026 PHARMACIE SAMY</div>
+        <div class="text-center text-gray-400 text-xs border-t pt-8 uppercase tracking-widest">© 2026 Pharmacie Samy | Designed for excellence</div>
     </footer>
 
     <a href="https://wa.me/213770762987" class="whatsapp-float" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
 
-    <div id="adminModal" class="fixed inset-0 bg-black/60 hidden z-[100] flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-lg w-full p-8 shadow-2xl relative">
-            <button onclick="closeAdmin()" class="absolute top-4 right-6 text-gray-400 text-2xl">&times;</button>
+    <div id="adminModal" class="fixed inset-0 bg-black/70 hidden z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-8 shadow-2xl relative border border-gray-100">
+            <button onclick="closeAdmin()" class="absolute top-4 right-6 text-gray-400 text-3xl font-light">×</button>
+            
             <div id="loginArea">
-                <h3 class="text-2xl font-bold mb-6 text-gray-800 text-center">Admin Access</h3>
-                <input type="email" id="adminEmail" placeholder="Email" class="w-full p-4 bg-gray-50 border rounded-xl mb-4 outline-none">
-                <input type="password" id="adminPass" placeholder="Password" class="w-full p-4 bg-gray-50 border rounded-xl mb-6 outline-none">
-                <button onclick="handleLogin()" id="loginBtn" class="w-full bg-pharma text-white py-4 rounded-xl font-bold shadow-lg">Entrer</button>
+                <h3 class="text-2xl font-bold mb-6 text-gray-800 text-center">Gestion du Site</h3>
+                <p class="text-center text-gray-400 text-sm mb-6">Entrez le mot de passe pour modifier</p>
+                <input type="password" id="adminPass" placeholder="Mot de passe" class="w-full p-4 bg-gray-50 border rounded-xl mb-6 outline-none focus:ring-2 focus:ring-blue-600 transition-all text-center">
+                <button onclick="handleLogin()" class="w-full bg-pharma text-white py-4 rounded-xl font-bold shadow-lg hover:shadow-blue-200 transition-all">Accéder</button>
             </div>
-            <div id="adminPanel" class="hidden space-y-4">
-                <h3 class="text-xl font-bold mb-4">Gestion des Produits</h3>
-                <input type="text" id="pNameFr" placeholder="Nom FR" class="w-full p-3 border rounded-lg">
-                <input type="text" id="pNameAr" placeholder="الاسم بالعربية" class="w-full p-3 border rounded-lg text-right">
-                <input type="number" id="pPrice" placeholder="Prix (DA)" class="w-full p-3 border rounded-lg">
-                <input type="text" id="pBrand" placeholder="Marque (Vichy...)" class="w-full p-3 border rounded-lg">
-                <select id="pCat" class="w-full p-3 border rounded-lg">
+
+            <div id="adminPanel" class="hidden space-y-4 max-h-[70vh] overflow-y-auto pr-2">
+                <h3 class="text-xl font-bold mb-4 text-blue-900 border-b pb-2">Ajouter un nouveau produit</h3>
+                <input type="text" id="pNameFr" placeholder="Nom du produit (Ex: Vichy Mineral 89)" class="w-full p-3 border rounded-lg outline-none">
+                <input type="text" id="pNameAr" placeholder="اسم المنتج (بالعربية)" class="w-full p-3 border rounded-lg text-right outline-none">
+                <input type="number" id="pPrice" placeholder="Prix en DA" class="w-full p-3 border rounded-lg outline-none">
+                <input type="text" id="pBrand" placeholder="Marque (Ex: CeraVe, Vichy...)" class="w-full p-3 border rounded-lg outline-none">
+                <select id="pCat" class="w-full p-3 border rounded-lg outline-none bg-white">
                     <option value="Dermocosmétique">Dermocosmétique</option>
                     <option value="Maman & Bébé">Maman & Bébé</option>
                     <option value="Hygiène">Hygiène</option>
                     <option value="Compléments">Compléments</option>
                 </select>
-                <input type="text" id="pImg" placeholder="Lien direct Image (URL)" class="w-full p-3 border rounded-lg">
-                <button onclick="addProduct()" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold shadow-lg">Publier sur le site</button>
-                <button onclick="firebase.auth().signOut().then(() => location.reload())" class="w-full text-red-500 text-sm mt-4">Déconnexion</button>
+                <input type="text" id="pImg" placeholder="Lien direct de l'image (URL)" class="w-full p-3 border rounded-lg outline-none">
+                <button onclick="addProduct()" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold shadow-lg hover:bg-green-700 transition-all">✅ Publier le produit</button>
+                <button onclick="logoutAdmin()" class="w-full text-red-400 text-sm mt-4 hover:underline">Déconnexion</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- FIREBASE INITIALIZATION ---
+        // --- FIREBASE CONFIG ---
         const firebaseConfig = {
             apiKey: "AIzaSyDXOljj0H5909iVD-0hMbIVsF_pjzSDtBg",
             authDomain: "pharmacie-samy.firebaseapp.com",
@@ -149,31 +152,32 @@
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        const auth = firebase.auth();
 
         let currentLocale = 'fr';
         let allProducts = [];
+        let isAdmin = false;
 
-        // --- CORE FUNCTIONS ---
+        // --- FETCH PRODUCTS ---
         async function fetchProducts() {
             const grid = document.getElementById('productsGrid');
-            grid.innerHTML = '<div class="col-span-full text-center py-10"><i class="fa-solid fa-circle-notch animate-spin text-3xl pharma-blue"></i></div>';
+            grid.innerHTML = '<div class="col-span-full text-center py-20"><i class="fa-solid fa-circle-notch animate-spin text-4xl pharma-blue"></i></div>';
             
             try {
                 const snapshot = await db.collection('products').orderBy('createdAt', 'desc').get();
                 allProducts = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
                 renderGrid(allProducts);
             } catch (err) {
-                grid.innerHTML = '<p class="text-center col-span-full">Erreur lors du chargement des produits.</p>';
+                grid.innerHTML = '<p class="text-center col-span-full py-20">Erreur : Vérifiez votre connexion.</p>';
             }
         }
 
+        // --- RENDER GRID ---
         function renderGrid(products) {
             const grid = document.getElementById('productsGrid');
             grid.innerHTML = '';
             
             if(products.length === 0) {
-                grid.innerHTML = '<p class="col-span-full text-center text-gray-400 py-10 font-bold">Aucun produit trouvé.</p>';
+                grid.innerHTML = '<p class="col-span-full text-center text-gray-400 py-10">Aucun produit ne correspond.</p>';
                 return;
             }
 
@@ -182,16 +186,17 @@
                 const waMsg = encodeURIComponent(`Bonjour Pharmacie Samy, je souhaite réserver : ${p.name_fr}\nMarque: ${p.brand}\nPrix: ${p.price} DA`);
                 
                 grid.innerHTML += `
-                    <div class="bg-white rounded-2xl p-4 product-card flex flex-col shadow-sm">
+                    <div class="bg-white rounded-2xl p-4 product-card flex flex-col shadow-sm ${isAdmin ? 'is-admin' : ''}">
+                        <div onclick="deleteProduct('${p.id}')" class="delete-btn" title="Supprimer"><i class="fa-solid fa-trash text-xs"></i></div>
                         <div class="aspect-square mb-4 rounded-xl bg-gray-50 flex items-center justify-center overflow-hidden">
-                            <img src="${p.images || 'https://via.placeholder.com/300?text=Produit'}" class="max-h-full max-w-full object-contain p-2">
+                            <img src="${p.images || 'https://via.placeholder.com/300?text=Produit'}" class="max-h-full max-w-full object-contain p-2" loading="lazy">
                         </div>
-                        <span class="text-[10px] text-blue-600 font-extrabold uppercase tracking-tighter">${p.brand || 'Pharmacie Samy'}</span>
+                        <span class="text-[10px] text-blue-600 font-extrabold uppercase tracking-widest">${p.brand || 'Pharmacie Samy'}</span>
                         <h4 class="font-bold text-gray-800 text-sm mt-1 h-10 overflow-hidden line-clamp-2">${name}</h4>
                         <div class="mt-4 pt-4 border-t flex justify-between items-center">
                             <span class="text-xl font-bold pharma-blue">${p.price} DA</span>
                             <a href="https://wa.me/213770762987?text=${waMsg}" target="_blank" 
-                               class="bg-green-500 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-green-600 transition flex items-center gap-1 shadow-sm">
+                               class="bg-green-500 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-green-600 transition shadow-sm flex items-center gap-1">
                                <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp
                             </a>
                         </div>
@@ -200,19 +205,66 @@
             });
         }
 
-        // --- FILTERING LOGIC ---
+        // --- ADMIN ACCESS ---
+        const SECRET_KEY = "pharmaciesami001";
+
+        function handleLogin() {
+            const pass = document.getElementById('adminPass').value;
+            if (pass === SECRET_KEY) {
+                isAdmin = true;
+                document.getElementById('loginArea').classList.add('hidden');
+                document.getElementById('adminPanel').classList.remove('hidden');
+                renderGrid(allProducts); // Refresh to show delete buttons
+                localStorage.setItem('pharmacy_admin', 'true');
+            } else {
+                alert("❌ Mot de passe incorrect");
+            }
+        }
+
+        function logoutAdmin() {
+            isAdmin = false;
+            localStorage.removeItem('pharmacy_admin');
+            location.reload();
+        }
+
+        // --- CRUD OPERATIONS ---
+        async function addProduct() {
+            const data = {
+                name_fr: document.getElementById('pNameFr').value,
+                name_ar: document.getElementById('pNameAr').value,
+                price: document.getElementById('pPrice').value,
+                brand: document.getElementById('pBrand').value,
+                category: document.getElementById('pCat').value,
+                images: document.getElementById('pImg').value,
+                createdAt: new Date().toISOString()
+            };
+
+            if(!data.name_fr || !data.price || !data.brand) {
+                alert("Veuillez remplir au moins le Nom, le Prix et la Marque.");
+                return;
+            }
+
+            try {
+                await db.collection('products').add(data);
+                alert("✅ Produit ajouté !");
+                location.reload();
+            } catch(e) { alert("Erreur Firestore: " + e.message); }
+        }
+
+        async function deleteProduct(id) {
+            if(confirm("🗑️ Supprimer définitivement ce produit ?")) {
+                await db.collection('products').doc(id).delete();
+                allProducts = allProducts.filter(p => p.id !== id);
+                renderGrid(allProducts);
+            }
+        }
+
+        // --- FILTERING ---
         function filterByCategory(category) {
-            document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('active'));
             const filtered = allProducts.filter(p => p.category === category);
             document.getElementById('section-title').innerText = category;
             renderGrid(filtered);
             window.location.hash = "products";
-        }
-
-        function resetFilters() {
-            document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('active'));
-            document.getElementById('section-title').innerText = "Tous les produits";
-            renderGrid(allProducts);
         }
 
         function searchProducts() {
@@ -225,48 +277,7 @@
             renderGrid(filtered);
         }
 
-        // --- ADMIN FUNCTIONS ---
-        async function handleLogin() {
-            const email = document.getElementById('adminEmail').value;
-            const pass = document.getElementById('adminPass').value;
-            const btn = document.getElementById('loginBtn');
-
-            if(email !== "drlokman6@gmail.com") {
-                alert("Accès refusé : Email non autorisé.");
-                return;
-            }
-
-            btn.innerText = "Vérification...";
-            try {
-                await auth.signInWithEmailAndPassword(email, pass);
-                document.getElementById('loginArea').classList.add('hidden');
-                document.getElementById('adminPanel').classList.remove('hidden');
-            } catch(e) {
-                alert("Erreur: " + e.message);
-                btn.innerText = "Entrer";
-            }
-        }
-
-        async function addProduct() {
-            const data = {
-                name_fr: document.getElementById('pNameFr').value,
-                name_ar: document.getElementById('pNameAr').value,
-                price: document.getElementById('pPrice').value,
-                brand: document.getElementById('pBrand').value,
-                category: document.getElementById('pCat').value,
-                images: document.getElementById('pImg').value,
-                createdAt: new Date().toISOString()
-            };
-
-            if(!data.name_fr || !data.price) { alert("Nom et Prix obligatoires !"); return; }
-
-            try {
-                await db.collection('products').add(data);
-                alert("✅ Produit ajouté avec succès !");
-                location.reload();
-            } catch(e) { alert("Erreur Firestore : " + e.message); }
-        }
-
+        // --- UI HELPERS ---
         function showAdmin() { document.getElementById('adminModal').classList.remove('hidden'); }
         function closeAdmin() { document.getElementById('adminModal').classList.add('hidden'); }
 
@@ -277,16 +288,15 @@
             renderGrid(allProducts);
         }
 
-        // Initialize on Load
-        window.onload = fetchProducts;
-
-        // Auto-check if already logged in
-        auth.onAuthStateChanged(user => {
-            if(user && user.email === "drlokman6@gmail.com") {
+        // On Load
+        window.onload = () => {
+            fetchProducts();
+            if(localStorage.getItem('pharmacy_admin') === 'true') {
+                isAdmin = true;
                 document.getElementById('loginArea').classList.add('hidden');
                 document.getElementById('adminPanel').classList.remove('hidden');
             }
-        });
+        };
     </script>
 </body>
 </html>
