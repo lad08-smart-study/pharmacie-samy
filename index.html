@@ -13,17 +13,18 @@
 
     <style>
         :root { --main-blue: #0d47a1; --accent-green: #25d366; }
-        body { font-family: 'Inter', 'Noto Sans Arabic', sans-serif; background-color: #fcfdfe; scroll-behavior: smooth; overflow-x: hidden; }
+        body { font-family: 'Inter', 'Noto Sans Arabic', sans-serif; background-color: #fcfdfe; scroll-behavior: smooth; }
         .pharma-blue { color: var(--main-blue); }
         .bg-pharma { background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%); }
         
-        /* التصميم الطويل للأقسام */
+        /* Hero Section Full Design */
         .hero-gradient { 
             background: linear-gradient(to right, rgba(13, 71, 161, 0.95), rgba(13, 71, 161, 0.6)), 
             url('https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=1920'); 
             background-size: cover; background-position: center; min-height: 700px; display: flex; align-items: center;
         }
 
+        /* Product Card Design */
         .product-card { 
             transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); 
             border: 1px solid #f1f5f9; background: white; border-radius: 40px; 
@@ -31,13 +32,15 @@
         }
         .product-card:hover { transform: translateY(-15px); box-shadow: 0 40px 80px rgba(13,71,161,0.12); border-color: var(--main-blue); }
         
-        /* أزرار الإدارة */
+        /* Delete Button - Hidden by default */
         .delete-btn { 
             position: absolute; top: 15px; right: 15px; background: #ef4444; color: white; 
-            width: 40px; height: 40px; border-radius: 50%; display: none; items-center; justify-content: center; 
+            width: 45px; height: 45px; border-radius: 50%; display: none; align-items: center; justify-content: center; 
             z-index: 50; border: 3px solid white; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-size: 1.2rem;
         }
-        .is-admin .delete-btn { display: flex; }
+        /* Show delete button when admin class is active */
+        .is-admin .delete-btn { display: flex !important; }
         
         .whatsapp-float { 
             position: fixed; bottom: 30px; right: 30px; background-color: var(--accent-green); 
@@ -50,14 +53,7 @@
         .cat-chip { transition: 0.3s; cursor: pointer; border: 1px solid #f1f5f9; white-space: nowrap; background: white; color: #64748b; }
         .cat-chip:hover, .cat-chip.active { background: var(--main-blue); color: white; border-color: var(--main-blue); transform: scale(1.05); }
 
-        #adminTrigger { cursor: pointer; transition: 0.3s; }
-        #adminTrigger:active { transform: scale(0.8); }
-
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        
-        /* تحسين الأنميشن */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade { animation: fadeIn 0.8s ease-out forwards; }
     </style>
 </head>
 <body>
@@ -72,7 +68,7 @@
                     <h1 class="text-3xl font-black pharma-blue tracking-tighter uppercase leading-none">PHARMACIE SAMY</h1>
                     <div class="flex items-center gap-2 mt-1">
                         <span class="w-2 h-2 bg-green-500 rounded-full animate-ping"></span>
-                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Les Sources, Bir Mourad Rais</p>
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest text-left">Les Sources, Bir Mourad Rais</p>
                     </div>
                 </div>
             </div>
@@ -86,7 +82,7 @@
 
     <header class="hero-gradient text-white px-6">
         <div class="max-w-7xl mx-auto w-full py-24">
-            <div class="max-w-4xl animate-fade">
+            <div class="max-w-4xl">
                 <h2 class="text-7xl md:text-9xl font-black mb-8 leading-[0.85] tracking-tighter uppercase">
                     Pharmacie <br> <span class="text-blue-400">Samy</span>
                 </h2>
@@ -95,8 +91,8 @@
                     <span class="font-bold text-green-400">Ouvert 7j/7 jusqu'à 00:00</span>
                 </p>
                 <div class="flex flex-wrap gap-6">
-                    <a href="#products" class="bg-white text-blue-900 px-16 py-6 rounded-[30px] font-black shadow-2xl hover:bg-blue-50 transition transform hover:-translate-y-2 text-lg text-center min-w-[200px]">CATALOGUE</a>
-                    <a href="https://wa.me/213770762987" class="bg-green-500 text-white px-12 py-6 rounded-[30px] font-black flex items-center justify-center gap-4 shadow-2xl hover:bg-green-600 transition transform hover:-translate-y-2 text-lg min-w-[200px]"><i class="fa-brands fa-whatsapp text-3xl"></i> WHATSAPP</a>
+                    <a href="#products" class="bg-white text-blue-900 px-16 py-6 rounded-[30px] font-black shadow-2xl hover:bg-blue-50 transition transform hover:-translate-y-2 text-lg text-center min-w-[220px]">CATALOGUE</a>
+                    <a href="https://wa.me/213770762987" class="bg-green-500 text-white px-12 py-6 rounded-[30px] font-black flex items-center justify-center gap-4 shadow-2xl hover:bg-green-600 transition transform hover:-translate-y-2 text-lg min-w-[220px]"><i class="fa-brands fa-whatsapp text-3xl"></i> WHATSAPP</a>
                 </div>
             </div>
         </div>
@@ -141,56 +137,70 @@
             </div>
 
             <div id="adminPanel" class="hidden space-y-6">
-                <h3 class="text-2xl font-black text-blue-900 border-b pb-4 uppercase">Ajouter au Stock</h3>
-                <input type="text" id="pName" placeholder="Nom du produit" class="w-full p-5 bg-gray-50 rounded-2xl outline-none font-bold">
-                <input type="text" id="pBrand" placeholder="Marque" class="w-full p-5 bg-gray-50 rounded-2xl outline-none font-bold">
-                <input type="number" id="pPrice" placeholder="Prix (DA)" class="w-full p-5 bg-gray-50 rounded-2xl outline-none font-black text-2xl">
-                <select id="pCat" class="w-full p-5 bg-gray-50 rounded-2xl font-bold">
-                    <option>Dermocosmétique</option>
-                    <option>Maman & Bébé</option>
-                    <option>Hygiène</option>
-                    <option>Santé</option>
-                </select>
+                <h3 class="text-2xl font-black text-blue-900 border-b pb-4 uppercase italic">Ajouter au Stock</h3>
                 
-                <div class="p-6 border-2 border-dashed border-blue-200 rounded-3xl text-center">
-                    <input type="file" id="pImgFile" accept="image/*" class="w-full text-sm text-gray-400">
-                    <p class="text-[10px] uppercase font-black mt-2 text-blue-400">Image du produit (Obligatoire)</p>
+                <div>
+                    <label class="text-[10px] font-black uppercase text-gray-400 ml-2">Nom du produit</label>
+                    <input type="text" id="pName" placeholder="Ex: CeraVe Hydrating Cleanser" class="w-full p-5 bg-gray-50 rounded-2xl outline-none font-bold border-2 border-transparent focus:border-blue-600">
+                </div>
+                
+                <div>
+                    <label class="text-[10px] font-black uppercase text-gray-400 ml-2">Marque</label>
+                    <input type="text" id="pBrand" placeholder="Ex: CeraVe" class="w-full p-5 bg-gray-50 rounded-2xl outline-none font-bold border-2 border-transparent focus:border-blue-600">
                 </div>
 
-                <button onclick="addProduct()" id="saveBtn" class="w-full bg-green-600 text-white py-6 rounded-3xl font-black text-xl shadow-xl uppercase transition-all active:scale-95">🚀 Publier sur le Site</button>
-                <button onclick="logoutAdmin()" class="w-full text-red-400 font-bold uppercase text-xs mt-4">Déconnexion de la session</button>
+                <div>
+                    <label class="text-[10px] font-black uppercase text-gray-400 ml-2">Prix (DA)</label>
+                    <input type="number" id="pPrice" placeholder="Ex: 3500" class="w-full p-5 bg-gray-50 rounded-2xl outline-none font-black text-2xl border-2 border-transparent focus:border-blue-600 text-blue-800">
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-black uppercase text-gray-400 ml-2">Catégorie</label>
+                    <select id="pCat" class="w-full p-5 bg-gray-50 rounded-2xl font-bold outline-none border-2 border-transparent focus:border-blue-600">
+                        <option>Dermocosmétique</option>
+                        <option>Maman & Bébé</option>
+                        <option>Hygiène</option>
+                        <option>Santé</option>
+                    </select>
+                </div>
+
+                <div class="p-6 border-4 border-dashed border-gray-100 rounded-3xl text-center bg-gray-50 group hover:border-blue-200 transition-all">
+                    <input type="file" id="pImgFile" accept="image/*" class="w-full text-sm text-gray-400 cursor-pointer">
+                    <p class="text-[10px] font-black mt-3 text-blue-400 uppercase tracking-widest">Photo du produit (Format Image)</p>
+                </div>
+
+                <button onclick="addProduct()" id="saveBtn" class="w-full bg-green-600 text-white py-6 rounded-3xl font-black text-xl shadow-xl uppercase transition-all active:scale-95">🚀 Publier maintenant</button>
+                <button onclick="logoutAdmin()" class="w-full text-red-400 font-bold uppercase text-[10px] mt-4 tracking-widest">Se déconnecter</button>
             </div>
         </div>
     </div>
 
-    <a href="https://wa.me/213770762987" class="whatsapp-float">
-        <i class="fa-brands fa-whatsapp"></i>
-    </a>
-
     <footer class="bg-white border-t py-20 mt-20">
         <div class="max-w-7xl mx-auto px-6 text-center">
             <h3 class="text-4xl font-black pharma-blue mb-4 uppercase">Pharmacie Samy</h3>
-            <p class="text-gray-400 font-medium mb-10">L'adresse de confiance pour votre dermo-cosmétique à Bir Mourad Rais.</p>
-            <div class="flex justify-center gap-10 text-gray-300">
-                <i class="fa-solid fa-location-dot"> Les Sources</i>
-                <i class="fa-solid fa-phone"> 0770 76 29 87</i>
-                <i class="fa-solid fa-clock"> 08:00 - 00:00</i>
+            <p class="text-gray-400 font-medium mb-10 italic">"Votre beauté mérite l'excellence médicale."</p>
+            <div class="flex flex-col md:flex-row justify-center gap-10 text-gray-400 text-sm font-black uppercase tracking-widest">
+                <span><i class="fa-solid fa-map-pin text-blue-600 mr-2"></i> Les Sources, Alger</span>
+                <span><i class="fa-solid fa-clock text-blue-600 mr-2"></i> 08:00 - 00:00</span>
+                <span><i class="fa-solid fa-phone text-blue-600 mr-2"></i> 0770 76 29 87</span>
             </div>
         </div>
     </footer>
 
+    <a href="https://wa.me/213770762987" class="whatsapp-float"><i class="fa-brands fa-whatsapp"></i></a>
+
     <script>
-        // --- تهيئة Supabase ---
+        // --- SUPABASE ENGINE ---
         const SB_URL = 'YOUR_SUPABASE_URL'; 
         const SB_KEY = 'YOUR_SUPABASE_ANON_KEY';
-        const supabase = window.supabase.createClient(SB_URL, SB_KEY);
+        const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
         let allProducts = [];
-        let isAdmin = localStorage.getItem('samy_admin_session') === 'true';
+        let isAdminActive = localStorage.getItem('samy_auth') === 'true';
 
-        // جلب البيانات بالكامل
+        // 1. Fetch
         async function fetchProducts() {
-            const { data, error } = await supabase
+            const { data, error } = await supabaseClient
                 .from('products')
                 .select('*')
                 .order('created_at', { ascending: false });
@@ -201,44 +211,43 @@
             }
         }
 
-        // رسم الشبكة (Grid) بالكامل مع أزرار الحذف
+        // 2. Render
         function renderGrid(products) {
             const grid = document.getElementById('productsGrid');
             if(products.length === 0) {
-                grid.innerHTML = `<p class="col-span-full text-center py-20 text-gray-300 font-bold">AUCUN PRODUIT TROUVÉ</p>`;
+                grid.innerHTML = `<p class="col-span-full text-center py-20 text-gray-300 font-bold uppercase">Aucun produit en stock</p>`;
                 return;
             }
             grid.innerHTML = products.map(p => `
-                <div class="product-card p-8 ${isAdmin ? 'is-admin' : ''}">
-                    <div onclick="deleteProduct('${p.id}')" class="delete-btn" title="Supprimer"><i class="fa-solid fa-trash"></i></div>
+                <div class="product-card p-8 ${isAdminActive ? 'is-admin' : ''}">
+                    <div onclick="deleteProduct('${p.id}')" class="delete-btn"><i class="fa-solid fa-trash-can"></i></div>
                     <div class="aspect-square bg-gray-50 rounded-[35px] mb-8 flex items-center justify-center p-6">
-                        <img src="${p.img_url}" class="max-h-full max-w-full object-contain transition-transform duration-500 hover:scale-110" loading="lazy">
+                        <img src="${p.img_url}" class="max-h-full max-w-full object-contain transform transition-transform duration-500 hover:scale-110">
                     </div>
-                    <div class="flex-grow">
+                    <div class="flex-grow text-left">
                         <span class="text-[10px] text-blue-600 font-black uppercase tracking-widest opacity-60">${p.brand || 'Premium'}</span>
                         <h4 class="font-bold text-gray-900 text-xl leading-tight h-14 overflow-hidden mt-2 uppercase tracking-tighter">${p.name}</h4>
                     </div>
-                    <div class="mt-8 flex justify-between items-center pt-6 border-t">
+                    <div class="mt-8 flex justify-between items-center pt-6 border-t border-gray-50">
                         <span class="text-3xl font-black pharma-blue tracking-tighter">${p.price} <small class="text-xs">DA</small></span>
-                        <a href="https://wa.me/213770762987?text=Commande: ${p.name}" class="bg-green-500 text-white w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg transform active:scale-90 transition-transform"><i class="fa-brands fa-whatsapp text-2xl"></i></a>
+                        <a href="https://wa.me/213770762987?text=Commande: ${p.name}" class="bg-green-500 text-white w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg active:scale-90 transition-all"><i class="fa-brands fa-whatsapp text-2xl"></i></a>
                     </div>
                 </div>
             `).join('');
         }
 
-        // تسجيل الدخول للإدارة
-        async function handleLogin() {
-            const pin = document.getElementById('adminPass').value;
-            if(pin === "pharmaciesami001") {
-                isAdmin = true;
-                localStorage.setItem('samy_admin_session', 'true');
+        // 3. Login
+        function handleLogin() {
+            if(document.getElementById('adminPass').value === "pharmaciesami001") {
+                isAdminActive = true;
+                localStorage.setItem('samy_auth', 'true');
                 document.getElementById('loginArea').classList.add('hidden');
                 document.getElementById('adminPanel').classList.remove('hidden');
-                renderGrid(allProducts); // لتظهر أزرار الحذف فوراً
-            } else { alert("Code Secret Incorrect"); }
+                renderGrid(allProducts); // Force update to show delete buttons
+            } else { alert("Code incorrect"); }
         }
 
-        // إضافة منتج جديد (رفع صورة + بيانات)
+        // 4. Add (Fixed & Full)
         async function addProduct() {
             const file = document.getElementById('pImgFile').files[0];
             const name = document.getElementById('pName').value;
@@ -247,22 +256,21 @@
             const cat = document.getElementById('pCat').value;
             const btn = document.getElementById('saveBtn');
 
-            if(!file || !name || !price) return alert("Veuillez remplir tous les champs et ajouter une photo !");
+            if(!file || !name || !price) return alert("Champs manquants !");
             
-            btn.disabled = true; 
-            btn.innerText = "CHARGEMENT (PATIENTEZ)...";
+            btn.disabled = true; btn.innerText = "CHARGEMENT...";
 
             try {
-                // 1. رفع الصورة إلى الـ Bucket (يجب تسميته product-images)
+                // Upload image
                 const fileName = `${Date.now()}_${file.name}`;
-                const { data: uploadData, error: upErr } = await supabase.storage.from('product-images').upload(fileName, file);
+                const { data: uploadData, error: upErr } = await supabaseClient.storage.from('product-images').upload(fileName, file);
                 if (upErr) throw upErr;
 
-                // 2. الحصول على الرابط العام للصورة
-                const { data: urlData } = supabase.storage.from('product-images').getPublicUrl(fileName);
+                // URL
+                const { data: urlData } = supabaseClient.storage.from('product-images').getPublicUrl(fileName);
 
-                // 3. الإدراج في قاعدة البيانات
-                const { error: dbErr } = await supabase.from('products').insert([{
+                // DB Insert
+                const { error: dbErr } = await supabaseClient.from('products').insert([{
                     name: name,
                     brand: brand,
                     price: price,
@@ -270,35 +278,26 @@
                     img_url: urlData.publicUrl
                 }]);
 
-                if (dbErr) throw dbErr;
-
-                location.reload();
-            } catch (err) {
-                alert("Erreur: " + err.message);
-                btn.disabled = false;
-                btn.innerText = "🚀 PUBLIER SUR LE SITE";
-            }
+                if (!dbErr) location.reload(); else throw dbErr;
+            } catch (err) { alert(err.message); btn.disabled = false; btn.innerText = "RÉESSAYER"; }
         }
 
-        // حذف المنتج
+        // 5. Delete
         async function deleteProduct(id) {
-            if(confirm("Confirmer la suppression définitive de ce produit ?")) {
-                const { error } = await supabase.from('products').delete().eq('id', id);
-                if (!error) {
+            if(confirm("Supprimer ce produit définitivement ?")) {
+                const { error } = await supabaseClient.from('products').delete().eq('id', id);
+                if(!error) {
                     allProducts = allProducts.filter(p => p.id !== id);
                     renderGrid(allProducts);
-                } else {
-                    alert("Erreur de suppression");
                 }
             }
         }
 
-        // وظائف الواجهة (بحث وفلترة)
+        // UI Helpers
         function filterByCategory(cat, btn) {
             document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
             btn.classList.add('active');
             renderGrid(cat === 'Tout' ? allProducts : allProducts.filter(p => p.category === cat));
-            document.getElementById('section-title').innerText = cat === 'Tout' ? 'Nos Produits' : cat;
         }
 
         function searchProducts() {
@@ -308,13 +307,13 @@
 
         function showAdmin() { 
             document.getElementById('adminModal').classList.remove('hidden'); 
-            if(isAdmin) { 
+            if(isAdminActive) { 
                 document.getElementById('loginArea').classList.add('hidden'); 
                 document.getElementById('adminPanel').classList.remove('hidden'); 
             } 
         }
         function closeAdmin() { document.getElementById('adminModal').classList.add('hidden'); }
-        function logoutAdmin() { localStorage.removeItem('samy_admin_session'); location.reload(); }
+        function logoutAdmin() { localStorage.removeItem('samy_auth'); location.reload(); }
 
         window.onload = fetchProducts;
     </script>
