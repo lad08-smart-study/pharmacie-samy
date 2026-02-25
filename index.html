@@ -3,189 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PHARMACIE SAMY | Les Sources Premium</title>
+    <title>PHARMACIE SAMY | Officiel</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; scroll-behavior: smooth; }
         
-        /* Hero Section */
+        /* الهيرو المحدث لجعل الاسم بارزاً جداً */
         .hero-section { 
-            background: linear-gradient(to right, rgba(13, 71, 161, 0.95), rgba(13, 71, 161, 0.6)), 
+            background: linear-gradient(to bottom, rgba(13, 71, 161, 0.9), rgba(13, 71, 161, 0.7)), 
             url('https://images.unsplash.com/photo-1586015555751-63bb77f4322a?q=80&w=1920'); 
-            background-size: cover; background-position: center; min-height: 650px; 
-            display: flex; align-items: center; clip-path: ellipse(150% 100% at 50% 0%);
+            background-size: cover; background-position: center; min-height: 700px; 
+            display: flex; align-items: center; justify-content: center; text-align: center;
+            clip-path: ellipse(160% 100% at 50% 0%);
         }
 
-        /* التصنيفات */
-        .cat-btn { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; border: 2px solid transparent; white-space: nowrap; }
-        .cat-btn.active { background-color: #1e3a8a; color: white; transform: scale(1.05); box-shadow: 0 10px 20px rgba(30, 58, 138, 0.2); border-color: #1e3a8a; }
+        .cat-btn { transition: all 0.3s ease; cursor: pointer; border: 2px solid #e2e8f0; white-space: nowrap; }
+        .cat-btn.active { background-color: #1e3a8a; color: white; border-color: #1e3a8a; transform: scale(1.05); shadow: 0 10px 15px rgba(0,0,0,0.1); }
 
-        /* البطاقات */
         .product-card { 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            border-radius: 40px; background: white; border: 1px solid #f1f5f9; 
-            position: relative; overflow: hidden; display: flex; flex-direction: column;
+            transition: all 0.4s ease; border-radius: 35px; background: white; 
+            position: relative; overflow: hidden; border: 1px solid #f1f5f9; 
         }
-        .product-card:hover { transform: translateY(-20px); box-shadow: 0 40px 80px -15px rgba(13, 71, 161, 0.2); }
+        .product-card:hover { transform: translateY(-15px); shadow: 0 25px 50px -12px rgba(0,0,0,0.1); }
 
+        /* زر الحذف للأدمن */
         .delete-btn { 
-            position: absolute; top: 20px; right: 20px; background: #ef4444; color: white; 
-            width: 45px; height: 45px; border-radius: 50%; display: none; 
-            align-items: center; justify-content: center; z-index: 50; cursor: pointer; 
-            box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3); border: 3px solid white;
+            position: absolute; top: 15px; right: 15px; background: #ff4d4d; color: white; 
+            width: 40px; height: 40px; border-radius: 50%; display: none; 
+            align-items: center; justify-content: center; z-index: 50; cursor: pointer; border: 2px solid white;
         }
         .is-admin .delete-btn { display: flex; }
 
-        /* Loader */
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #0d47a1; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* زر البصمة ليكون تفاعلياً */
+        #adminTrigger { cursor: pointer !important; transition: transform 0.2s; z-index: 110; position: relative; }
+        #adminTrigger:active { transform: scale(0.9); }
 
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #0d47a1; border-radius: 50%; width: 25px; height: 25px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <nav class="bg-white/90 backdrop-blur-xl shadow-sm sticky top-0 z-[100] px-6 py-5 flex justify-between items-center border-b border-gray-100">
-        <div class="flex items-center gap-4">
-            <div class="bg-blue-900 p-3 rounded-2xl text-white shadow-xl rotate-3"><i class="fa-solid fa-mortar-pestle text-2xl"></i></div>
-            <div>
-                <h1 class="text-2xl font-black text-blue-950 leading-none tracking-tighter uppercase">Pharmacie Samy</h1>
-                <p class="text-[11px] font-bold text-blue-600 mt-1 uppercase tracking-widest flex items-center gap-1">
-                    <i class="fa-solid fa-location-dot"></i> Les Sources, Bir Mourad Rais
-                </p>
-            </div>
+    <nav class="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-[100] px-6 py-4 flex justify-between items-center border-b">
+        <div class="flex items-center gap-3">
+            <div class="bg-blue-900 p-2 rounded-xl text-white shadow-lg"><i class="fa-solid fa-mortar-pestle text-xl"></i></div>
+            <h1 class="text-xl font-black text-blue-950 uppercase tracking-tighter">PHARMACIE SAMY</h1>
         </div>
-        <div class="flex items-center gap-6">
-            <div class="hidden lg:block text-right border-r pr-6 border-gray-200">
-                <p class="text-[10px] font-black text-green-600 uppercase">Ouvert Maintenant</p>
-                <p class="text-sm font-bold text-gray-900 tracking-tighter">08:00 — 00:00</p>
-            </div>
-            <button onclick="showAdmin()" class="group bg-gray-50 p-4 rounded-full hover:bg-blue-900 transition-all duration-500 active:scale-90 shadow-inner">
-                <i class="fa-solid fa-fingerprint text-gray-400 group-hover:text-white text-2xl transition-colors"></i>
-            </button>
-        </div>
+        <button id="adminTrigger" onclick="showAdmin()" class="bg-gray-100 p-3 rounded-full hover:bg-blue-900 group transition-all">
+            <i class="fa-solid fa-fingerprint text-gray-500 group-hover:text-white text-2xl"></i>
+        </button>
     </nav>
 
-    <header class="hero-section text-white px-8 relative overflow-hidden">
-        <div class="max-w-7xl mx-auto w-full relative z-10">
-            <div class="max-w-3xl">
-                <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-5 py-2.5 rounded-full text-[12px] font-bold uppercase tracking-[0.4em] mb-10 border border-white/20">
-                    <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> Espace Santé & Beauté
-                </div>
-                <h2 class="text-7xl md:text-9xl font-black mb-10 leading-[0.9] tracking-tighter uppercase">Le Luxe de<br><span class="text-blue-200">Se Soigner.</span></h2>
-                <p class="text-2xl opacity-90 mb-14 leading-relaxed max-w-xl font-medium">Votre partenaire bien-être aux <b>Sources</b>. Une sélection rigoureuse pour votre peau et votre santé.</p>
-                <div class="flex flex-wrap gap-6">
-                    <a href="#catalog" class="bg-white text-blue-950 px-14 py-6 rounded-[25px] font-black shadow-2xl hover:bg-blue-50 transition-all transform hover:-translate-y-2 uppercase tracking-tighter">Découvrir le stock</a>
-                    <a href="https://wa.me/213770762987" class="bg-green-500 text-white px-12 py-6 rounded-[25px] font-black flex items-center gap-4 shadow-2xl hover:bg-green-600 transition-all transform hover:-translate-y-2 uppercase tracking-tighter">
-                        <i class="fa-brands fa-whatsapp text-3xl"></i> WhatsApp
-                    </a>
-                </div>
+    <header class="hero-section text-white px-6">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-7xl md:text-9xl font-black mb-6 tracking-[ -0.05em] uppercase leading-none">
+                PHARMACIE <br> <span class="text-blue-300">SAMY</span>
+            </h2>
+            <p class="text-xl md:text-2xl opacity-90 mb-10 font-medium">Votre santé, notre priorité absolue à Les Sources.</p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#catalog" class="bg-white text-blue-900 px-10 py-5 rounded-2xl font-black shadow-xl hover:scale-105 transition-all">VOIR CATALOGUE</a>
+                <a href="https://wa.me/213770762987" class="bg-green-500 text-white px-8 py-5 rounded-2xl font-black flex items-center gap-3 shadow-xl hover:bg-green-600 transition-all">
+                    <i class="fa-brands fa-whatsapp text-2xl"></i> CONTACTER
+                </a>
             </div>
         </div>
     </header>
 
-    <section class="max-w-7xl mx-auto px-6 -mt-20 relative z-20 grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="bg-white p-10 rounded-[45px] shadow-2xl border border-gray-50 flex items-center gap-8 group hover:bg-blue-950 transition-colors duration-500">
-            <i class="fa-solid fa-truck-fast text-5xl text-blue-800 group-hover:text-white"></i>
-            <div><h4 class="font-black text-blue-950 group-hover:text-white uppercase text-lg">Livraison</h4><p class="text-sm text-gray-400 font-bold group-hover:text-blue-200 uppercase">58 Wilayas</p></div>
-        </div>
-        <div class="bg-white p-10 rounded-[45px] shadow-2xl border border-gray-50 flex items-center gap-8 group hover:bg-blue-950 transition-colors duration-500">
-            <i class="fa-solid fa-user-doctor text-5xl text-blue-800 group-hover:text-white"></i>
-            <div><h4 class="font-black text-blue-950 group-hover:text-white uppercase text-lg">Conseil</h4><p class="text-sm text-gray-400 font-bold group-hover:text-blue-200 uppercase">Expertise Médicale</p></div>
-        </div>
-        <div class="bg-white p-10 rounded-[45px] shadow-2xl border border-gray-50 flex items-center gap-8 group hover:bg-blue-950 transition-colors duration-500">
-            <i class="fa-solid fa-shield-heart text-5xl text-blue-800 group-hover:text-white"></i>
-            <div><h4 class="font-black text-blue-950 group-hover:text-white uppercase text-lg">Qualité</h4><p class="text-sm text-gray-400 font-bold group-hover:text-blue-200 uppercase">100% Authentique</p></div>
-        </div>
-    </section>
-
-    <main id="catalog" class="max-w-7xl mx-auto px-6 py-32">
-        <div class="flex flex-col gap-16 mb-24">
-            <div class="flex flex-col md:flex-row justify-between items-end gap-10">
-                <div>
-                    <h2 class="text-6xl font-black text-blue-950 tracking-tighter uppercase">Le Catalogue</h2>
-                    <div class="h-2.5 w-32 bg-blue-800 rounded-full mt-6"></div>
-                </div>
-                <div class="w-full max-w-lg relative group">
-                    <i class="fa-solid fa-search absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-900 text-xl transition-all"></i>
-                    <input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Chercher une marque ou un produit..." class="w-full p-6 pl-16 border-4 border-white rounded-[30px] outline-none focus:border-blue-900 transition-all bg-white shadow-2xl text-lg font-medium">
-                </div>
+    <main id="catalog" class="max-w-7xl mx-auto px-6 py-20">
+        <div class="flex flex-col gap-10 mb-16">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <h2 class="text-4xl font-black text-blue-950 uppercase tracking-tighter">Nos Produits</h2>
+                <input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Rechercher une marque (Vichy, CeraVe...)" class="w-full max-w-md p-5 border-2 border-gray-100 rounded-2xl outline-none focus:border-blue-900 shadow-sm bg-white font-medium">
             </div>
 
-            <div class="flex flex-wrap gap-4 overflow-x-auto pb-6 no-scrollbar">
-                <button onclick="filterCat('All')" class="cat-btn active bg-white px-10 py-5 rounded-2xl font-black shadow-sm border border-gray-100 uppercase text-xs tracking-[0.2em]">Tous</button>
-                <button onclick="filterCat('Mère et Enfant')" class="cat-btn bg-white px-10 py-5 rounded-2xl font-black shadow-sm border border-gray-100 uppercase text-xs tracking-[0.2em]">Mère et Enfant</button>
-                <button onclick="filterCat('Dermo-cosmétique')" class="cat-btn bg-white px-10 py-5 rounded-2xl font-black shadow-sm border border-gray-100 uppercase text-xs tracking-[0.2em]">Dermo-cosmétique</button>
-                <button onclick="filterCat('Soins Dentaires')" class="cat-btn bg-white px-10 py-5 rounded-2xl font-black shadow-sm border border-gray-100 uppercase text-xs tracking-[0.2em]">Soins Dentaires</button>
-                <button onclick="filterCat('Compléments Alimentaires')" class="cat-btn bg-white px-10 py-5 rounded-2xl font-black shadow-sm border border-gray-100 uppercase text-xs tracking-[0.2em]">Compléments Alimentaires</button>
+            <div class="flex flex-wrap gap-3 overflow-x-auto pb-4 no-scrollbar">
+                <button onclick="filterCat('All', this)" class="cat-btn active bg-white px-8 py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-sm">Tous</button>
+                <button onclick="filterCat('Mère et Enfant', this)" class="cat-btn bg-white px-8 py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-sm">Mère et Enfant</button>
+                <button onclick="filterCat('Dermo-cosmétique', this)" class="cat-btn bg-white px-8 py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-sm">Dermo-cosmétique</button>
+                <button onclick="filterCat('Soins Dentaires', this)" class="cat-btn bg-white px-8 py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-sm">Soins Dentaires</button>
+                <button onclick="filterCat('Compléments Alimentaires', this)" class="cat-btn bg-white px-8 py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-sm">Compléments Alimentaires</button>
             </div>
         </div>
 
-        <div id="productsGrid" class="grid grid-cols-2 lg:grid-cols-4 gap-10 md:gap-16">
-            <div class="col-span-full flex flex-col items-center py-40">
-                <div class="loader mb-6"></div>
-                <p class="text-gray-400 font-black uppercase tracking-widest text-xs">Synchronisation avec Supabase...</p>
-            </div>
+        <div id="productsGrid" class="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="col-span-full py-20 text-center"><div class="loader mx-auto"></div></div>
         </div>
     </main>
 
-    <div id="adminModal" class="fixed inset-0 bg-blue-950/60 hidden z-[200] flex items-center justify-center p-6 backdrop-blur-xl">
-        <div class="bg-white w-full max-w-2xl rounded-[50px] p-12 shadow-3xl overflow-y-auto max-h-[90vh] relative border border-white/20">
-            <button onclick="closeAdmin()" class="absolute top-10 right-10 text-4xl text-gray-300 hover:text-black transition-colors">&times;</button>
+    <div id="adminModal" class="fixed inset-0 bg-black/60 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-xl rounded-[40px] p-10 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeAdmin()" class="absolute top-6 right-8 text-3xl text-gray-400 hover:text-black">&times;</button>
             
             <div id="loginArea">
-                <div class="text-center mb-12">
-                    <div class="bg-blue-50 w-24 h-24 rounded-[30px] flex items-center justify-center mx-auto mb-6 text-blue-900 text-4xl shadow-inner"><i class="fa-solid fa-lock"></i></div>
-                    <h3 class="text-3xl font-black text-blue-950 uppercase tracking-tighter">Espace Gestion</h3>
-                </div>
-                <input type="password" id="adminPass" placeholder="••••••••" class="w-full p-8 bg-gray-50 rounded-[30px] mb-8 text-center text-4xl font-black outline-none border-4 border-transparent focus:border-blue-900 transition-all tracking-widest shadow-inner">
-                <button onclick="handleLogin()" class="w-full bg-blue-950 text-white py-8 rounded-[30px] font-black text-xl shadow-2xl hover:bg-blue-800 transition-all uppercase tracking-widest">Connexion</button>
+                <h3 class="text-2xl font-black text-blue-950 text-center mb-8 uppercase">Administration</h3>
+                <input type="password" id="adminPass" placeholder="Entrez le code" class="w-full p-6 bg-gray-50 rounded-2xl mb-6 text-center text-3xl font-black outline-none border-2 border-transparent focus:border-blue-900">
+                <button onclick="handleLogin()" class="w-full bg-blue-900 text-white py-6 rounded-2xl font-black shadow-lg">ENTRER</button>
             </div>
 
-            <div id="adminPanel" class="hidden space-y-8">
-                <div class="flex items-center gap-4 border-b pb-6 mb-8">
-                    <i class="fa-solid fa-plus-circle text-3xl text-blue-900"></i>
-                    <h3 class="text-2xl font-black text-blue-950 uppercase tracking-tighter">Nouveau Produit</h3>
+            <div id="adminPanel" class="hidden space-y-5">
+                <h3 class="text-xl font-black text-blue-950 border-b pb-4">AJOUTER PRODUIT</h3>
+                <input type="text" id="pName" placeholder="Nom du produit" class="w-full p-4 bg-gray-50 rounded-xl border outline-none font-bold">
+                <input type="text" id="pBrand" placeholder="Marque" class="w-full p-4 bg-gray-50 rounded-xl border outline-none font-bold">
+                <input type="number" id="pPrice" placeholder="Prix (DA)" class="w-full p-4 bg-gray-50 rounded-xl border outline-none font-black text-xl text-blue-900">
+                <select id="pCat" class="w-full p-4 bg-gray-50 rounded-xl border font-black uppercase text-xs">
+                    <option value="Mère et Enfant">Mère et Enfant</option>
+                    <option value="Dermo-cosmétique">Dermo-cosmétique</option>
+                    <option value="Soins Dentaires">Soins Dentaires</option>
+                    <option value="Compléments Alimentaires">Compléments Alimentaires</option>
+                </select>
+                <div class="border-2 border-dashed border-gray-200 p-6 rounded-2xl text-center">
+                    <input type="file" id="pImgFile" accept="image/*" class="w-full text-xs font-bold">
                 </div>
-                
-                <div class="grid gap-6">
-                    <input type="text" id="pName" placeholder="Nom complet du produit" class="w-full p-6 bg-gray-50 rounded-2xl border-2 border-transparent focus:border-blue-900 outline-none font-bold text-lg transition-all shadow-inner">
-                    <input type="text" id="pBrand" placeholder="Marque (ex: Vichy, Bioderma...)" class="w-full p-6 bg-gray-50 rounded-2xl border-2 border-transparent focus:border-blue-900 outline-none font-bold text-lg transition-all shadow-inner">
-                    <input type="number" id="pPrice" placeholder="Prix en Dinars (DA)" class="w-full p-6 bg-gray-50 rounded-2xl border-2 border-transparent focus:border-blue-900 outline-none font-black text-3xl text-blue-900 transition-all shadow-inner">
-                    
-                    <select id="pCat" class="w-full p-6 bg-gray-50 rounded-2xl border-2 border-transparent focus:border-blue-900 outline-none font-black uppercase text-sm tracking-widest shadow-inner cursor-pointer">
-                        <option value="Mère et Enfant">Mère et Enfant</option>
-                        <option value="Dermo-cosmétique">Dermo-cosmétique</option>
-                        <option value="Soins Dentaires">Soins Dentaires</option>
-                        <option value="Compléments Alimentaires">Compléments Alimentaires</option>
-                    </select>
-
-                    <div class="relative group">
-                        <input type="file" id="pImgFile" accept="image/*" class="hidden">
-                        <label for="pImgFile" class="flex flex-col items-center justify-center border-4 border-dashed border-gray-100 p-14 rounded-[40px] cursor-pointer hover:bg-blue-50 hover:border-blue-200 transition-all group">
-                            <i class="fa-solid fa-cloud-arrow-up text-5xl text-gray-200 group-hover:text-blue-500 mb-4 transition-all transform group-hover:-translate-y-2"></i>
-                            <span id="fileName" class="text-blue-900 font-black text-sm uppercase tracking-[0.2em]">Charger une photo HD</span>
-                        </label>
-                    </div>
-                </div>
-                
-                <button onclick="uploadProduct()" id="saveBtn" class="w-full bg-blue-900 text-white py-8 rounded-[30px] font-black text-2xl shadow-2xl hover:bg-blue-800 transition-all transform hover:scale-[1.02] uppercase tracking-tighter">🚀 Publier Maintenant</button>
-                <button onclick="logoutAdmin()" class="w-full text-red-500 text-[11px] font-black uppercase mt-12 opacity-40 hover:opacity-100 transition-opacity tracking-widest">Fermer la session de travail</button>
+                <button onclick="uploadProduct()" id="saveBtn" class="w-full bg-blue-900 text-white py-5 rounded-2xl font-black text-lg shadow-xl">🚀 PUBLIER SUR LE SITE</button>
+                <button onclick="logoutAdmin()" class="w-full text-red-500 text-[10px] font-black uppercase mt-10">Déconnexion</button>
             </div>
         </div>
     </div>
 
-    <a href="https://wa.me/213770762987" class="fixed bottom-10 right-10 bg-green-500 text-white w-20 h-20 rounded-[25px] flex items-center justify-center text-4xl shadow-3xl z-[60] hover:scale-110 transition-transform animate-bounce hover:rotate-12 border-4 border-white">
+    <a href="https://wa.me/213770762987" class="fixed bottom-8 right-8 bg-green-500 text-white w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shadow-2xl z-[60] hover:scale-110 transition-transform">
         <i class="fa-brands fa-whatsapp"></i>
     </a>
 
     <script>
-        // --- إعدادات سيبا باز (ضع بياناتك هنا) ---
+        // --- Supabase Config ---
         const SB_URL = 'YOUR_SUPABASE_URL'; 
         const SB_KEY = 'YOUR_SUPABASE_ANON_KEY';
         const supabase = supabase.createClient(SB_URL, SB_KEY);
@@ -194,57 +139,75 @@
         let isAdmin = localStorage.getItem('samy_admin_session') === 'true';
 
         async function fetchProducts() {
-            try {
-                const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
-                if (error) throw error;
-                allProducts = data || [];
-                renderGrid(allProducts);
-            } catch (err) {
-                document.getElementById('productsGrid').innerHTML = `<p class="col-span-full text-center text-red-500 font-black">Erreur: ${err.message}</p>`;
-            }
+            const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+            if (error) return;
+            allProducts = data || [];
+            renderGrid(allProducts);
         }
 
         function renderGrid(products) {
             const grid = document.getElementById('productsGrid');
-            if(products.length === 0) {
-                grid.innerHTML = `<div class="col-span-full py-20 text-center"><i class="fa-solid fa-box-open text-6xl text-gray-100 mb-6 block"></i><p class="text-gray-300 font-black uppercase tracking-widest text-sm">Le stock est vide</p></div>`;
-                return;
-            }
+            if(products.length === 0) { grid.innerHTML = `<p class="col-span-full py-20 text-gray-400 font-bold uppercase tracking-widest text-center">Aucun produit trouvé</p>`; return; }
+            
             grid.innerHTML = products.map(p => `
-                <div class="product-card p-8 ${isAdmin ? 'is-admin' : ''}">
-                    <div onclick="deleteProduct('${p.id}')" class="delete-btn hover:scale-110 transition-transform"><i class="fa-solid fa-trash-can"></i></div>
-                    <div class="aspect-square bg-gray-50 rounded-[35px] mb-10 overflow-hidden flex items-center justify-center p-8 border border-gray-50/50">
-                        <img src="${p.img_url}" class="max-h-full max-w-full object-contain transition-transform duration-1000 hover:scale-110" loading="lazy">
+                <div class="product-card p-6 ${isAdmin ? 'is-admin' : ''}">
+                    <div onclick="deleteProduct('${p.id}')" class="delete-btn"><i class="fa-solid fa-trash-can"></i></div>
+                    <div class="aspect-square bg-gray-50 rounded-[30px] mb-6 overflow-hidden flex items-center justify-center p-6">
+                        <img src="${p.img_url}" class="max-h-full max-w-full object-contain transition-transform duration-700 hover:scale-110">
                     </div>
                     <div class="flex-grow">
-                        <span class="text-[11px] text-blue-600 font-black uppercase tracking-[0.3em] mb-4 block opacity-60">${p.brand}</span>
-                        <h4 class="font-bold text-blue-950 text-lg leading-tight h-14 overflow-hidden uppercase tracking-tighter">${p.name}</h4>
+                        <span class="text-[10px] text-blue-600 font-black uppercase tracking-[0.2em] mb-2 block opacity-60">${p.brand}</span>
+                        <h4 class="font-bold text-blue-950 text-base leading-tight h-10 overflow-hidden uppercase tracking-tighter">${p.name}</h4>
                     </div>
-                    <div class="mt-10 pt-8 border-t border-gray-50 flex justify-between items-center">
-                        <span class="text-3xl font-black text-blue-900 tracking-tighter">${p.price} <small class="text-xs opacity-40 font-bold tracking-normal">DA</small></span>
-                        <a href="https://wa.me/213770762987?text=Bonjour, je souhaite commander: ${p.brand} - ${p.name}" class="bg-green-500 text-white w-14 h-14 rounded-2xl flex items-center justify-center shadow-xl transition-all hover:rotate-12 hover:scale-110 active:scale-95">
-                            <i class="fa-brands fa-whatsapp text-2xl"></i>
-                        </a>
+                    <div class="mt-6 pt-5 border-t border-gray-50 flex justify-between items-center">
+                        <span class="text-xl font-black text-blue-900 tracking-tighter">${p.price} <small class="text-[10px] opacity-50">DA</small></span>
+                        <a href="https://wa.me/213770762987?text=Commande: ${p.name}" class="bg-green-500 text-white w-10 h-10 rounded-xl flex items-center justify-center shadow-md"><i class="fa-brands fa-whatsapp text-xl"></i></a>
                     </div>
                 </div>
             `).join('');
         }
 
-        // Filters
-        function filterCat(cat) {
+        // إصلاح الفلترة: عند الضغط يتم تصفية المنتجات مباشرة
+        function filterCat(cat, btn) {
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
-            if(cat === 'All') renderGrid(allProducts);
-            else renderGrid(allProducts.filter(p => p.category === cat));
-            window.scrollTo({ top: document.getElementById('catalog').offsetTop - 100, behavior: 'smooth' });
+            btn.classList.add('active');
+            
+            if(cat === 'All') {
+                renderGrid(allProducts);
+            } else {
+                const filtered = allProducts.filter(p => p.category === cat);
+                renderGrid(filtered);
+            }
         }
 
         function searchProducts() {
             const v = document.getElementById('searchInput').value.toLowerCase();
-            renderGrid(allProducts.filter(p => p.name.toLowerCase().includes(v) || p.brand.toLowerCase().includes(v)));
+            const filtered = allProducts.filter(p => p.name.toLowerCase().includes(v) || p.brand.toLowerCase().includes(v));
+            renderGrid(filtered);
         }
 
-        // Upload Logic
+        // نظام الأدمن المصلح
+        function handleLogin() {
+            if(document.getElementById('adminPass').value === "pharmaciesami001") {
+                isAdmin = true;
+                localStorage.setItem('samy_admin_session', 'true');
+                document.getElementById('loginArea').classList.add('hidden');
+                document.getElementById('adminPanel').classList.remove('hidden');
+                renderGrid(allProducts);
+            } else { alert("Code incorrect !"); }
+        }
+
+        function showAdmin() {
+            document.getElementById('adminModal').classList.remove('hidden');
+            if(isAdmin) {
+                document.getElementById('loginArea').classList.add('hidden');
+                document.getElementById('adminPanel').classList.remove('hidden');
+            }
+        }
+
+        function closeAdmin() { document.getElementById('adminModal').classList.add('hidden'); }
+        function logoutAdmin() { localStorage.removeItem('samy_admin_session'); location.reload(); }
+
         async function uploadProduct() {
             const file = document.getElementById('pImgFile').files[0];
             const btn = document.getElementById('saveBtn');
@@ -253,52 +216,27 @@
             const brand = document.getElementById('pBrand').value;
             const cat = document.getElementById('pCat').value;
 
-            if(!file || !name || !price || !brand) return alert("Veuillez remplir tous les champs obligatoires !");
-            
-            btn.disabled = true; 
-            btn.innerHTML = `<div class="loader mx-auto"></div>`;
+            if(!file || !name || !price || !brand) return alert("Remplissez tous les champs !");
+            btn.disabled = true; btn.innerHTML = "Téléchargement...";
 
             try {
                 const fileName = Date.now() + "_" + file.name;
-                const { data: imgData, error: imgErr } = await supabase.storage.from('product-images').upload(fileName, file);
-                if(imgErr) throw imgErr;
-
+                const { data: imgData } = await supabase.storage.from('product-images').upload(fileName, file);
                 const { data: urlData } = supabase.storage.from('product-images').getPublicUrl(fileName);
 
-                const { error: dbErr } = await supabase.from('products').insert([{
+                await supabase.from('products').insert([{
                     name: name, brand: brand, price: price, category: cat, img_url: urlData.publicUrl
                 }]);
-                if(dbErr) throw dbErr;
-
                 location.reload();
-            } catch (e) {
-                alert("Erreur de publication: " + e.message);
-                btn.disabled = false;
-                btn.innerHTML = "🚀 RÉESSAYER";
-            }
+            } catch (e) { alert("Erreur !"); btn.disabled = false; btn.innerHTML = "Réessayer"; }
         }
 
         async function deleteProduct(id) {
-            if(confirm("Confirmer la suppression définitive ?")) {
-                const { error } = await supabase.from('products').delete().eq('id', id);
-                if(!error) location.reload();
+            if(confirm("Supprimer ce produit ?")) {
+                await supabase.from('products').delete().eq('id', id);
+                location.reload();
             }
         }
-
-        // Admin Management
-        function handleLogin() {
-            if(document.getElementById('adminPass').value === "pharmaciesami001") {
-                isAdmin = true; localStorage.setItem('samy_admin_session', 'true');
-                document.getElementById('loginArea').classList.add('hidden');
-                document.getElementById('adminPanel').classList.remove('hidden');
-                renderGrid(allProducts);
-            } else { alert("Accès Refusé"); }
-        }
-
-        function showAdmin() { document.getElementById('adminModal').classList.remove('hidden'); if(isAdmin) { document.getElementById('loginArea').classList.add('hidden'); document.getElementById('adminPanel').classList.remove('hidden'); } }
-        function closeAdmin() { document.getElementById('adminModal').classList.add('hidden'); }
-        function logoutAdmin() { localStorage.removeItem('samy_admin_session'); location.reload(); }
-        document.getElementById('pImgFile').onchange = function() { document.getElementById('fileName').innerText = "✅ PHOTO PRÊTE: " + this.files[0].name.substring(0,15) + "..."; };
 
         window.onload = fetchProducts;
     </script>
