@@ -342,19 +342,25 @@
                     .getPublicUrl(`products/${fileName}`);
 
                 const { error: insertError } = await client
-                    .from('products')
+                 .from('products')
                     .insert([{
                         name_fr: name,
                         price: parseInt(price),
                         brand: document.getElementById('pBrand').value || "Marque Inconnue",
                         category: document.getElementById('pCat').value,
-                        img: publicUrlData.publicUrl,
-                        createdAt: new Date().toISOString()
+                        img: publicUrlData.publicUrl
+                        // لاحظ أننا حذفنا السطر الخاص بـ createdAt هنا
                     }]);
 
                 if(insertError) throw insertError;
 
                 alert("✅ Produit ajouté avec succès!");
+                
+                // إضافة بسيطة لتنظيف الحقول بعد النجاح:
+                document.getElementById('pNameFr').value = "";
+                document.getElementById('pPrice').value = "";
+                document.getElementById('pImgFile').value = "";
+
                 fetchProducts();
                 btn.disabled = false;
                 btn.innerHTML = "🚀 Mettre à jour le catalogue";
@@ -364,7 +370,6 @@
                 btn.disabled = false;
                 btn.innerHTML = "🚀 Mettre à jour le catalogue";
             }
-        }
 
         async function deleteProduct(id) {
             if(confirm("Supprimer ce produit ?")) {
@@ -408,3 +413,4 @@
     </script>
 </body>
 </html>
+
