@@ -30,14 +30,20 @@
             position: relative; overflow: hidden; display: flex; flex-direction: column;
         }
         .product-card:hover { transform: translateY(-15px); box-shadow: 0 40px 80px rgba(13,71,161,0.12); border-color: var(--main-blue); }
-        
-        .delete-btn { 
-            position: absolute; top: 15px; right: 15px; background: #ef4444; color: white; 
-            width: 40px; height: 40px; border-radius: 50%; display: none; align-items: center; justify-content: center; 
-            z-index: 50; border: 3px solid white; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+
+        /* ADMIN ACTIONS */
+        .admin-action{
+            position:absolute; top:15px;
+            width:40px; height:40px; border-radius:50%;
+            display:none; align-items:center; justify-content:center;
+            z-index:50; border:3px solid white; cursor:pointer;
+            box-shadow:0 5px 15px rgba(0,0,0,0.2);
+            color:#fff;
         }
-        .is-admin .delete-btn { display: flex; }
-        
+        .edit-btn{ left:15px; background:#2563eb; }
+        .delete-btn{ right:15px; background:#ef4444; }
+        .is-admin .admin-action{ display:flex; }
+
         .whatsapp-float { 
             position: fixed; bottom: 30px; right: 30px; background-color: var(--accent-green); 
             color: white; width: 70px; height: 70px; border-radius: 50%; display: flex; 
@@ -117,7 +123,7 @@
             <div class="w-full md:max-w-md">
                 <div class="relative group">
                     <i class="fa-solid fa-magnifying-glass absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600 transition-all"></i>
-                    <input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Rechercher une marque (Vichy, CeraVe...)" 
+                    <input type="text" id="searchInput" placeholder="Rechercher une marque (Vichy, CeraVe...)" 
                            class="w-full p-6 pl-16 rounded-3xl border-2 border-gray-50 focus:border-blue-600 outline-none shadow-sm text-lg transition-all bg-white font-medium">
                 </div>
             </div>
@@ -165,6 +171,7 @@
         </div>
     </footer>
 
+    <!-- ADMIN LOGIN / ADD -->
     <div id="adminModal" class="fixed inset-0 bg-black/95 hidden z-[1000] flex items-center justify-center p-4 backdrop-blur-xl">
         <div class="bg-white w-full max-w-2xl rounded-[50px] p-10 md:p-16 shadow-2xl relative overflow-y-auto max-h-[90vh] border border-gray-100">
             <button onclick="closeAdmin()" class="absolute top-10 right-10 text-gray-200 hover:text-black text-5xl font-light transition-colors">×</button>
@@ -175,14 +182,17 @@
                         <i class="fa-solid fa-shield-halved text-3xl pharma-blue"></i>
                     </div>
                     <h3 class="text-4xl font-black text-gray-900 tracking-tighter uppercase">Authentification</h3>
+                    <p class="text-gray-400 text-sm mt-2">Admin: drlokman6@gmail.com</p>
                 </div>
                 <input type="password" id="adminPass" placeholder="••••••••" class="w-full p-7 bg-gray-50 border-2 border-transparent focus:border-blue-600 rounded-3xl mb-8 text-center outline-none transition-all text-3xl font-black tracking-widest">
-                <button onclick="handleLogin()" class="w-full bg-pharma text-white py-6 rounded-3xl font-black text-xl shadow-2xl hover:shadow-blue-200 transition-all active:scale-95 uppercase">Valider l'accès</button>
+                <button onclick="handleLogin()" id="loginBtn" class="w-full bg-pharma text-white py-6 rounded-3xl font-black text-xl shadow-2xl hover:shadow-blue-200 transition-all active:scale-95 uppercase">Valider l'accès</button>
+                <p id="loginMsg" class="text-center text-red-500 text-xs mt-4"></p>
             </div>
 
             <div id="adminPanel" class="hidden space-y-8 animate-fade-in">
-                <div class="border-b pb-6">
+                <div class="border-b pb-6 flex items-center justify-between">
                     <h3 class="text-3xl font-black text-blue-900 tracking-tighter uppercase">Gestionnaire de Stock</h3>
+                    <button onclick="logoutAdmin()" class="text-red-400 text-[10px] font-black uppercase tracking-[0.3em] hover:text-red-600 transition-colors">Déconnexion</button>
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -212,18 +222,82 @@
                     </div>
                 </div>
                 
-                <div class="border-4 border-dashed border-gray-100 p-12 rounded-[40px] text-center group hover:border-blue-200 transition-all cursor-pointer bg-gray-50/50">
-                    <input type="file" id="pImgFile" accept="image/*" class="hidden">
-                    <label for="pImgFile" class="cursor-pointer block">
-                        <i class="fa-solid fa-cloud-arrow-up text-6xl text-blue-100 group-hover:text-blue-500 mb-6 block transition-all duration-500 transform group-hover:-translate-y-2"></i>
-                        <span class="text-blue-600 font-black block text-sm uppercase tracking-widest" id="fileName">Téléverser l'image du produit</span>
+                <!-- MULTI IMAGES -->
+                <div class="border-4 border-dashed border-gray-100 p-10 rounded-[40px] text-center group hover:border-blue-200 transition-all cursor-pointer bg-gray-50/50">
+                    <input type="file" id="pImgFiles" accept="image/*" multiple class="hidden">
+                    <label for="pImgFiles" class="cursor-pointer block">
+                        <i class="fa-solid fa-images text-6xl text-blue-100 group-hover:text-blue-500 mb-6 block transition-all duration-500 transform group-hover:-translate-y-2"></i>
+                        <span class="text-blue-600 font-black block text-sm uppercase tracking-widest" id="fileName">Ajouter 1 à 6 images</span>
+                        <span class="text-gray-400 text-xs block mt-2">La première image = image principale</span>
                     </label>
+                    <div id="newThumbs" class="mt-6 flex flex-wrap gap-3 justify-center"></div>
                 </div>
 
-                <button onclick="addProduct()" id="saveBtn" class="w-full bg-green-600 text-white py-7 rounded-[30px] font-black text-xl shadow-2xl hover:bg-green-700 transition-all active:scale-95 uppercase tracking-widest">🚀 Mettre à jour le catalogue</button>
-                <div class="text-center">
-                    <button onclick="logoutAdmin()" class="text-red-400 text-[10px] font-black uppercase tracking-[0.3em] hover:text-red-600 transition-colors">Déconnexion de session</button>
+                <button onclick="addProduct()" id="saveBtn" class="w-full bg-green-600 text-white py-7 rounded-[30px] font-black text-xl shadow-2xl hover:bg-green-700 transition-all active:scale-95 uppercase tracking-widest">🚀 Ajouter au catalogue</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT MODAL -->
+    <div id="editModal" class="fixed inset-0 bg-black/95 hidden z-[1100] flex items-center justify-center p-4 backdrop-blur-xl">
+        <div class="bg-white w-full max-w-2xl rounded-[50px] p-10 md:p-16 shadow-2xl relative overflow-y-auto max-h-[90vh] border border-gray-100">
+            <button onclick="closeEdit()" class="absolute top-10 right-10 text-gray-200 hover:text-black text-5xl font-light transition-colors">×</button>
+
+            <div class="border-b pb-6 mb-8">
+                <h3 class="text-3xl font-black text-blue-900 tracking-tighter uppercase">Modifier Produit</h3>
+                <p id="editHint" class="text-gray-400 text-sm mt-2">—</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase text-gray-400 ml-4">Nom du produit</label>
+                    <input type="text" id="eNameFr" class="w-full p-5 bg-gray-50 rounded-2xl outline-none border-2 border-transparent focus:border-blue-600 font-bold">
                 </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase text-gray-400 ml-4">Marque</label>
+                    <input type="text" id="eBrand" class="w-full p-5 bg-gray-50 rounded-2xl outline-none border-2 border-transparent focus:border-blue-600 font-bold">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase text-gray-400 ml-4">Prix (DA)</label>
+                    <input type="number" id="ePrice" class="w-full p-5 bg-gray-50 rounded-2xl outline-none border-2 border-transparent focus:border-blue-600 font-black">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase text-gray-400 ml-4">Catégorie</label>
+                    <select id="eCat" class="w-full p-5 bg-gray-50 rounded-2xl outline-none border-2 border-transparent focus:border-blue-600 font-bold">
+                        <option>Dermocosmétique</option>
+                        <option>Maman & Bébé</option>
+                        <option>Hygiène</option>
+                        <option>Compléments</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <label class="text-[10px] font-black uppercase text-gray-400 ml-4 block mb-3">Images actuelles</label>
+                <div id="imgGallery" class="flex flex-wrap gap-3"></div>
+                <p class="text-gray-400 text-xs mt-3">Vous pouvez supprimer une image (minimum 1) ou en ajouter.</p>
+            </div>
+
+            <div class="border-4 border-dashed border-gray-100 p-10 rounded-[40px] text-center group hover:border-blue-200 transition-all cursor-pointer bg-gray-50/50 mt-8">
+                <input type="file" id="eImgFiles" accept="image/*" multiple class="hidden">
+                <label for="eImgFiles" class="cursor-pointer block">
+                    <i class="fa-solid fa-image text-6xl text-blue-100 group-hover:text-blue-500 mb-6 block transition-all duration-500 transform group-hover:-translate-y-2"></i>
+                    <span class="text-blue-600 font-black block text-sm uppercase tracking-widest" id="eFileName">Ajouter des images (max 6)</span>
+                </label>
+                <div id="editNewThumbs" class="mt-6 flex flex-wrap gap-3 justify-center"></div>
+            </div>
+
+            <button onclick="updateProduct()" id="updateBtn" class="w-full bg-pharma text-white py-7 rounded-[30px] font-black text-xl shadow-2xl hover:shadow-blue-200 transition-all active:scale-95 uppercase tracking-widest mt-10">
+                💾 Enregistrer
+            </button>
+
+            <div class="text-center mt-6">
+                <button onclick="deleteProduct(currentEditId)" class="text-red-400 text-[10px] font-black uppercase tracking-[0.3em] hover:text-red-600 transition-colors">
+                    Supprimer ce produit
+                </button>
             </div>
         </div>
     </div>
@@ -233,52 +307,115 @@
     </a>
 
     <script>
-        // --- SUPABASE CONFIGURATION ---
+        // =========================
+        // CONFIG
+        // =========================
         const SUPABASE_URL = "https://kmhbvdqrhnwfpglngchf.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttaGJ2ZHFyaG53ZnBnbG5nY2hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5NzI3MzIsImV4cCI6MjA4NzU0ODczMn0.T9bPphIprrZeS_Qo116mIyWL6lThYdPTwSFkgdrwpGs";
         const { createClient } = window.supabase;
         const client = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let allProducts = [];
-        let isAdmin = localStorage.getItem('samy_admin_session') === 'true';
+        const ADMIN_EMAIL = "drlokman6@gmail.com";
+        const BUCKET = "product-images";
 
-        // --- Core Application Functions ---
-        async function fetchProducts() {
+        let allProducts = [];
+        let isAdmin = false;
+        let currentEditId = null;
+
+        let addSelectedFiles = [];
+        let editSelectedFiles = [];
+
+        function safeJsonArray(v){
+            try{
+                if(!v) return [];
+                if(Array.isArray(v)) return v;
+                return JSON.parse(v);
+            }catch(e){ return []; }
+        }
+
+        // =========================
+        // ADMIN STATE
+        // =========================
+        async function refreshAdminState(){
+            const { data: { session } } = await client.auth.getSession();
+            if(!session || !session.user){
+                isAdmin = false;
+                setAdminUI();
+                return;
+            }
+            const { data, error } = await client.rpc('is_admin');
+            if(error){
+                isAdmin = false; // no fallback
+            } else {
+                isAdmin = (data === true);
+            }
+            setAdminUI();
+            if(!isAdmin){
+                await client.auth.signOut();
+            }
+        }
+
+        function setAdminUI(){
+            const loginArea = document.getElementById('loginArea');
+            const adminPanel = document.getElementById('adminPanel');
+            if(isAdmin){
+                loginArea.classList.add('hidden');
+                adminPanel.classList.remove('hidden');
+            } else {
+                loginArea.classList.remove('hidden');
+                adminPanel.classList.add('hidden');
+            }
+        }
+
+        // =========================
+        // FETCH & RENDER
+        // =========================
+        async function fetchProducts(){
             const grid = document.getElementById('productsGrid');
-            try {
+            try{
                 const { data, error } = await client
                     .from('products')
                     .select('*')
                     .order('createdAt', { ascending: false });
-                
+
                 if(error) throw error;
                 allProducts = data || [];
                 renderGrid(allProducts);
-                if(isAdmin) renderGrid(allProducts);
-            } catch (err) { 
-                console.error('Error:', err);
+            }catch(err){
+                console.error(err);
                 grid.innerHTML = `<div class="col-span-full text-center py-20 bg-red-50 rounded-[40px] border border-red-100">
                     <i class="fa-solid fa-triangle-exclamation text-red-400 text-4xl mb-4"></i>
                     <p class="text-red-900 font-black uppercase text-xs tracking-widest">Erreur de Synchronisation Supabase</p>
-                    <p class="text-red-400 text-[10px] mt-2 italic font-medium">Vérifiez votre connexion et vos données Supabase</p>
                     <p class="text-red-400 text-[10px] mt-2 italic font-medium">Erreur: ${err.message}</p>
-                </div>`; 
+                </div>`;
             }
         }
 
-        function renderGrid(products) {
+        function getProductImages(p){
+            const imgs = safeJsonArray(p.images);
+            if(imgs.length) return imgs;
+            if(p.img) return [{url:p.img, path:p.img_path || null}];
+            return [];
+        }
+
+        function renderGrid(products){
             const grid = document.getElementById('productsGrid');
-            if(products.length === 0) {
+            if(!products || products.length === 0){
                 grid.innerHTML = `<p class="col-span-full text-center py-20 text-gray-300 font-bold uppercase tracking-widest">Aucun produit dans cette catégorie</p>`;
                 return;
             }
+
             grid.innerHTML = products.map(p => {
+                const imgs = getProductImages(p);
+                const mainImg = imgs[0]?.url || 'https://via.placeholder.com/400';
                 const waMsg = encodeURIComponent(`Bonjour Pharmacie Samy, je souhaite commander : ${p.name_fr} de la marque ${p.brand || '---'} au prix de ${p.price} DA.`);
                 return `
                     <div class="product-card p-7 ${isAdmin ? 'is-admin' : ''}">
-                        <div onclick="deleteProduct('${p.id}')" class="delete-btn" title="Supprimer du stock"><i class="fa-solid fa-trash-can"></i></div>
-                        <div class="aspect-[4/5] bg-gray-50 rounded-[25px] mb-8 overflow-hidden flex items-center justify-center p-6 group-hover:bg-white transition-colors duration-500">
-                            <img src="${p.img || 'https://via.placeholder.com/400'}" class="max-h-full max-w-full object-contain mix-blend-multiply transform transition-transform duration-700 hover:scale-110" loading="lazy" onerror="this.src='https://via.placeholder.com/400'">
+                        <button onclick="openEdit('${p.id}')" class="admin-action edit-btn" title="Modifier"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteProduct('${p.id}')" class="admin-action delete-btn" title="Supprimer"><i class="fa-solid fa-trash-can"></i></button>
+
+                        <div class="aspect-[4/5] bg-gray-50 rounded-[25px] mb-8 overflow-hidden flex items-center justify-center p-6">
+                            <img src="${mainImg}" class="max-h-full max-w-full object-contain mix-blend-multiply transform transition-transform duration-700 hover:scale-110" loading="lazy" onerror="this.src='https://via.placeholder.com/400'">
                         </div>
                         <div class="flex-grow">
                             <span class="text-[10px] text-blue-600 font-black uppercase tracking-[0.25em] mb-3 block opacity-60">${p.brand || 'Premium Care'}</span>
@@ -299,140 +436,359 @@
             }).join('');
         }
 
-        // --- Admin Security & Management ---
-        function handleLogin() {
-            if(document.getElementById('adminPass').value === "pharmaciesami001") {
-                isAdmin = true;
-                localStorage.setItem('samy_admin_session', 'true');
-                document.getElementById('loginArea').classList.add('hidden');
-                document.getElementById('adminPanel').classList.remove('hidden');
-                renderGrid(allProducts);
-            } else { 
-                alert("Accès refusé : Code de sécurité invalide."); 
-                document.getElementById('adminPass').value = "";
-            }
-        }
-
-        function logoutAdmin() {
-            localStorage.removeItem('samy_admin_session');
-            location.reload();
-        }
-
-        async function addProduct() {
-            const btn = document.getElementById('saveBtn');
-            const file = document.getElementById('pImgFile').files[0];
-            const name = document.getElementById('pNameFr').value;
-            const price = document.getElementById('pPrice').value;
-
-            if(!file || !name || !price) return alert("Formulaire incomplet : Photo, Nom et Prix sont obligatoires.");
-
-            btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-2"></i> TRAITEMENT...`;
-
-            try {
-                // Upload image to Supabase Storage
-                const fileExtension = file.name.split('.').pop();
-                const fileName = `SAMY_${Date.now()}.${fileExtension}`;
-                
-                const { data: uploadData, error: uploadError } = await client.storage
-                    .from('product-images')
-                    .upload(`products/${fileName}`, file);
-                
-                if(uploadError) throw uploadError;
-
-                // Get public URL
-                const { data: publicUrlData } = client.storage
-                    .from('product-images')
-                    .getPublicUrl(`products/${fileName}`);
-
-                const downloadURL = publicUrlData.publicUrl;
-
-                // Insert product into Supabase
-                const { data: insertData, error: insertError } = await client
-                    .from('products')
-                    .insert([{
-                        name_fr: name,
-                        price: parseInt(price),
-                        brand: document.getElementById('pBrand').value || "Marque Inconnue",
-                        category: document.getElementById('pCat').value,
-                        img: downloadURL,
-                        createdAt: new Date().toISOString()
-                    }]);
-
-                if(insertError) throw insertError;
-
-                alert("✅ Produit ajouté avec succès!");
-                document.getElementById('pNameFr').value = "";
-                document.getElementById('pBrand').value = "";
-                document.getElementById('pPrice').value = "";
-                document.getElementById('pImgFile').value = "";
-                document.getElementById('fileName').innerHTML = "Téléverser l'image du produit";
-                document.getElementById('fileName').classList.remove('text-green-600');
-                
-                fetchProducts();
-                btn.disabled = false;
-                btn.innerHTML = "🚀 Mettre à jour le catalogue";
-            } catch(e) { 
-                console.error(e);
-                alert("❌ Erreur : " + e.message); 
-                btn.disabled = false;
-                btn.innerHTML = "🚀 Mettre à jour le catalogue";
-            }
-        }
-
-        async function deleteProduct(id) {
-            if(confirm("Action irréversible : Voulez-vous vraiment retirer ce produit du catalogue ?")) {
-                try {
-                    const { error } = await client
-                        .from('products')
-                        .delete()
-                        .eq('id', id);
-                    
-                    if(error) throw error;
-                    fetchProducts();
-                } catch(e) { alert("Erreur lors de la suppression: " + e.message); }
-            }
-        }
-
-        // --- Filtering & UI Logic ---
-        function filterByCategory(cat) {
+        // =========================
+        // FILTER / SEARCH
+        // =========================
+        function filterByCategory(cat){
             document.querySelectorAll('.cat-chip').forEach(chip => {
                 chip.classList.remove('active');
                 if(chip.innerText === cat) chip.classList.add('active');
             });
 
             document.getElementById('section-title').innerText = cat === 'Tout' ? 'Catalogue' : cat;
-            
-            const filtered = cat === 'Tout' 
-                ? allProducts 
-                : allProducts.filter(p => p.category === cat);
-            
+            const filtered = cat === 'Tout' ? allProducts : allProducts.filter(p => p.category === cat);
             renderGrid(filtered);
             window.location.hash = "products";
         }
 
-        function searchProducts() {
-            const val = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = allProducts.filter(p => 
-                p.name_fr.toLowerCase().includes(val) || 
-                (p.brand && p.brand.toLowerCase().includes(val))
-            );
-            renderGrid(filtered);
+        let searchTimer=null;
+        document.getElementById('searchInput').addEventListener('input', ()=>{
+            clearTimeout(searchTimer);
+            searchTimer=setTimeout(()=>{
+                const val = (document.getElementById('searchInput').value||'').toLowerCase();
+                const filtered = allProducts.filter(p =>
+                    (p.name_fr||'').toLowerCase().includes(val) ||
+                    (p.brand||'').toLowerCase().includes(val)
+                );
+                renderGrid(filtered);
+            }, 120);
+        });
+
+        // =========================
+        // ADMIN MODAL
+        // =========================
+        function showAdmin(){
+            document.getElementById('adminModal').classList.remove('hidden');
+            refreshAdminState();
+        }
+        function closeAdmin(){
+            document.getElementById('adminModal').classList.add('hidden');
         }
 
-        function showAdmin() { document.getElementById('adminModal').classList.remove('hidden'); }
-        function closeAdmin() { document.getElementById('adminModal').classList.add('hidden'); }
-        
-        document.getElementById('pImgFile').onchange = function() {
-            const fileNameDisplay = document.getElementById('fileName');
-            if(this.files[0]) {
-                fileNameDisplay.innerHTML = `<i class="fa-solid fa-check-circle text-green-500"></i> ${this.files[0].name}`;
-                fileNameDisplay.classList.add('text-green-600');
-            }
-        };
+        async function handleLogin(){
+            const passEl = document.getElementById('adminPass');
+            const password = (passEl.value||'').trim();
+            const btn = document.getElementById('loginBtn');
+            const msg = document.getElementById('loginMsg');
+            msg.innerText = '';
 
-        // --- Init ---
-        window.onload = fetchProducts;
+            if(!password){ msg.innerText='Mot de passe requis.'; return; }
+
+            btn.disabled=true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-2"></i> Connexion...`;
+
+            try{
+                const { error } = await client.auth.signInWithPassword({ email: ADMIN_EMAIL, password });
+                if(error){
+                    msg.innerText = "Accès refusé: " + error.message;
+                    passEl.value = '';
+                    return;
+                }
+                passEl.value='';
+                await refreshAdminState();
+                await fetchProducts();
+            } finally {
+                btn.disabled=false;
+                btn.innerHTML='Valider l\\'accès';
+            }
+        }
+
+        async function logoutAdmin(){
+            try{ await client.auth.signOut(); }catch(e){}
+            isAdmin=false;
+            setAdminUI();
+            closeEdit();
+            await fetchProducts();
+            location.reload();
+        }
+
+        // =========================
+        // MULTI IMAGE HELPERS
+        // =========================
+        function renderThumbs(containerId, files){
+            const el = document.getElementById(containerId);
+            if(!el) return;
+            if(!files || !files.length){ el.innerHTML=''; return; }
+            el.innerHTML = files.slice(0,6).map(f=>{
+                const url = URL.createObjectURL(f);
+                return `<img src="${url}" class="w-16 h-16 rounded-2xl object-cover border border-gray-200" />`;
+            }).join('');
+        }
+
+        document.getElementById('pImgFiles').addEventListener('change', function(){
+            addSelectedFiles = Array.from(this.files||[]).slice(0,6);
+            document.getElementById('fileName').innerText = addSelectedFiles.length ? `${addSelectedFiles.length} image(s) sélectionnée(s)` : 'Ajouter 1 à 6 images';
+            renderThumbs('newThumbs', addSelectedFiles);
+        });
+
+        document.getElementById('eImgFiles').addEventListener('change', function(){
+            editSelectedFiles = Array.from(this.files||[]).slice(0,6);
+            document.getElementById('eFileName').innerText = editSelectedFiles.length ? `${editSelectedFiles.length} nouvelle(s) image(s)` : 'Ajouter des images (max 6)';
+            renderThumbs('editNewThumbs', editSelectedFiles);
+        });
+
+        async function uploadMany(files){
+            const slice = (files||[]).slice(0,6);
+            const results = [];
+            for(const file of slice){
+                const ext = (file.name.split('.').pop()||'jpg').toLowerCase();
+                const fileName = `SAMY_${Date.now()}_${Math.random().toString(16).slice(2)}.${ext}`;
+                const path = `products/${fileName}`;
+
+                const { error: upErr } = await client.storage.from(BUCKET).upload(path, file);
+                if(upErr) throw upErr;
+
+                const { data: pu } = client.storage.from(BUCKET).getPublicUrl(path);
+                results.push({ url: pu.publicUrl, path });
+            }
+            return results;
+        }
+
+        async function removeFromStorage(path){
+            if(!path) return;
+            const { error } = await client.storage.from(BUCKET).remove([path]);
+            if(error) console.warn(error);
+        }
+
+        // =========================
+        // CRUD
+        // =========================
+        async function addProduct(){
+            await refreshAdminState();
+            if(!isAdmin) return alert("Accès admin requis.");
+
+            const btn = document.getElementById('saveBtn');
+
+            const name = (document.getElementById('pNameFr').value||'').trim();
+            const brand = (document.getElementById('pBrand').value||'').trim();
+            const price = (document.getElementById('pPrice').value||'').trim();
+            const category = document.getElementById('pCat').value;
+
+            if(!name || !price) return alert("Nom et Prix obligatoires.");
+            if(!addSelectedFiles.length) return alert("Ajoutez au moins 1 image.");
+
+            btn.disabled=true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-2"></i> Upload...`;
+
+            try{
+                const imgs = await uploadMany(addSelectedFiles);
+                const main = imgs[0];
+
+                const { error } = await client.from('products').insert([{
+                    name_fr: name,
+                    brand: brand || "Marque Inconnue",
+                    price: parseFloat(price),
+                    category,
+                    img: main.url,
+                    img_path: main.path,
+                    images: imgs,
+                    createdAt: new Date().toISOString()
+                }]);
+
+                if(error) throw error;
+
+                // reset
+                document.getElementById('pNameFr').value='';
+                document.getElementById('pBrand').value='';
+                document.getElementById('pPrice').value='';
+                document.getElementById('pImgFiles').value='';
+                addSelectedFiles=[];
+                document.getElementById('fileName').innerText='Ajouter 1 à 6 images';
+                renderThumbs('newThumbs', []);
+
+                alert("✅ Produit ajouté !");
+                await fetchProducts();
+            }catch(e){
+                console.error(e);
+                alert("❌ Erreur: " + (e.message||e));
+            }finally{
+                btn.disabled=false;
+                btn.innerHTML="🚀 Ajouter au catalogue";
+            }
+        }
+
+        // EDIT
+        function openEdit(id){
+            if(!isAdmin) return;
+            const p = allProducts.find(x=>x.id===id);
+            if(!p) return;
+
+            currentEditId = id;
+            document.getElementById('eNameFr').value = p.name_fr || '';
+            document.getElementById('eBrand').value = p.brand || '';
+            document.getElementById('ePrice').value = p.price ?? '';
+            document.getElementById('eCat').value = p.category || 'Dermocosmétique';
+            document.getElementById('editHint').innerText = `${p.name_fr} • ${p.brand||''}`;
+
+            editSelectedFiles=[];
+            document.getElementById('eImgFiles').value='';
+            document.getElementById('eFileName').innerText='Ajouter des images (max 6)';
+            renderThumbs('editNewThumbs', []);
+
+            renderGallery(p);
+            document.getElementById('editModal').classList.remove('hidden');
+        }
+
+        function closeEdit(){
+            currentEditId=null;
+            editSelectedFiles=[];
+            document.getElementById('editModal').classList.add('hidden');
+        }
+
+        function renderGallery(p){
+            const gallery = document.getElementById('imgGallery');
+            const imgs = getProductImages(p);
+            if(!imgs.length){
+                gallery.innerHTML = `<p class="text-gray-400 text-sm">Aucune image</p>`;
+                return;
+            }
+            gallery.innerHTML = imgs.map((img, idx)=>`
+                <div class="relative">
+                    <img src="${img.url}" class="w-20 h-20 rounded-2xl object-cover border border-gray-200"/>
+                    <button onclick="removeImageAt(${idx})" class="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-red-500 text-white flex items-center justify-center shadow">
+                        <i class="fa-solid fa-xmark text-xs"></i>
+                    </button>
+                    ${idx===0 ? `<span class="absolute left-2 bottom-2 text-[9px] font-black bg-white/90 px-2 py-1 rounded-full">MAIN</span>` : ``}
+                </div>
+            `).join('');
+        }
+
+        async function removeImageAt(index){
+            await refreshAdminState();
+            if(!isAdmin) return;
+
+            const p = allProducts.find(x=>x.id===currentEditId);
+            if(!p) return;
+
+            const imgs = getProductImages(p);
+            if(imgs.length <= 1) return alert("Minimum 1 image obligatoire.");
+
+            const target = imgs[index];
+            if(!confirm("Supprimer cette image ?")) return;
+
+            const newImgs = imgs.filter((_,i)=>i!==index);
+            const main = newImgs[0];
+
+            const { error } = await client.from('products').update({
+                images: newImgs,
+                img: main.url,
+                img_path: main.path || null
+            }).eq('id', currentEditId);
+
+            if(error) return alert("Erreur: " + error.message);
+
+            await removeFromStorage(target.path);
+
+            await fetchProducts();
+            const refreshed = allProducts.find(x=>x.id===currentEditId);
+            if(refreshed) renderGallery(refreshed);
+        }
+
+        async function updateProduct(){
+            await refreshAdminState();
+            if(!isAdmin) return alert("Accès admin requis.");
+            if(!currentEditId) return;
+
+            const btn = document.getElementById('updateBtn');
+
+            const name = (document.getElementById('eNameFr').value||'').trim();
+            const brand = (document.getElementById('eBrand').value||'').trim();
+            const price = (document.getElementById('ePrice').value||'').trim();
+            const category = document.getElementById('eCat').value;
+
+            if(!name || !price) return alert("Nom et Prix obligatoires.");
+
+            btn.disabled=true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-2"></i> Enregistrement...`;
+
+            try{
+                const p = allProducts.find(x=>x.id===currentEditId);
+                if(!p) throw new Error("Produit introuvable.");
+
+                let imgs = getProductImages(p);
+
+                if(editSelectedFiles.length){
+                    const uploaded = await uploadMany(editSelectedFiles);
+                    imgs = imgs.concat(uploaded).slice(0,6);
+                }
+
+                const main = imgs[0];
+                if(!main) throw new Error("Minimum 1 image obligatoire.");
+
+                const { error } = await client.from('products').update({
+                    name_fr: name,
+                    brand: brand || "Marque Inconnue",
+                    price: parseFloat(price),
+                    category,
+                    images: imgs,
+                    img: main.url,
+                    img_path: main.path || null
+                }).eq('id', currentEditId);
+
+                if(error) throw error;
+
+                editSelectedFiles=[];
+                document.getElementById('eImgFiles').value='';
+                document.getElementById('eFileName').innerText='Ajouter des images (max 6)';
+                renderThumbs('editNewThumbs', []);
+
+                alert("✅ Modifié !");
+                await fetchProducts();
+                const refreshed = allProducts.find(x=>x.id===currentEditId);
+                if(refreshed) renderGallery(refreshed);
+            }catch(e){
+                console.error(e);
+                alert("❌ Erreur: " + (e.message||e));
+            }finally{
+                btn.disabled=false;
+                btn.innerHTML="💾 Enregistrer";
+            }
+        }
+
+        async function deleteProduct(id){
+            await refreshAdminState();
+            if(!isAdmin) return alert("Accès refusé.");
+
+            const p = allProducts.find(x=>x.id===id);
+            if(!p) return;
+            if(!confirm("Supprimer définitivement ce produit ?")) return;
+
+            try{
+                const imgs = getProductImages(p);
+                for(const img of imgs){
+                    await removeFromStorage(img.path);
+                }
+                const { error } = await client.from('products').delete().eq('id', id);
+                if(error) throw error;
+
+                closeEdit();
+                await fetchProducts();
+            }catch(e){
+                console.error(e);
+                alert("Erreur suppression: " + (e.message||e));
+            }
+        }
+
+        // INIT
+        async function initApp(){
+            client.auth.onAuthStateChange(async ()=>{
+                await refreshAdminState();
+                renderGrid(allProducts);
+            });
+            await refreshAdminState();
+            await fetchProducts();
+        }
+        window.onload = initApp;
     </script>
 </body>
 </html>
