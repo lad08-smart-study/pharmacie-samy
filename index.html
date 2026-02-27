@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PHARMACIE SAMY | Premium Showcase</title>
-    
+
     <!-- Supabase (UMD build for browser) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.97.0/dist/umd/supabase.min.js"></script>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -17,16 +17,16 @@
         body { font-family: 'Inter', 'Noto Sans Arabic', sans-serif; background-color: #fcfdfe; scroll-behavior: smooth; }
         .pharma-blue { color: var(--main-blue); }
         .bg-pharma { background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%); }
-        
-        .hero-gradient { 
-            background: linear-gradient(to right, rgba(13, 71, 161, 0.9), rgba(13, 71, 161, 0.4)), 
-            url('https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=1920&auto=format&fit=crop'); 
+
+        .hero-gradient {
+            background: linear-gradient(to right, rgba(13, 71, 161, 0.9), rgba(13, 71, 161, 0.4)),
+            url('https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=1920&auto=format&fit=crop');
             background-size: cover; background-position: center; min-height: 650px; display: flex; align-items: center;
         }
 
-        .product-card { 
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); 
-            border: 1px solid #f1f5f9; background: white; border-radius: 30px; 
+        .product-card {
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            border: 1px solid #f1f5f9; background: white; border-radius: 30px;
             position: relative; overflow: hidden; display: flex; flex-direction: column;
         }
         .product-card:hover { transform: translateY(-15px); box-shadow: 0 40px 80px rgba(13,71,161,0.12); border-color: var(--main-blue); }
@@ -44,11 +44,11 @@
         .delete-btn{ right:15px; background:#ef4444; }
         .is-admin .admin-action{ display:flex; }
 
-        .whatsapp-float { 
-            position: fixed; bottom: 30px; right: 30px; background-color: var(--accent-green); 
-            color: white; width: 70px; height: 70px; border-radius: 50%; display: flex; 
-            align-items: center; justify-content: center; font-size: 35px; box-shadow: 0 15px 35px rgba(37,211,102,0.4); 
-            z-index: 1000; transition: 0.4s; 
+        .whatsapp-float {
+            position: fixed; bottom: 30px; right: 30px; background-color: var(--accent-green);
+            color: white; width: 70px; height: 70px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-size: 35px; box-shadow: 0 15px 35px rgba(37,211,102,0.4);
+            z-index: 1000; transition: 0.4s;
         }
         .whatsapp-float:hover { transform: rotate(360deg) scale(1.1); }
 
@@ -59,6 +59,24 @@
     </style>
 </head>
 <body>
+
+    <!-- ✅ FIX CRITIQUE: تعريف showAdmin/closeAdmin قبل أي JS آخر -->
+    <script>
+      window.showAdmin = function () {
+        var m = document.getElementById('adminModal');
+        if (m) m.classList.remove('hidden');
+        // refreshAdminState قد يكون معرّف لاحقاً، نتحقق قبل الاستدعاء
+        if (typeof refreshAdminState === "function") refreshAdminState();
+      };
+      window.closeAdmin = function () {
+        var m = document.getElementById('adminModal');
+        if (m) m.classList.add('hidden');
+      };
+      window.closeEdit = function () {
+        var m = document.getElementById('editModal');
+        if (m) m.classList.add('hidden');
+      };
+    </script>
 
     <nav class="bg-white/95 backdrop-blur-2xl shadow-sm border-b sticky top-0 z-[100] px-6 py-5">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
@@ -123,7 +141,7 @@
             <div class="w-full md:max-w-md">
                 <div class="relative group">
                     <i class="fa-solid fa-magnifying-glass absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600 transition-all"></i>
-                    <input type="text" id="searchInput" placeholder="Rechercher une marque (Vichy, CeraVe...)" 
+                    <input type="text" id="searchInput" placeholder="Rechercher une marque (Vichy, CeraVe...)"
                            class="w-full p-6 pl-16 rounded-3xl border-2 border-gray-50 focus:border-blue-600 outline-none shadow-sm text-lg transition-all bg-white font-medium">
                 </div>
             </div>
@@ -171,11 +189,11 @@
         </div>
     </footer>
 
-    <!-- ADMIN LOGIN / ADD -->
+    <!-- ADMIN MODAL -->
     <div id="adminModal" class="fixed inset-0 bg-black/95 hidden z-[1000] flex items-center justify-center p-4 backdrop-blur-xl">
         <div class="bg-white w-full max-w-2xl rounded-[50px] p-10 md:p-16 shadow-2xl relative overflow-y-auto max-h-[90vh] border border-gray-100">
             <button onclick="closeAdmin()" class="absolute top-10 right-10 text-gray-200 hover:text-black text-5xl font-light transition-colors">×</button>
-            
+
             <div id="loginArea">
                 <div class="text-center mb-12">
                     <div class="w-20 h-20 bg-blue-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
@@ -194,7 +212,7 @@
                     <h3 class="text-3xl font-black text-blue-900 tracking-tighter uppercase">Gestionnaire de Stock</h3>
                     <button onclick="logoutAdmin()" class="text-red-400 text-[10px] font-black uppercase tracking-[0.3em] hover:text-red-600 transition-colors">Déconnexion</button>
                 </div>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-2">
                         <label class="text-[10px] font-black uppercase text-gray-400 ml-4">Nom du produit</label>
@@ -221,8 +239,7 @@
                         </select>
                     </div>
                 </div>
-                
-                <!-- MULTI IMAGES -->
+
                 <div class="border-4 border-dashed border-gray-100 p-10 rounded-[40px] text-center group hover:border-blue-200 transition-all cursor-pointer bg-gray-50/50">
                     <input type="file" id="pImgFiles" accept="image/*" multiple class="hidden">
                     <label for="pImgFiles" class="cursor-pointer block">
@@ -465,16 +482,8 @@
         });
 
         // =========================
-        // ADMIN MODAL
+        // AUTH
         // =========================
-        function showAdmin(){
-            document.getElementById('adminModal').classList.remove('hidden');
-            refreshAdminState();
-        }
-        function closeAdmin(){
-            document.getElementById('adminModal').classList.add('hidden');
-        }
-
         async function handleLogin(){
             const passEl = document.getElementById('adminPass');
             const password = (passEl.value||'').trim();
@@ -597,7 +606,6 @@
 
                 if(error) throw error;
 
-                // reset
                 document.getElementById('pNameFr').value='';
                 document.getElementById('pBrand').value='';
                 document.getElementById('pPrice').value='';
@@ -617,7 +625,6 @@
             }
         }
 
-        // EDIT
         function openEdit(id){
             if(!isAdmin) return;
             const p = allProducts.find(x=>x.id===id);
@@ -637,12 +644,6 @@
 
             renderGallery(p);
             document.getElementById('editModal').classList.remove('hidden');
-        }
-
-        function closeEdit(){
-            currentEditId=null;
-            editSelectedFiles=[];
-            document.getElementById('editModal').classList.add('hidden');
         }
 
         function renderGallery(p){
@@ -779,7 +780,6 @@
             }
         }
 
-        // INIT
         async function initApp(){
             client.auth.onAuthStateChange(async ()=>{
                 await refreshAdminState();
@@ -788,23 +788,7 @@
             await refreshAdminState();
             await fetchProducts();
         }
-        window.onload = initApp;// ✅ FIX: افتح الأدمن إذا كان الرابط فيه #admin
-if (location.hash === "#admin") {
-  const m = document.getElementById("adminModal");
-  if (m) m.classList.remove("hidden");
-}
-
-// ✅ FIX: تأكد زر البصمة يخدم حتى لو onclick ما خدمش
-document.addEventListener("click", (e) => {
-  const fp = e.target.closest(".fa-fingerprint");
-  if (fp) {
-    const m = document.getElementById("adminModal");
-    if (m) m.classList.remove("hidden");
-    // نحدث حالة الأدمن
-    if (typeof refreshAdminState === "function") refreshAdminState();
-  }
-});
+        window.onload = initApp;
     </script>
 </body>
 </html>
-
