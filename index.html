@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PHARMACIE SAMY | Premium Showcase</title>
     
-    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -235,7 +234,9 @@
     <script>
         // --- SUPABASE CONFIGURATION ---
         const SUPABASE_URL = "https://kmhbvdqrhnwfpglngchf.supabase.co";
-        const SUPABASE_KEY = "sb_publishable_gpDvHMQc6DC37fFeoXtF1Q_QpUkN0YI";
+        // تم تحديث المفتاح بالمفتاح الذي قدمته
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttaGJ2ZHFyaG53ZnBnbG5nY2hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5NzI3MzIsImV4cCI6MjA4NzU0ODczMn0.T9bPphIprrZeS_Qo116mIyWL6lThYdPTwSFkgdrwpGs";
+        
         const { createClient } = window.supabase;
         const client = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -254,14 +255,11 @@
                 if(error) throw error;
                 allProducts = data || [];
                 renderGrid(allProducts);
-                if(isAdmin) renderGrid(allProducts);
             } catch (err) { 
                 console.error('Error:', err);
                 grid.innerHTML = `<div class="col-span-full text-center py-20 bg-red-50 rounded-[40px] border border-red-100">
                     <i class="fa-solid fa-triangle-exclamation text-red-400 text-4xl mb-4"></i>
                     <p class="text-red-900 font-black uppercase text-xs tracking-widest">Erreur de Synchronisation Supabase</p>
-                    <p class="text-red-400 text-[10px] mt-2 italic font-medium">Vérifiez votre connexion et vos données Supabase</p>
-                    <p class="text-red-400 text-[10px] mt-2 italic font-medium">Erreur: ${err.message}</p>
                 </div>`; 
             }
         }
@@ -277,8 +275,8 @@
                 return `
                     <div class="product-card p-7 ${isAdmin ? 'is-admin' : ''}">
                         <div onclick="deleteProduct('${p.id}')" class="delete-btn" title="Supprimer du stock"><i class="fa-solid fa-trash-can"></i></div>
-                        <div class="aspect-[4/5] bg-gray-50 rounded-[25px] mb-8 overflow-hidden flex items-center justify-center p-6 group-hover:bg-white transition-colors duration-500">
-                            <img src="${p.img || 'https://via.placeholder.com/400'}" class="max-h-full max-w-full object-contain mix-blend-multiply transform transition-transform duration-700 hover:scale-110" loading="lazy" onerror="this.src='https://via.placeholder.com/400'">
+                        <div class="aspect-[4/5] bg-gray-50 rounded-[25px] mb-8 overflow-hidden flex items-center justify-center p-6">
+                            <img src="${p.img || 'https://via.placeholder.com/400'}" class="max-h-full max-w-full object-contain mix-blend-multiply" loading="lazy" onerror="this.src='https://via.placeholder.com/400'">
                         </div>
                         <div class="flex-grow">
                             <span class="text-[10px] text-blue-600 font-black uppercase tracking-[0.25em] mb-3 block opacity-60">${p.brand || 'Premium Care'}</span>
@@ -330,7 +328,6 @@
             btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-2"></i> TRAITEMENT...`;
 
             try {
-                // Upload image to Supabase Storage
                 const fileExtension = file.name.split('.').pop();
                 const fileName = `SAMY_${Date.now()}.${fileExtension}`;
                 
@@ -340,35 +337,24 @@
                 
                 if(uploadError) throw uploadError;
 
-                // Get public URL
                 const { data: publicUrlData } = client.storage
                     .from('product-images')
                     .getPublicUrl(`products/${fileName}`);
 
-                const downloadURL = publicUrlData.publicUrl;
-
-                // Insert product into Supabase
-                const { data: insertData, error: insertError } = await client
+                const { error: insertError } = await client
                     .from('products')
                     .insert([{
                         name_fr: name,
                         price: parseInt(price),
                         brand: document.getElementById('pBrand').value || "Marque Inconnue",
                         category: document.getElementById('pCat').value,
-                        img: downloadURL,
+                        img: publicUrlData.publicUrl,
                         createdAt: new Date().toISOString()
                     }]);
 
                 if(insertError) throw insertError;
 
                 alert("✅ Produit ajouté avec succès!");
-                document.getElementById('pNameFr').value = "";
-                document.getElementById('pBrand').value = "";
-                document.getElementById('pPrice').value = "";
-                document.getElementById('pImgFile').value = "";
-                document.getElementById('fileName').innerHTML = "Téléverser l'image du produit";
-                document.getElementById('fileName').classList.remove('text-green-600');
-                
                 fetchProducts();
                 btn.disabled = false;
                 btn.innerHTML = "🚀 Mettre à jour le catalogue";
@@ -381,41 +367,29 @@
         }
 
         async function deleteProduct(id) {
-            if(confirm("Action irréversible : Voulez-vous vraiment retirer ce produit du catalogue ?")) {
+            if(confirm("Supprimer ce produit ?")) {
                 try {
-                    const { error } = await client
-                        .from('products')
-                        .delete()
-                        .eq('id', id);
-                    
+                    const { error } = await client.from('products').delete().eq('id', id);
                     if(error) throw error;
                     fetchProducts();
-                } catch(e) { alert("Erreur lors de la suppression: " + e.message); }
+                } catch(e) { alert("Erreur: " + e.message); }
             }
         }
 
-        // --- Filtering & UI Logic ---
         function filterByCategory(cat) {
             document.querySelectorAll('.cat-chip').forEach(chip => {
                 chip.classList.remove('active');
                 if(chip.innerText === cat) chip.classList.add('active');
             });
-
             document.getElementById('section-title').innerText = cat === 'Tout' ? 'Catalogue' : cat;
-            
-            const filtered = cat === 'Tout' 
-                ? allProducts 
-                : allProducts.filter(p => p.category === cat);
-            
+            const filtered = cat === 'Tout' ? allProducts : allProducts.filter(p => p.category === cat);
             renderGrid(filtered);
-            window.location.hash = "products";
         }
 
         function searchProducts() {
             const val = document.getElementById('searchInput').value.toLowerCase();
             const filtered = allProducts.filter(p => 
-                p.name_fr.toLowerCase().includes(val) || 
-                (p.brand && p.brand.toLowerCase().includes(val))
+                p.name_fr.toLowerCase().includes(val) || (p.brand && p.brand.toLowerCase().includes(val))
             );
             renderGrid(filtered);
         }
@@ -427,11 +401,9 @@
             const fileNameDisplay = document.getElementById('fileName');
             if(this.files[0]) {
                 fileNameDisplay.innerHTML = `<i class="fa-solid fa-check-circle text-green-500"></i> ${this.files[0].name}`;
-                fileNameDisplay.classList.add('text-green-600');
             }
         };
 
-        // --- Init ---
         window.onload = fetchProducts;
     </script>
 </body>
