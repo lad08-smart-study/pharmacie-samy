@@ -788,7 +788,23 @@
             await refreshAdminState();
             await fetchProducts();
         }
-        window.onload = initApp;
+        window.onload = initApp;// ✅ FIX: افتح الأدمن إذا كان الرابط فيه #admin
+if (location.hash === "#admin") {
+  const m = document.getElementById("adminModal");
+  if (m) m.classList.remove("hidden");
+}
+
+// ✅ FIX: تأكد زر البصمة يخدم حتى لو onclick ما خدمش
+document.addEventListener("click", (e) => {
+  const fp = e.target.closest(".fa-fingerprint");
+  if (fp) {
+    const m = document.getElementById("adminModal");
+    if (m) m.classList.remove("hidden");
+    // نحدث حالة الأدمن
+    if (typeof refreshAdminState === "function") refreshAdminState();
+  }
+});
     </script>
 </body>
 </html>
+
