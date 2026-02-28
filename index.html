@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>PHARMACIE SAMY | Premium Showcase</title>
 
-  <!-- Supabase (UMD build for browser) -->
+  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.97.0/dist/umd/supabase.min.js"></script>
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -56,17 +56,31 @@
     .cat-chip:hover, .cat-chip.active { background: var(--main-blue); color: white; border-color: var(--main-blue); transform: scale(1.05); }
 
     .no-scrollbar::-webkit-scrollbar { display: none; }
+
+    /* Status indicator */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+    }
+    .status-success { background: #dcfce7; color: #166534; }
+    .status-error { background: #fee2e2; color: #991b1b; }
+    .status-warning { background: #fef3c7; color: #92400e; }
   </style>
 </head>
 
 <body>
 
-  <!-- ✅ FIX: showAdmin/closeAdmin موجودين قبل أي JS -->
+  <!-- Modal Functions (Global) -->
   <script>
     window.showAdmin = function () {
       var m = document.getElementById('adminModal');
       if (m) m.classList.remove('hidden');
-      if (typeof refreshAdminState === "function") refreshAdminState();
     };
     window.closeAdmin = function () {
       var m = document.getElementById('adminModal');
@@ -78,6 +92,7 @@
     };
   </script>
 
+  <!-- NAVBAR -->
   <nav class="bg-white/95 backdrop-blur-2xl shadow-sm border-b sticky top-0 z-[100] px-6 py-5">
     <div class="max-w-7xl mx-auto flex justify-between items-center">
       <div class="flex items-center gap-4 cursor-pointer" onclick="location.reload()">
@@ -102,6 +117,7 @@
     </div>
   </nav>
 
+  <!-- HERO HEADER -->
   <header class="hero-gradient text-white flex items-center px-6">
     <div class="max-w-7xl mx-auto w-full py-24">
       <div class="max-w-3xl animate-fade-in">
@@ -124,6 +140,7 @@
     </div>
   </header>
 
+  <!-- CATEGORIES -->
   <section class="py-12 bg-white overflow-x-auto no-scrollbar border-b">
     <div class="max-w-7xl mx-auto px-6 flex gap-4">
       <div onclick="filterByCategory('Tout')" class="cat-chip active px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-sm">Tout</div>
@@ -134,6 +151,7 @@
     </div>
   </section>
 
+  <!-- MAIN PRODUCTS SECTION -->
   <main id="products" class="max-w-7xl mx-auto px-6 py-24">
     <div class="flex flex-col md:flex-row justify-between items-end mb-20 gap-10">
       <div class="w-full">
@@ -157,6 +175,7 @@
     </div>
   </main>
 
+  <!-- FOOTER -->
   <footer class="bg-white border-t pt-28 pb-12">
     <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-24 mb-24">
       <div>
@@ -191,34 +210,51 @@
     </div>
   </footer>
 
-  <!-- ADMIN MODAL -->
+  <!-- WHATSAPP FLOAT -->
+  <a href="https://wa.me/213770762987" class="whatsapp-float">
+    <i class="fa-brands fa-whatsapp"></i>
+  </a>
+
+  <!-- ============================================
+       ADMIN MODAL - LOGIN & MANAGEMENT
+       ============================================ -->
   <div id="adminModal" class="fixed inset-0 bg-black/95 hidden z-[1000] flex items-center justify-center p-4 backdrop-blur-xl">
     <div class="bg-white w-full max-w-2xl rounded-[50px] p-10 md:p-16 shadow-2xl relative overflow-y-auto max-h-[90vh] border border-gray-100">
       <button onclick="closeAdmin()" class="absolute top-10 right-10 text-gray-200 hover:text-black text-5xl font-light transition-colors">×</button>
 
+      <!-- LOGIN AREA -->
       <div id="loginArea">
         <div class="text-center mb-12">
-          <div class="w-20 h-20 bg-blue-50 rounded-3xl flex items-center justify-content-center mx-auto mb-6">
+          <div class="w-20 h-20 bg-blue-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
             <i class="fa-solid fa-shield-halved text-3xl pharma-blue"></i>
           </div>
-          <h3 class="text-4xl font-black text-gray-900 tracking-tighter uppercase">Authentification</h3>
-          <p class="text-gray-400 text-sm mt-2">Admin: drlokman6@gmail.com</p>
+          <h3 class="text-4xl font-black text-gray-900 tracking-tighter uppercase">Authentification Admin</h3>
+          <p class="text-gray-400 text-sm mt-2">Email: <span class="font-mono bg-gray-100 px-2 py-1 rounded">lokmaddjeddou@gmail.com</span></p>
+          <div id="authStatus" class="mt-4"></div>
         </div>
+
         <input type="password" id="adminPass" placeholder="••••••••"
           class="w-full p-7 bg-gray-50 border-2 border-transparent focus:border-blue-600 rounded-3xl mb-8 text-center outline-none transition-all text-3xl font-black tracking-widest">
+
         <button onclick="handleLogin()" id="loginBtn"
           class="w-full bg-pharma text-white py-6 rounded-3xl font-black text-xl shadow-2xl hover:shadow-blue-200 transition-all active:scale-95 uppercase">
           Valider l'accès
         </button>
-        <p id="loginMsg" class="text-center text-red-500 text-xs mt-4"></p>
+
+        <div id="loginMsg" class="mt-6 space-y-2"></div>
       </div>
 
+      <!-- ADMIN PANEL -->
       <div id="adminPanel" class="hidden space-y-8 animate-fade-in">
         <div class="border-b pb-6 flex items-center justify-between">
-          <h3 class="text-3xl font-black text-blue-900 tracking-tighter uppercase">Gestionnaire de Stock</h3>
+          <div>
+            <h3 class="text-3xl font-black text-blue-900 tracking-tighter uppercase">Gestionnaire de Stock</h3>
+            <p id="adminEmail" class="text-gray-400 text-xs mt-1">Admin logged in</p>
+          </div>
           <button onclick="logoutAdmin()" class="text-red-400 text-[10px] font-black uppercase tracking-[0.3em] hover:text-red-600 transition-colors">Déconnexion</button>
         </div>
 
+        <!-- FORM -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-2">
             <label class="text-[10px] font-black uppercase text-gray-400 ml-4">Nom du produit</label>
@@ -246,6 +282,7 @@
           </div>
         </div>
 
+        <!-- IMAGE UPLOAD -->
         <div class="border-4 border-dashed border-gray-100 p-10 rounded-[40px] text-center group hover:border-blue-200 transition-all cursor-pointer bg-gray-50/50">
           <input type="file" id="pImgFiles" accept="image/*" multiple class="hidden">
           <label for="pImgFiles" class="cursor-pointer block">
@@ -264,7 +301,9 @@
     </div>
   </div>
 
-  <!-- EDIT MODAL -->
+  <!-- ============================================
+       EDIT MODAL
+       ============================================ -->
   <div id="editModal" class="fixed inset-0 bg-black/95 hidden z-[1100] flex items-center justify-center p-4 backdrop-blur-xl">
     <div class="bg-white w-full max-w-2xl rounded-[50px] p-10 md:p-16 shadow-2xl relative overflow-y-auto max-h-[90vh] border border-gray-100">
       <button onclick="closeEdit()" class="absolute top-10 right-10 text-gray-200 hover:text-black text-5xl font-light transition-colors">×</button>
@@ -330,14 +369,11 @@
     </div>
   </div>
 
-  <a href="https://wa.me/213770762987" class="whatsapp-float">
-    <i class="fa-brands fa-whatsapp"></i>
-  </a>
-
+  <!-- ============================================
+       JAVASCRIPT - CORE LOGIC
+       ============================================ -->
   <script>
-    // =========================
-    // CONFIG
-    // =========================
+    // ===== CONFIG =====
     const SUPABASE_URL = "https://kmhbvdqrhnwfpglngchf.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttaGJ2ZHFyaG53ZnBnbG5nY2hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5NzI3MzIsImV4cCI6MjA4NzU0ODczMn0.T9bPphIprrZeS_Qo116mIyWL6lThYdPTwSFkgdrwpGs";
     const { createClient } = window.supabase;
@@ -346,13 +382,16 @@
     const ADMIN_EMAIL = "lokmaddjeddou@gmail.com";
     const BUCKET = "product-images";
 
+    // ===== STATE =====
     let allProducts = [];
     let isAdmin = false;
     let currentEditId = null;
+    let currentUser = null;
 
     let addSelectedFiles = [];
     let editSelectedFiles = [];
 
+    // ===== UTILITIES =====
     function safeJsonArray(v){
       try{
         if(!v) return [];
@@ -361,51 +400,59 @@
       }catch(e){ return []; }
     }
 
-    // =========================
-    // ADMIN STATE (✅ لا signOut تلقائي)
-    // =========================
+    function showStatus(msg, type = 'info') {
+      const statusEl = document.getElementById('authStatus');
+      if (!statusEl) return;
+      
+      const bgColor = type === 'success' ? 'bg-green-100' : type === 'error' ? 'bg-red-100' : 'bg-blue-100';
+      const textColor = type === 'success' ? 'text-green-700' : type === 'error' ? 'text-red-700' : 'text-blue-700';
+      
+      statusEl.innerHTML = `<div class="${bgColor} ${textColor} p-3 rounded-lg text-xs font-bold text-center">${msg}</div>`;
+    }
+
+    // ===== AUTH MANAGEMENT =====
     async function refreshAdminState(){
-      const msg = document.getElementById('loginMsg');
+      try {
+        const { data: { session } } = await client.auth.getSession();
+        
+        if(!session || !session.user){
+          isAdmin = false;
+          currentUser = null;
+          setAdminUI();
+          return;
+        }
 
-      const { data: { session } } = await client.auth.getSession();
-      if(!session || !session.user){
-        isAdmin = false;
+        currentUser = session.user;
+        
+        // ✅ FIX: Simple email verification instead of RPC
+        isAdmin = (currentUser.email === ADMIN_EMAIL);
+        
         setAdminUI();
-        return;
-      }
-
-      const { data, error } = await client.rpc('is_admin');
-
-      if(error){
+      } catch(e) {
+        console.error('Auth Error:', e);
         isAdmin = false;
+        currentUser = null;
         setAdminUI();
-        if(msg) msg.innerText = "RPC ERROR: " + error.message;
-        return;
-      }
-
-      isAdmin = (data === true);
-      setAdminUI();
-
-      if(!isAdmin && msg){
-        msg.innerText = "✅ Logged in لكن ❌ لست Admin (admin_users).";
       }
     }
 
     function setAdminUI(){
       const loginArea = document.getElementById('loginArea');
       const adminPanel = document.getElementById('adminPanel');
-      if(isAdmin){
+      const authStatus = document.getElementById('authStatus');
+      
+      if(isAdmin && currentUser){
         loginArea.classList.add('hidden');
         adminPanel.classList.remove('hidden');
+        document.getElementById('adminEmail').innerText = `✅ Connecté comme: ${currentUser.email}`;
       } else {
         loginArea.classList.remove('hidden');
         adminPanel.classList.add('hidden');
+        if(authStatus) authStatus.innerHTML = '';
       }
     }
 
-    // =========================
-    // FETCH & RENDER
-    // =========================
+    // ===== FETCH PRODUCTS =====
     async function fetchProducts(){
       const grid = document.getElementById('productsGrid');
       try{
@@ -434,6 +481,7 @@
       return [];
     }
 
+    // ===== RENDER GRID =====
     function renderGrid(products){
       const grid = document.getElementById('productsGrid');
       if(!products || products.length === 0){
@@ -447,8 +495,10 @@
         const waMsg = encodeURIComponent(`Bonjour Pharmacie Samy, je souhaite commander : ${p.name_fr} de la marque ${p.brand || '---'} au prix de ${p.price} DA.`);
         return `
           <div class="product-card p-7 ${isAdmin ? 'is-admin' : ''}">
-            <button onclick="openEdit('${p.id}')" class="admin-action edit-btn" title="Modifier"><i class="fa-solid fa-pen"></i></button>
-            <button onclick="deleteProduct('${p.id}')" class="admin-action delete-btn" title="Supprimer"><i class="fa-solid fa-trash-can"></i></button>
+            ${isAdmin ? `
+              <button onclick="openEdit('${p.id}')" class="admin-action edit-btn" title="Modifier"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="deleteProduct('${p.id}')" class="admin-action delete-btn" title="Supprimer"><i class="fa-solid fa-trash-can"></i></button>
+            ` : ''}
 
             <div class="aspect-[4/5] bg-gray-50 rounded-[25px] mb-8 overflow-hidden flex items-center justify-center p-6">
               <img src="${mainImg}" class="max-h-full max-w-full object-contain mix-blend-multiply transform transition-transform duration-700 hover:scale-110" loading="lazy" onerror="this.src='https://via.placeholder.com/400'">
@@ -472,9 +522,7 @@
       }).join('');
     }
 
-    // =========================
-    // FILTER / SEARCH
-    // =========================
+    // ===== FILTER / SEARCH =====
     function filterByCategory(cat){
       document.querySelectorAll('.cat-chip').forEach(chip => {
         chip.classList.remove('active');
@@ -500,54 +548,69 @@
       }, 120);
     });
 
-    // =========================
-    // AUTH (✅ يعرض السبب الحقيقي)
-    // =========================
+    // ===== LOGIN HANDLER (✅ FIXED) =====
     async function handleLogin(){
       const passEl = document.getElementById('adminPass');
       const password = (passEl.value||'').trim();
       const btn = document.getElementById('loginBtn');
-      const msg = document.getElementById('loginMsg');
-      msg.innerText = '';
-
-      if(!password){ msg.innerText='اكتب كلمة السر'; return; }
+      
+      if(!password){ 
+        showStatus('❌ Veuillez entrer un mot de passe', 'error');
+        return; 
+      }
 
       btn.disabled=true;
       btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-2"></i> Connexion...`;
+      showStatus('⏳ Vérification en cours...', 'info');
 
       try{
-        const { data, error } = await client.auth.signInWithPassword({ email: ADMIN_EMAIL, password });
+        const { data, error } = await client.auth.signInWithPassword({ 
+          email: ADMIN_EMAIL, 
+          password 
+        });
 
         if(error){
-          msg.innerText = "LOGIN ERROR: " + error.message;
+          showStatus(`❌ ${error.message}`, 'error');
+          passEl.value = '';
           return;
         }
 
-        msg.innerText = "✅ Logged in. UID=" + (data?.user?.id || '');
-
+        showStatus('✅ Authentification réussie...', 'success');
         await refreshAdminState();
+        
         if(isAdmin){
-          msg.innerText = "✅ Admin OK!";
+          passEl.value = '';
+          setTimeout(() => {
+            showStatus('✅ Admin Panel Activé!', 'success');
+          }, 300);
           await fetchProducts();
         }
+      } catch(e){
+        showStatus(`❌ Erreur: ${e.message}`, 'error');
       } finally {
         btn.disabled=false;
-        btn.innerHTML='Valider l\\'accès';
+        btn.innerHTML='Valider l\'accès';
       }
     }
 
     async function logoutAdmin(){
-      try{ await client.auth.signOut(); }catch(e){}
+      if(!confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) return;
+      
+      try{ 
+        await client.auth.signOut(); 
+      }catch(e){
+        console.error(e);
+      }
+      
       isAdmin=false;
+      currentUser=null;
       setAdminUI();
       closeEdit();
       await fetchProducts();
-      location.reload();
+      showStatus('✅ Déconnecté avec succès', 'success');
     }
 
-    // =========================
-    // MULTI IMAGE HELPERS
-    // =========================
+    // ===== IMAGE HANDLING =====
     function renderThumbs(containerId, files){
       const el = document.getElementById(containerId);
       if(!el) return;
@@ -589,16 +652,21 @@
 
     async function removeFromStorage(path){
       if(!path) return;
-      const { error } = await client.storage.from(BUCKET).remove([path]);
-      if(error) console.warn(error);
+      try {
+        await client.storage.from(BUCKET).remove([path]);
+      }catch(e){
+        console.warn('Storage delete warning:', e);
+      }
     }
 
-    // =========================
-    // CRUD
-    // =========================
+    // ===== CRUD OPERATIONS (✅ FIXED - ADMIN ONLY) =====
     async function addProduct(){
+      // ✅ CHECK ADMIN STATUS
       await refreshAdminState();
-      if(!isAdmin) return alert("Accès admin requis.");
+      if(!isAdmin) {
+        alert("❌ Accès refusé: Seul l'administrateur peut ajouter des produits.");
+        return;
+      }
 
       const btn = document.getElementById('saveBtn');
 
@@ -625,7 +693,8 @@
           img: main.url,
           img_path: main.path,
           images: imgs,
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
+          admin_id: currentUser.id  // ✅ Track which admin added it
         }]);
 
         if(error) throw error;
@@ -638,7 +707,7 @@
         document.getElementById('fileName').innerText='Ajouter 1 à 6 images';
         renderThumbs('newThumbs', []);
 
-        alert("✅ Produit ajouté !");
+        alert("✅ Produit ajouté avec succès!");
         await fetchProducts();
       }catch(e){
         alert("❌ Erreur: " + (e.message||e));
@@ -649,7 +718,12 @@
     }
 
     function openEdit(id){
-      if(!isAdmin) return;
+      // ✅ CHECK ADMIN
+      if(!isAdmin) {
+        alert("❌ Accès refusé");
+        return;
+      }
+      
       const p = allProducts.find(x=>x.id===id);
       if(!p) return;
 
@@ -689,7 +763,7 @@
 
     async function removeImageAt(index){
       await refreshAdminState();
-      if(!isAdmin) return;
+      if(!isAdmin) return alert("❌ Accès refusé");
 
       const p = allProducts.find(x=>x.id===currentEditId);
       if(!p) return;
@@ -720,7 +794,7 @@
 
     async function updateProduct(){
       await refreshAdminState();
-      if(!isAdmin) return alert("Accès admin requis.");
+      if(!isAdmin) return alert("❌ Accès refusé");
       if(!currentEditId) return;
 
       const btn = document.getElementById('updateBtn');
@@ -766,7 +840,7 @@
         document.getElementById('eFileName').innerText='Ajouter des images (max 6)';
         renderThumbs('editNewThumbs', []);
 
-        alert("✅ Modifié !");
+        alert("✅ Produit modifié!");
         await fetchProducts();
         const refreshed = allProducts.find(x=>x.id===currentEditId);
         if(refreshed) renderGallery(refreshed);
@@ -780,11 +854,14 @@
 
     async function deleteProduct(id){
       await refreshAdminState();
-      if(!isAdmin) return alert("Accès refusé.");
+      if(!isAdmin) {
+        alert("❌ Accès refusé: Seul l'admin peut supprimer.");
+        return;
+      }
 
       const p = allProducts.find(x=>x.id===id);
       if(!p) return;
-      if(!confirm("Supprimer définitivement ce produit ?")) return;
+      if(!confirm("Supprimer DÉFINITIVEMENT ce produit ?")) return;
 
       try{
         const imgs = getProductImages(p);
@@ -796,11 +873,13 @@
 
         closeEdit();
         await fetchProducts();
+        alert("✅ Produit supprimé!");
       }catch(e){
-        alert("Erreur suppression: " + (e.message||e));
+        alert("❌ Erreur suppression: " + (e.message||e));
       }
     }
 
+    // ===== INIT APP =====
     async function initApp(){
       client.auth.onAuthStateChange(async ()=>{
         await refreshAdminState();
@@ -809,6 +888,7 @@
       await refreshAdminState();
       await fetchProducts();
     }
+    
     window.onload = initApp;
   </script>
 
